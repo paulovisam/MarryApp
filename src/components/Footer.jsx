@@ -18,15 +18,15 @@ const Footer = () => {
           </h3>
           
           {/* Date */}
-          <p className="font-serif text-xl md:text-2xl mb-8 text-gray-300">
+          <p className="font-script text-xl md:text-2xl mb-8 text-gray-300">
             15 de Agosto, 2026
           </p>
           
           {/* Divider */}
           <div className="flex items-center justify-center space-x-4 mb-8">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent to-burgundy-500 opacity-50"></div>
-            <FaHeart className="text-xl text-burgundy-400 opacity-70" />
-            <div className="h-px w-16 bg-gradient-to-l from-transparent to-burgundy-500 opacity-50"></div>
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-secondary-500 opacity-50"></div>
+            <FaHeart className="text-xl text-secondary-500 opacity-70" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-secondary-500 opacity-50"></div>
           </div>
           
           {/* Message */}

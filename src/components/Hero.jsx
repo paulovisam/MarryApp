@@ -39,7 +39,10 @@ const Hero = () => {
                 Celebração
               </p>
             </div>
-            <div className="w-px h-16 bg-burgundy-500 opacity-50"></div>
+            <div className="">
+              <div className="w-[2px] h-16 bg-gradient-to-b from-transparent to-secondary-500 opacity-50"></div>
+              <div className="w-[2px] h-16 bg-gradient-to-t from-transparent to-secondary-500 opacity-50"></div>
+            </div>
             <div className="flex-1 text-left pl-6">
               <p className="font-sans text-xs md:text-sm text-gray-400 tracking-[0.25em] uppercase mb-2">
                 Amor
@@ -61,7 +64,7 @@ const Hero = () => {
 
           {/* Main content - Large typography like EDENROSE */}
           <div className="text-center space-y-12">
-            <h1 className="font-serif text-7xl md:text-8xl lg:text-9xl text-white py-24 leading-none tracking-wider font-light">
+            <h1 className="font-serif text-7xl md:text-8xl lg:text-9xl text-white pb-52 leading-none tracking-wider font-light">
               Paulo & Sara
             </h1>
 
@@ -72,7 +75,7 @@ const Hero = () => {
           </div>
 
           {/* Bottom text */}
-          <div className="flex pt-8">
+          <div className="flex items-center justify-center pt-8">
             <div className="flex-1 text-right pr-6">
               <p className="font-sans text-xs md:text-sm text-gray-400 tracking-[0.25em] uppercase mb-2">
                 História
@@ -81,7 +84,10 @@ const Hero = () => {
                 15 de Agosto, 2026
               </p>
             </div>
-            <div className="w-px h-16 bg-royal-500 opacity-30"></div>
+            <div className="">
+              <div className="w-[2px] h-16 bg-gradient-to-b from-transparent to-primary-500 opacity-50"></div>
+              <div className="w-[2px] h-16 bg-gradient-to-t from-transparent to-primary-500 opacity-50"></div>
+            </div>
             <div className="flex-1 text-left pl-6">
               <p className="font-sans text-xs md:text-sm text-gray-400 tracking-[0.25em] uppercase mb-2">
                 Memórias
