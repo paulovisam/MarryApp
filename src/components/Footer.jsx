@@ -9,11 +9,7 @@ const Footer = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Monogram */}
           <div className="flex justify-center mb-8">
-            <img 
-              src={monogramaImg} 
-              alt="Sara & Paulo Monograma" 
-              className="w-24 h-24 object-contain opacity-70 hover:opacity-90 transition-opacity duration-300"
-            />
+            <h3 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-none tracking-wider font-light">P | S</h3>
           </div>
           
           {/* Names */}
