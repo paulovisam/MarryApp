@@ -140,7 +140,7 @@ const Story = () => {
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-4">
               Nossa História
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-secondary-700 to-primary-500 mx-auto mb-6"></div>
+            {/* <div className="w-24 h-1 bg-gradient-to-r from-secondary-700 to-primary-500 mx-auto mb-6"></div> */}
             <p className="font-sans text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
               Uma jornada de amor, cumplicidade e sonhos compartilhados
             </p>
@@ -148,8 +148,11 @@ const Story = () => {
           
           {/* Timeline */}
           <div className="relative">
-            {/* Vertical line */}
+            {/* Vertical line - Desktop (center) */}
             <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-burgundy-500 via-royal-400 to-burgundy-500 opacity-30"></div>
+            
+            {/* Vertical line - Mobile (left side) */}
+            <div className="block md:hidden absolute left-6 top-0 h-full w-0.5 bg-gradient-to-b from-burgundy-500 via-royal-400 to-burgundy-500 opacity-30"></div>
             
             <div className="space-y-16">
               {timeline.map((item, index) => {
@@ -159,39 +162,16 @@ const Story = () => {
                 return (
                   <div 
                     key={index}
-                    className={`relative flex items-center ${
-                      isLeft ? 'md:flex-row' : 'md:flex-row-reverse'
-                    } flex-col`}
+                    className="relative flex flex-row md:items-center items-start"
                   >
-                    {/* Content */}
-                    <div className={`w-full md:w-5/12 ${isLeft ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'} text-center`}>
-                      <div className="mb-4">
-                        <span className={`inline-block px-4 py-1 rounded-full text-sm font-sans font-medium ${
-                          item.color === 'burgundy' 
-                            ? 'bg-secondary-900 text-secondary-300 border border-secondary-500 border-opacity-30' 
-                            : 'bg-blue-950 text-royal-300 border border-royal-500 border-opacity-30'
-                        }`}>
-                          {item.date}
-                        </span>
-                      </div>
-                      
-                      <h3 className="font-serif text-2xl md:text-3xl text-white mb-3">
-                        {item.title}
-                      </h3>
-                      
-                      <p className="font-sans text-gray-300 leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                    
-                    {/* Icon */}
-                    <div className="w-full md:w-2/12 flex justify-center my-8 md:my-0">
-                      <div className={`relative w-16 h-16 rounded-full flex items-center justify-center shadow-2xl border-2 ${
+                    {/* Mobile Layout: Icon on left, content on right stacked */}
+                    <div className="md:hidden w-auto flex justify-center shrink-0">
+                      <div className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-2xl border-2 ${
                         item.color === 'burgundy' 
                           ? 'bg-burgundy-900 border-burgundy-500 border-opacity-30' 
                           : 'bg-blue-900 border-royal-500'
                       }`}>
-                        <Icon className="text-white text-2xl" />
+                        <Icon className="text-white text-lg" />
                         
                         {/* Pulse effect */}
                         <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${
@@ -202,30 +182,125 @@ const Story = () => {
                       </div>
                     </div>
                     
-                    {/* Photo Collage */}
-                    <div className={`w-full md:w-5/12 ${isLeft ? 'md:pl-12' : 'md:pr-12'} mt-8 md:mt-0`}>
-                      <div className="grid grid-cols-2 gap-2 md:gap-3 max-w-sm mx-auto">
-                        {item.photos.map((photo, photoIndex) => (
-                          <div 
-                            key={photoIndex}
-                            onClick={() => openLightbox(photo, item.photos, photoIndex, item.title)}
-                            className={`relative overflow-hidden rounded-lg shadow-lg cursor-pointer ${
-                              photoIndex === 0 ? 'row-span-2' : ''
-                            }`}
-                            style={{ aspectRatio: photoIndex === 0 ? '1/2' : '1/1' }}
-                          >
-                            <img 
-                              src={photo} 
-                              alt={`${item.title} - Foto ${photoIndex + 1}`}
-                              className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                            />
-                            <div className={`absolute inset-0 bg-gradient-to-t ${
-                              item.color === 'burgundy'
-                                ? 'from-burgundy-900/20 to-transparent'
-                                : 'from-royal-900/20 to-transparent'
-                            }`}></div>
-                          </div>
-                        ))}
+                    {/* Mobile Content Container */}
+                    <div className="md:hidden flex-1 pl-6 flex flex-col gap-6">
+                      {/* Content */}
+                      <div className="w-full text-left">
+                        <div className="mb-4">
+                          <span className={`inline-block px-4 py-1 rounded-full text-sm font-sans font-medium ${
+                            item.color === 'burgundy' 
+                              ? 'bg-secondary-900 text-secondary-300 border border-secondary-500 border-opacity-30' 
+                              : 'bg-blue-950 text-royal-300 border border-royal-500 border-opacity-30'
+                          }`}>
+                            {item.date}
+                          </span>
+                        </div>
+                        
+                        <h3 className="font-serif text-2xl text-beige-300 mb-3">
+                          {item.title}
+                        </h3>
+                        
+                        <p className="font-sans text-beige-300 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                      
+                      {/* Photo Collage */}
+                      <div className="w-full">
+                        <div className="grid grid-cols-2 gap-2 max-w-sm">
+                          {item.photos.map((photo, photoIndex) => (
+                            <div 
+                              key={photoIndex}
+                              onClick={() => openLightbox(photo, item.photos, photoIndex, item.title)}
+                              className={`relative overflow-hidden rounded-lg shadow-lg cursor-pointer ${
+                                photoIndex === 0 ? 'row-span-2' : ''
+                              }`}
+                              style={{ aspectRatio: photoIndex === 0 ? '1/2' : '1/1' }}
+                            >
+                              <img 
+                                src={photo} 
+                                alt={`${item.title} - Foto ${photoIndex + 1}`}
+                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                              />
+                              <div className={`absolute inset-0 bg-gradient-to-t ${
+                                item.color === 'burgundy'
+                                  ? 'from-burgundy-900/20 to-transparent'
+                                  : 'from-royal-900/20 to-transparent'
+                              }`}></div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className={`hidden md:flex w-full items-center ${
+                      isLeft ? 'flex-row' : 'flex-row-reverse'
+                    }`}>
+                      {/* Content */}
+                      <div className={`w-5/12 ${isLeft ? 'text-right pr-12' : 'text-left pl-12'}`}>
+                        <div className="mb-4">
+                          <span className={`inline-block px-4 py-1 rounded-full text-sm font-sans font-medium ${
+                            item.color === 'burgundy' 
+                              ? 'bg-secondary-900 text-secondary-300 border border-secondary-500 border-opacity-30' 
+                              : 'bg-blue-950 text-royal-300 border border-royal-500 border-opacity-30'
+                          }`}>
+                            {item.date}
+                          </span>
+                        </div>
+                        
+                        <h3 className="font-serif text-3xl text-beige-300 mb-3">
+                          {item.title}
+                        </h3>
+                        
+                        <p className="font-sans text-beige-300 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                      
+                      {/* Icon */}
+                      <div className="w-2/12 flex justify-center shrink-0">
+                        <div className={`relative w-16 h-16 rounded-full flex items-center justify-center shadow-2xl border-2 ${
+                          item.color === 'burgundy' 
+                            ? 'bg-burgundy-900 border-burgundy-500 border-opacity-30' 
+                            : 'bg-blue-900 border-royal-500'
+                        }`}>
+                          <Icon className="text-white text-2xl" />
+                          
+                          {/* Pulse effect */}
+                          <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${
+                            item.color === 'burgundy' 
+                              ? 'bg-burgundy-500' 
+                              : 'bg-royal-500'
+                          }`}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Photo Collage */}
+                      <div className={`w-5/12 ${isLeft ? 'pl-12' : 'pr-12'}`}>
+                        <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+                          {item.photos.map((photo, photoIndex) => (
+                            <div 
+                              key={photoIndex}
+                              onClick={() => openLightbox(photo, item.photos, photoIndex, item.title)}
+                              className={`relative overflow-hidden rounded-lg shadow-lg cursor-pointer ${
+                                photoIndex === 0 ? 'row-span-2' : ''
+                              }`}
+                              style={{ aspectRatio: photoIndex === 0 ? '1/2' : '1/1' }}
+                            >
+                              <img 
+                                src={photo} 
+                                alt={`${item.title} - Foto ${photoIndex + 1}`}
+                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                              />
+                              <div className={`absolute inset-0 bg-gradient-to-t ${
+                                item.color === 'burgundy'
+                                  ? 'from-burgundy-900/20 to-transparent'
+                                  : 'from-royal-900/20 to-transparent'
+                              }`}></div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -236,7 +311,7 @@ const Story = () => {
           
           {/* Final message */}
           <div className="mt-20 text-center">
-            <div className="inline-block bg-gradient-to-r from-slate-800 to-blue-950 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-burgundy-500 border-opacity-30">
+            <div className="inline-block bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-primary-500 border-opacity-30">
               <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-beige-400 mb-10 leading-normal pb-2">
                 15 de Agosto 2026
               </p>
