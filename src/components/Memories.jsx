@@ -62,7 +62,6 @@ const Memories = () => {
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-4">
               Nossas Lembranças
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-burgundy-500 to-royal-500 mx-auto mb-6"></div>
             <p className="font-sans text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
               Momentos especiais que marcaram nossa jornada juntos
             </p>

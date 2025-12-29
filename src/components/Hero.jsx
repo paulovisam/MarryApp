@@ -25,7 +25,7 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="">
-          <div className="flex justify-center mb-8 animate-fadeIn">
+          <div className="flex justify-center mb-4 animate-fadeIn">
             <h3 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-none tracking-wider font-light">P | S</h3>
           </div>
 
@@ -100,10 +100,12 @@ const Hero = () => {
         </div>
       </div>
 
+      <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-gray-950 to-transparent">
+      </div>
       {/* Scroll indicator */}
       <a
         href="#about"
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"
+        className="absolute bottom-10 center transform -translate-x-1/2 animate-bounce"
       >
         <FaChevronDown className="text-burgundy-400 text-2xl opacity-50 hover:opacity-100 transition-opacity" />
       </a>
