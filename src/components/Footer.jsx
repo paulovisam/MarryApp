@@ -38,7 +38,7 @@ const Footer = () => {
           {/* Copyright */}
           <div className="pt-8 border-t border-burgundy-500 border-opacity-20">
             <p className="font-sans text-sm text-gray-400">
-              © 2026 Sara & Paulo. Feito com amor e carinho.
+              © 2026 Sara & Paulo. Feito com muito amor e carinho.
             </p>
           </div>
         </div>

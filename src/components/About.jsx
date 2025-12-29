@@ -79,11 +79,17 @@ const About = () => {
 
           {/* Together section */}
           <div className="mt-20 text-center max-w-3xl mx-auto">
-            <div className="bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl p-8 md:p-12 shadow-xl border border-primary-500 border-opacity-30">
-              <p className="font-sans text-lg md:text-xl text-beige-300 leading-relaxed italic">
-                Eles acreditam que o amor se constrói nos detalhes do dia a dia, nas conversas sinceras, nas risadas inesperadas e com Deus no centro de tudo.
-                Juntos, eles se completam com parceria e equilíbrio. Entre fé, amor, risadas e planos bem organizados, escolheram caminhar lado a lado, confiando que Deus é a base dessa história que agora começa um novo capítulo.
-              </p>
+            <div className="relative overflow-hidden rounded-2xl p-8 md:p-12 shadow-2xl backdrop-blur-lg bg-white/10 border border-white/20">
+              {/* Glass effect gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-primary-500/10 pointer-events-none"></div>
+              
+              {/* Content */}
+              <div className="relative z-10">
+                <p className="font-sans text-lg md:text-xl text-beige-200 leading-relaxed italic">
+                  Eles acreditam que o amor se constrói nos detalhes do dia a dia, nas conversas sinceras, nas risadas inesperadas e com Deus no centro de tudo.
+                  Juntos, eles se completam com parceria e equilíbrio. Entre fé, amor, risadas e planos bem organizados, escolheram caminhar lado a lado, confiando que Deus é a base dessa história que agora começa um novo capítulo.
+                </p>
+              </div>
             </div>
           </div>
         </div>

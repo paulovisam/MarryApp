@@ -99,7 +99,7 @@ const Memories = () => {
                 <p className="font-sans text-lg md:text-xl text-beige-200 mb-4">
                   Estamos criando novas memórias a cada dia
                 </p>
-                <p className="font-script text-3xl md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-secondary-400 to-primary-400">
+                <p className="font-script text-3xl md:text-4xl bg-clip-text text-transparent bg-beige-300">
                   E você faz parte dessa história!
                 </p>
               </div>
