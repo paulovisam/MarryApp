@@ -40,7 +40,7 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-burgundy-400 to-royal-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary-400 to-primary-400;
   }
   
   .animate-fadeIn {
@@ -103,5 +103,12 @@ html {
 /* IE and Edge */
 * {
   -ms-overflow-style: none;
+}
+
+/* Custom color variables for easy access */
+:root {
+  --color-primary: #0b1c2d;
+  --color-secondary: #960018;
+  --color-beige: #e0d0ba;
 }
 

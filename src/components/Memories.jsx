@@ -124,16 +124,16 @@ const Memories = () => {
               <div 
                 className="absolute -inset-[100%] animate-gradient-rotate"
                 style={{
-                  background: 'conic-gradient(from 0deg, #800020, #4169E1, #800020, #4169E1, #800020)'
+                  background: 'conic-gradient(from 0deg, #960018, #0b1c2d, #960018, #0b1c2d, #960018)'
                 }}>
               </div>
               
               {/* Content - stays static */}
-              <div className="relative bg-slate-900 rounded-xl px-8 md:px-12 py-8 z-10">
-                <p className="font-sans text-lg md:text-xl text-gray-200 mb-4">
+              <div className="relative bg-primary-700 rounded-xl px-8 md:px-12 py-8 z-10">
+                <p className="font-sans text-lg md:text-xl text-beige-200 mb-4">
                   Estamos criando novas memórias a cada dia
                 </p>
-                <p className="font-script text-3xl md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-burgundy-400 to-royal-400">
+                <p className="font-script text-3xl md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-secondary-400 to-primary-400">
                   E você faz parte dessa história!
                 </p>
               </div>
