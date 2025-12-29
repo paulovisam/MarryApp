@@ -41,17 +41,6 @@ const Memories = () => {
     }
   ];
 
-  const quotes = [
-    {
-      text: 'Cada momento ao seu lado é uma lembrança que guardo no coração.',
-      author: 'Sara'
-    },
-    {
-      text: 'Você transformou minha vida em uma coleção de momentos mágicos.',
-      author: 'Paulo'
-    }
-  ];
-
   return (
     <section id="memories" className="py-20 md:py-32 bg-gradient-to-br from-slate-900 via-gray-900 to-blue-950">
       <div className="container mx-auto px-4">
@@ -89,35 +78,6 @@ const Memories = () => {
                       <p className="font-sans text-sm opacity-90">{memory.description}</p>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Quotes section */}
-          <div className="grid md:grid-cols-2 gap-8">
-            {quotes.map((quote, index) => (
-              <div 
-                key={index}
-                className="relative bg-gradient-to-br from-slate-800 to-blue-950 rounded-2xl shadow-2xl p-8 md:p-10 hover:shadow-burgundy-500/20 transition-all duration-300 border border-opacity-30 border-burgundy-500"
-              >
-                <FaQuoteLeft className={`text-4xl mb-4 opacity-30 ${
-                  index === 0 ? 'text-burgundy-400' : 'text-royal-400'
-                }`} />
-                
-                <p className="font-sans text-lg text-gray-200 italic leading-relaxed mb-6">
-                  "{quote.text}"
-                </p>
-                
-                <div className="flex items-center">
-                  <div className={`w-12 h-0.5 mr-4 ${
-                    index === 0 ? 'bg-burgundy-500' : 'bg-royal-500'
-                  }`}></div>
-                  <p className={`font-script text-2xl ${
-                    index === 0 ? 'text-burgundy-400' : 'text-royal-400'
-                  }`}>
-                    {quote.author}
-                  </p>
                 </div>
               </div>
             ))}
