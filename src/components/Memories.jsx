@@ -6,32 +6,38 @@ const Memories = () => {
     {
       type: 'photo',
       title: 'Primeira Viagem',
-      description: 'Praia paradisíaca, 2019'
+      description: 'Praia paradisíaca, 2019',
+      image: '/src/assets/story/encontro_1.jpeg'
     },
     {
       type: 'photo',
       title: 'Aniversário dela',
-      description: 'Surpresa inesquecível'
+      description: 'Surpresa inesquecível',
+      image: '/src/assets/story/encontro_2.jpeg'
     },
     {
       type: 'photo',
       title: 'Nosso Lar',
-      description: 'Primeiro apartamento juntos'
+      description: 'Primeiro apartamento juntos',
+      image: '/src/assets/casa.jpeg'
     },
     {
       type: 'photo',
       title: 'Aventura nas Montanhas',
-      description: 'Trilha memorável'
+      description: 'Trilha memorável',
+      image: '/src/assets/story/pedido_3.jpeg'
     },
     {
       type: 'photo',
       title: 'Jantar Especial',
-      description: 'Restaurante favorito'
+      description: 'Restaurante favorito',
+      image: '/src/assets/story/noivado_1.jpeg'
     },
     {
       type: 'photo',
       title: 'O Grande Dia',
-      description: 'O pedido de casamento'
+      description: 'O pedido de casamento',
+      image: '/src/assets/story/noivado_2.jpeg'
     }
   ];
 
@@ -69,15 +75,16 @@ const Memories = () => {
                 key={index}
                 className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-all duration-300"
               >
-                {/* Photo placeholder */}
-                <div className="aspect-square bg-gradient-to-br from-slate-800 to-blue-950 flex items-center justify-center relative overflow-hidden border border-burgundy-500 border-opacity-20">
-                  <div className="text-center p-6">
-                    <FaCamera className="w-12 h-12 mx-auto mb-3 text-gray-600 group-hover:scale-110 transition-transform duration-300" />
-                    <p className="text-gray-400 font-sans text-sm">Foto da memória</p>
-                  </div>
+                {/* Photo */}
+                <div className="aspect-square relative overflow-hidden shadow-md">
+                  <img 
+                    src={memory.image} 
+                    alt={memory.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
                   
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-burgundy-900 via-burgundy-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-700 via-primary-700/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white w-full">
                       <h3 className="font-serif text-xl mb-1">{memory.title}</h3>
                       <p className="font-sans text-sm opacity-90">{memory.description}</p>
