@@ -112,7 +112,7 @@ const Story = () => {
       photos: [
         '/src/assets/story/pedido_1.jpeg',
         '/src/assets/story/pedido_2.jpeg',
-        '/src/assets/story/pedido_3.jpeg',
+        '/src/assets/story/pedido_5.webp',
         '/src/assets/story/pedido_4.jpeg'
       ]
     },
