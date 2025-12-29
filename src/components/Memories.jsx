@@ -1,43 +1,51 @@
 import React from 'react';
 import { FaCamera, FaQuoteLeft } from 'react-icons/fa';
 
+// Importar todas as imagens
+import encontro1 from '../assets/story/encontro_1.jpeg';
+import encontro2 from '../assets/story/encontro_2.jpeg';
+import casaImg from '../assets/casa.jpeg';
+import pedido3 from '../assets/story/pedido_3.jpeg';
+import noivado1 from '../assets/story/noivado_1.jpeg';
+import noivado2 from '../assets/story/noivado_2.jpeg';
+
 const Memories = () => {
   const memories = [
     {
       type: 'photo',
       title: 'Primeira Viagem',
       description: 'Praia paradisíaca, 2019',
-      image: '/src/assets/story/encontro_1.jpeg'
+      image: encontro1
     },
     {
       type: 'photo',
       title: 'Aniversário dela',
       description: 'Surpresa inesquecível',
-      image: '/src/assets/story/encontro_2.jpeg'
+      image: encontro2
     },
     {
       type: 'photo',
       title: 'Nosso Lar',
       description: 'Primeiro apartamento juntos',
-      image: '/src/assets/casa.jpeg'
+      image: casaImg
     },
     {
       type: 'photo',
       title: 'Aventura nas Montanhas',
       description: 'Trilha memorável',
-      image: '/src/assets/story/pedido_3.jpeg'
+      image: pedido3
     },
     {
       type: 'photo',
       title: 'Jantar Especial',
       description: 'Restaurante favorito',
-      image: '/src/assets/story/noivado_1.jpeg'
+      image: noivado1
     },
     {
       type: 'photo',
       title: 'O Grande Dia',
       description: 'O pedido de casamento',
-      image: '/src/assets/story/noivado_2.jpeg'
+      image: noivado2
     }
   ];
 

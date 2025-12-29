@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRing, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
+// Importar todas as imagens
+import encontro1 from '../assets/story/encontro_1.jpeg';
+import encontro2 from '../assets/story/encontro_2.jpeg';
+import encontro3 from '../assets/story/encontro_3.jpeg';
+import encontro4 from '../assets/story/encontro_4.jpeg';
+import pedido1 from '../assets/story/pedido_1.jpeg';
+import pedido2 from '../assets/story/pedido_2.jpeg';
+import pedido4 from '../assets/story/pedido_4.jpeg';
+import pedido5 from '../assets/story/pedido_5.webp';
+import noivado1 from '../assets/story/noivado_1.jpeg';
+import noivado2 from '../assets/story/noivado_2.jpeg';
+import noivado3 from '../assets/story/noivado_3.jpeg';
+import noivado4 from '../assets/story/noivado_4.jpeg';
+
 const Story = () => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -97,10 +111,10 @@ const Story = () => {
       title: 'O Primeiro Encontro',
       description: 'O primeiro encontro aconteceu em uma hamburgueria, mas nem tudo saiu como o esperado. Enquanto o lugar pedia um bom hambúrguer, ela escolheu uma tortilha de quatro queijos, arrancando risadas e já mostrando que seria tudo, menos comum. Foi ali que se conheceram melhor, conversaram por horas e sentiram que havia algo diferente. Um verdadeiro amor à primeira vista, simples e cheio de conexão.',
       photos: [
-        '/src/assets/story/encontro_3.jpeg',
-        '/src/assets/story/encontro_2.jpeg',
-        '/src/assets/story/encontro_1.jpeg',
-        '/src/assets/story/encontro_4.jpeg'
+        encontro3,
+        encontro2,
+        encontro1,
+        encontro4
       ]
     },
     {
@@ -110,10 +124,10 @@ const Story = () => {
       title: 'O Pedido de Namoro',
       description: 'Paulo pediu Sara em namoro no dia 15 de junho de 2024, no restaurante Paris 6. Um momento planejado com carinho, emoção e aquele friozinho bom no coração. Depois do tão esperado "SIM", a noite continuou em um show de comédia, leve, divertido e com muitas risadas, do jeitinho que marca a história deles. Até hoje, Sara ainda não descobriu como Paulo conseguiu esconder o porta-aliança… um mistério que virou parte da memória afetiva desse dia tão especial',
       photos: [
-        '/src/assets/story/pedido_1.jpeg',
-        '/src/assets/story/pedido_2.jpeg',
-        '/src/assets/story/pedido_5.webp',
-        '/src/assets/story/pedido_4.jpeg'
+        pedido1,
+        pedido2,
+        pedido5,
+        pedido4
       ]
     },
     {
@@ -123,10 +137,10 @@ const Story = () => {
       title: 'O Pedido de Noivado',
       description: 'O pedido de noivado aconteceu no dia 15 de novembro de 2025 na Vila Barro Branco e foi mais do que uma surpresa: foi uma resposta e um cuidado de Deus. Paulo levou Sara a um lugar cheio de significado, preparado em silêncio, com muito amor e intenção. Ali, começaram oficialmente um novo capítulo da história deles. Sara foi completamente surpreendida e até hoje se pergunta como ele conseguiu esconder tantas surpresas. Logo depois, a família se reuniu para abençoar esse momento, confirmando que esse amor é cercado por fé, propósito e pessoas que caminham junto.',
       photos: [
-        '/src/assets/story/noivado_1.jpeg',
-        '/src/assets/story/noivado_3.jpeg',
-        '/src/assets/story/noivado_2.jpeg',
-        '/src/assets/story/noivado_4.jpeg'
+        noivado1,
+        noivado3,
+        noivado2,
+        noivado4
       ]
     }
   ];
