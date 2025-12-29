@@ -8,21 +8,21 @@ const Story = () => {
       color: 'burgundy',
       date: 'Março 2024',
       title: 'O Primeiro Encontro',
-      description: 'Depois de um tempo conversando, nos decidicos encotrar no Texan Hamburger. O que começou como uma simples conversa se transformou em horas de risadas e conexão instantânea.'
+      description: 'O primeiro encontro aconteceu em uma hamburgueria, mas nem tudo saiu como o esperado. Enquanto o lugar pedia um bom hambúrguer, ela escolheu uma tortilha de quatro queijos, arrancando risadas e já mostrando que seria tudo, menos comum. Foi ali que se conheceram melhor, conversaram por horas e sentiram que havia algo diferente. Um verdadeiro amor à primeira vista, simples e cheio de conexão.'
     },
     {
       icon: FaMapMarkerAlt,
       color: 'royal',
       date: '15 de Junho 2024',
-      title: 'O pedido de namoro',
-      description: 'Paulo pediu a Sara em namoro no dia 15 de Junho de 2024 no Paris 6 Restaurante. Depois que ela disse SIM, fomos para um show de comédia muito divertido. Foi um momento muito especial e emocionante para nós. Até hoje ela não sabe como ele fez para guardar o porta aliança'
+      title: 'O Pedido de Namoro',
+      description: 'Paulo pediu Sara em namoro no dia 15 de junho de 2024, no restaurante Paris 6. Um momento planejado com carinho, emoção e aquele friozinho bom no coração. Depois do tão esperado “SIM”, a noite continuou em um show de comédia, leve, divertido e com muitas risadas, do jeitinho que marca a história deles. Até hoje, Sara ainda não descobriu como Paulo conseguiu esconder o porta-aliança… um mistério que virou parte da memória afetiva desse dia tão especial'
     },
     {
       icon: FaRing,
       color: 'burgundy',
       date: '15 de Novembro 2025',
-      title: 'O Pedido',
-      description: 'Em um dia ensolarado, cercados de amor e emoção, ele se ajoelhou e fez a pergunta que mudaria nossas vidas para sempre. E ela disse SIM!'
+      title: 'O Pedido de Noivado',
+      description: 'O pedido de noivado aconteceu no dia 15 de novembro de 2025 na Vila Barro Branco e foi mais do que uma surpresa: foi uma resposta e um cuidado de Deus. Paulo levou Sara a um lugar cheio de significado, preparado em silêncio, com muito amor e intenção. Ali, começaram oficialmente um novo capítulo da história deles. Sara foi completamente surpreendida e até hoje se pergunta como ele conseguiu esconder tantas surpresas. Logo depois, a família se reuniu para abençoar esse momento, confirmando que esse amor é cercado por fé, propósito e pessoas que caminham junto.'
     }
   ];
 
