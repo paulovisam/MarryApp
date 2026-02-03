@@ -6,6 +6,7 @@ import Story from './components/Story';
 import Memories from './components/Memories';
 import Footer from './components/Footer';
 import Convite from './components/Convite';
+import BackgroundMusic from './components/BackgroundMusic';
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
         } />
         <Route path="/convite" element={<Convite />} />
       </Routes>
+      {/* Player de música de fundo - renderizado fora das rotas para persistir entre navegações */}
+      <BackgroundMusic audioSrc="/background-music.mp3" />
     </Router>
   );
 }

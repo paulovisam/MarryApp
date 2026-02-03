@@ -12,13 +12,17 @@ Uma landing page moderna e elegante para casamento, construída com React, Tailw
 - **Seções Completas**:
   - Hero com monograma personalizado
   - Sobre os Noivos
-  - História do Casal (timeline interativa)
+  - História do Casal (timeline interativa com lightbox)
   - Galeria de Lembranças
+  - Página de Convite personalizada (/convite)
   - Footer com informações do evento
+- **Música de Fundo**: Player elegante com controles de volume e play/pause
+- **Lightbox de Fotos**: Galeria interativa com navegação por teclado
 
 ## 🚀 Tecnologias
 
 - **React 18**: Biblioteca JavaScript para construção de interfaces
+- **React Router DOM**: Roteamento client-side para múltiplas páginas
 - **Vite**: Build tool ultra-rápido
 - **Tailwind CSS**: Framework CSS utility-first
 - **React Icons**: Biblioteca de ícones
@@ -54,6 +58,16 @@ Para visualizar o build de produção localmente:
 npm run preview
 ```
 
+## 🌐 Deploy na Vercel
+
+O projeto está configurado para deploy automático na Vercel:
+
+1. Conecte seu repositório GitHub à Vercel
+2. A cada push, o deploy é feito automaticamente
+3. O arquivo `vercel.json` já está configurado para SPA routing
+
+**Importante**: O `vercel.json` garante que rotas como `/convite` funcionem corretamente em produção.
+
 ## 🎨 Personalização
 
 ### Cores
@@ -83,13 +97,24 @@ O monograma em `src/components/Monogram.jsx` usa SVG e pode ser personalizado al
 ```
 MarryApp/
 ├── public/
+│   ├── rings.svg
+│   └── background-music.mp3  (adicionar sua música aqui)
 ├── src/
+│   ├── assets/
+│   │   ├── couple.jpg
+│   │   ├── home.jpg
+│   │   ├── monograma.png
+│   │   └── story/
+│   │       ├── encontro_*.jpeg
+│   │       ├── pedido_*.jpeg
+│   │       └── noivado_*.jpeg
 │   ├── components/
 │   │   ├── About.jsx
+│   │   ├── BackgroundMusic.jsx
+│   │   ├── Convite.jsx
 │   │   ├── Footer.jsx
 │   │   ├── Hero.jsx
 │   │   ├── Memories.jsx
-│   │   ├── Monogram.jsx
 │   │   └── Story.jsx
 │   ├── App.jsx
 │   ├── index.css
@@ -98,18 +123,51 @@ MarryApp/
 ├── package.json
 ├── tailwind.config.js
 ├── vite.config.js
+├── vercel.json
+├── MUSICA_INSTRUCOES.md
 └── README.md
 ```
 
 ## 🖼️ Adicionando Imagens
 
-Para adicionar fotos reais do casal:
+⚠️ **Importante**: As imagens devem ser **importadas como módulos** no React para serem incluídas no bundle de produção.
 
-1. Coloque as imagens na pasta `public/`
-2. Atualize os componentes substituindo os placeholders:
-   - Hero: foto principal do casal
-   - About: fotos individuais dos noivos
-   - Memories: galeria de momentos especiais
+**Correto:**
+```jsx
+import minhaFoto from '../assets/foto.jpg';
+<img src={minhaFoto} alt="Descrição" />
+```
+
+**Incorreto (não funciona em produção):**
+```jsx
+<img src="/src/assets/foto.jpg" alt="Descrição" />
+```
+
+### Estrutura:
+1. Coloque as imagens em `src/assets/`
+2. Importe-as nos componentes
+3. Use a variável importada no atributo `src`
+
+## 🎵 Adicionando Música de Fundo
+
+O site possui um player de música elegante! Para adicionar sua música:
+
+1. Baixe uma música **sem direitos autorais** (veja `MUSICA_INSTRUCOES.md`)
+2. Renomeie para `background-music.mp3`
+3. Coloque em `public/background-music.mp3`
+4. O player aparecerá automaticamente no canto inferior direito
+
+**Sites recomendados para música grátis:**
+- YouTube Audio Library
+- Pixabay Music
+- Free Music Archive
+
+Veja instruções detalhadas em: `MUSICA_INSTRUCOES.md`
+
+## 🔗 Rotas
+
+- **/** - Página principal com todas as seções
+- **/convite** - Página de convite personalizada
 
 ## 📝 Licença
 
