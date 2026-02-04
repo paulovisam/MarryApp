@@ -48,7 +48,7 @@ const BackgroundMusic = ({ audioSrc }) => {
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       {/* Botão principal */}
       <div
         className="relative"
@@ -57,9 +57,8 @@ const BackgroundMusic = ({ audioSrc }) => {
       >
         {/* Controles expandidos */}
         <div
-          className={`absolute bottom-full right-0 mb-2 transition-all duration-300 ${
-            showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-          }`}
+          className={`absolute bottom-full right-0 mb-2 transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
         >
           <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-4 border border-beige-300 min-w-[200px]">
             {/* Controle de Volume */}
@@ -95,32 +94,31 @@ const BackgroundMusic = ({ audioSrc }) => {
         {/* Botão Play/Pause */}
         <button
           onClick={togglePlay}
-          className="group relative bg-gradient-to-br from-secondary-500 to-secondary-600 text-white w-16 h-16 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center border-2 border-white/50"
+          className="group relative bg-gradient-to-br from-secondary-500 to-secondary-600 text-white w-10 h-10 rounded-full shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center border border-white/50"
           aria-label={isPlaying ? 'Pausar música' : 'Tocar música'}
         >
           {/* Pulse animation quando tocando */}
           {isPlaying && (
             <span className="absolute inset-0 rounded-full bg-secondary-400 animate-ping opacity-30"></span>
           )}
-          
+
           {/* Ícone */}
           <div className="relative z-10">
             {isPlaying ? (
-              <FaPause className="text-2xl" />
+              <FaPause className="text-sm" />
             ) : (
-              <FaPlay className="text-2xl ml-1" />
+              <FaPlay className="text-sm ml-0.5" />
             )}
           </div>
 
           {/* Ícone de música decorativo */}
-          <FaMusic className="absolute -top-1 -right-1 text-xs text-secondary-800 opacity-60" />
+          <FaMusic className="absolute -top-0.5 -right-0.5 text-[10px] text-secondary-800 opacity-60" />
         </button>
 
         {/* Tooltip */}
         <div
-          className={`absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap transition-opacity duration-300 ${
-            showControls ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
-          }`}
+          className={`absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap transition-opacity duration-300 ${showControls ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
+            }`}
         >
           {isPlaying ? 'Pausar música' : 'Tocar música'}
         </div>
