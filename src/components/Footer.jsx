@@ -11,30 +11,39 @@ const Footer = () => {
           <div className="flex justify-center mb-8">
             <h3 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-none tracking-wider font-light">P | S</h3>
           </div>
-          
+
           {/* Names */}
           <h3 className="font-script text-4xl md:text-5xl mb-6">
             Paulo & Sara
           </h3>
-          
+
           {/* Date */}
           <p className="font-script text-xl md:text-2xl mb-8 text-gray-300">
             15 de Agosto, 2026
           </p>
-          
+
           {/* Divider */}
           <div className="flex items-center justify-center space-x-4 mb-8">
             <div className="h-px w-16 bg-gradient-to-r from-transparent to-secondary-500 opacity-50"></div>
             <FaHeart className="text-xl text-secondary-500 opacity-70" />
             <div className="h-px w-16 bg-gradient-to-l from-transparent to-secondary-500 opacity-50"></div>
           </div>
-          
+
           {/* Message */}
           <p className="font-sans text-sm md:text-base text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
-            Obrigado por fazer parte da nossa história. Cada momento compartilhado com vocês 
+            Obrigado por fazer parte da nossa história. Cada momento compartilhado com vocês
             torna nosso amor ainda mais especial.
           </p>
-          
+
+          <div className="mb-8">
+            <a
+              href="/presentes"
+              className="text-burgundy-400 hover:text-white transition-colors border-b border-burgundy-400 hover:border-white pb-1"
+            >
+              Ver Lista de Presentes
+            </a>
+          </div>
+
           {/* Copyright */}
           <div className="pt-8 border-t border-burgundy-500 border-opacity-20">
             <p className="font-sans text-sm text-gray-400">

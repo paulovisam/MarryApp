@@ -86,6 +86,16 @@ const Hero = () => {
             </div>
             <div className="">
               <div className="w-[2px] h-16 bg-gradient-to-b from-transparent to-primary-500 opacity-50"></div>
+
+              <div className="py-8">
+                <a
+                  href="/presentes"
+                  className="inline-block px-8 py-3 border border-white text-white font-serif tracking-widest hover:bg-white hover:text-slate-900 transition-all duration-300"
+                >
+                  LISTA DE PRESENTES
+                </a>
+              </div>
+
               <div className="w-[2px] h-16 bg-gradient-to-t from-transparent to-primary-500 opacity-50"></div>
             </div>
             <div className="flex-1 text-left pl-6">
