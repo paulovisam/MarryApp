@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaGift, FaArrowLeft } from 'react-icons/fa';
 import { createRsvp } from '../services/rsvpService';
 
 const Convite = () => {
+  const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState(0);
   const [isPresent, setIsPresent] = useState(false);
   const [clickCount, setClickCount] = useState(0);
@@ -177,8 +179,8 @@ const Convite = () => {
 
   // Tela de Confirmação
   const ConfirmationScreen = () => {
-    const [name, setName] = useState('');
     const [guestsCount, setGuestsCount] = useState(1);
+    const [guestNames, setGuestNames] = useState(['']);
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -188,7 +190,8 @@ const Convite = () => {
       setLoading(true);
       try {
         await createRsvp({
-          name,
+          name: guestNames[0], // Main name
+          guestNames, // All names array
           guestsCount,
           isPresent,
           message
@@ -224,7 +227,7 @@ const Convite = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Toggle Switch */}
                 <div className="flex justify-center mb-8">
-                  <div className="relative">
+                  <div className="relative flex flex-col items-center">
                     <p className="text-center text-primary-800 mb-2 font-serif">Você irá ao casamento?</p>
                     <button
                       type="button"
@@ -243,43 +246,69 @@ const Convite = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-primary-800 mb-1">Seu Nome Completo</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    className="w-full rounded-lg border-primary-300 bg-white/50 p-3 text-primary-900 placeholder-primary-400 focus:ring-2 focus:ring-primary-500"
-                    placeholder="Ex: Ana Silva"
-                  />
-                </div>
 
                 {isPresent && (
-                  <div>
-                    <label className="block text-sm font-medium text-primary-800 mb-1">Total de Pessoas (incluindo você)</label>
-                    <select
-                      value={guestsCount}
-                      onChange={e => setGuestsCount(parseInt(e.target.value))}
-                      className="w-full rounded-lg border-primary-300 bg-white/50 p-3 text-primary-900 focus:ring-2 focus:ring-primary-500"
-                    >
-                      {[1, 2, 3, 4, 5, 6].map(num => (
-                        <option key={num} value={num}>{num} {num === 1 ? 'Pessoa' : 'Pessoas'}</option>
+                  <>
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-primary-800">
+                        Total de Pessoas
+                      </label>
+                      <select
+                        value={guestsCount}
+                        onChange={e => {
+                          const count = parseInt(e.target.value);
+                          setGuestsCount(count);
+                          // Adjust guest names array size
+                          const newGuestNames = [...guestNames];
+                          if (count > newGuestNames.length) {
+                            // Add empty slots
+                            for (let i = newGuestNames.length; i < count; i++) newGuestNames.push('');
+                          } else {
+                            // Trim array
+                            newGuestNames.length = count;
+                          }
+                          setGuestNames(newGuestNames);
+                        }}
+                        className="w-full rounded-lg border-primary-300 bg-white/50 p-3 text-primary-900 focus:ring-2 focus:ring-primary-500"
+                      >
+                        {[1, 2, 3, 4].map(num => (
+                          <option key={num} value={num}>{num} {num === 1 ? 'Pessoa' : 'Pessoas'}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-3 animate-fadeIn">
+                      <label className="block text-sm font-medium text-primary-800">Nome dos Convidados</label>
+                      {guestNames.map((name, index) => (
+                        <input
+                          key={index}
+                          type="text"
+                          required
+                          value={name}
+                          onChange={e => {
+                            const newNames = [...guestNames];
+                            newNames[index] = e.target.value;
+                            setGuestNames(newNames);
+                          }}
+                          className="w-full rounded-lg border-primary-300 bg-white/50 p-3 text-primary-900 placeholder-primary-400 focus:ring-2 focus:ring-primary-500 mb-2"
+                          placeholder={index === 0 ? "Seu Nome Completo" : `Nome do Convidado ${index + 1}`}
+                        />
                       ))}
-                    </select>
-                  </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-primary-800 mb-1">Recado aos Noivos (Opcional)</label>
+                      <textarea
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        className="w-full rounded-lg border-primary-300 bg-white/50 p-3 text-primary-900 placeholder-primary-400 focus:ring-2 focus:ring-primary-500"
+                        rows="3"
+                        placeholder="Deixe uma mensagem..."
+                      />
+                    </div>
+                  </>
                 )}
 
-                <div>
-                  <label className="block text-sm font-medium text-primary-800 mb-1">Recado aos Noivos (Opcional)</label>
-                  <textarea
-                    value={message}
-                    onChange={e => setMessage(e.target.value)}
-                    className="w-full rounded-lg border-primary-300 bg-white/50 p-3 text-primary-900 placeholder-primary-400 focus:ring-2 focus:ring-primary-500"
-                    rows="3"
-                    placeholder="Deixe uma mensagem..."
-                  />
-                </div>
 
                 <button
                   type="submit"
@@ -299,10 +328,17 @@ const Convite = () => {
                   Sua resposta foi registrada com sucesso.
                 </p>
                 {isPresent && (
-                  <p className="text-sm text-primary-600">
+                  <p className="text-sm text-primary-600 mb-8">
                     Nos vemos no grande dia!
                   </p>
                 )}
+
+                <button
+                  onClick={() => navigate('/presentes')}
+                  className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-burgundy-600 text-white rounded-full font-sans font-semibold shadow-lg hover:bg-burgundy-700 transition-colors animate-bounce-slow"
+                >
+                  <FaGift /> Ver Lista de Presentes 🎁
+                </button>
               </div>
             )}
 
