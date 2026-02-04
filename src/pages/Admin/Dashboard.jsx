@@ -11,6 +11,7 @@ const Dashboard = () => {
 
     // Gift Form State
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [editingGift, setEditingGift] = useState(null);
     const [formData, setFormData] = useState({ title: '', price: '', image_url: '', total_quantity: 1, description: '' });
 
@@ -21,6 +22,10 @@ const Dashboard = () => {
     }, [navigate]);
 
     const handleLogout = () => {
+        setIsLogoutModalOpen(true);
+    };
+
+    const confirmLogout = () => {
         localStorage.removeItem('adminAuth');
         navigate('/admin/login');
     };
@@ -144,7 +149,7 @@ const Dashboard = () => {
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     {activeTab === 'rsvps' && (
                         <div className="p-6">
-                            <h3 className="text-xl font-bold mb-6 dark:text-white">Lista de Confirmação</h3>
+                            <h3 className="text-xl font-bold font-sans mb-6 dark:text-white">Lista de Confirmação</h3>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-xs">
@@ -179,7 +184,7 @@ const Dashboard = () => {
                     {activeTab === 'gifts' && (
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-xl font-bold dark:text-white">Gerenciar Presentes</h3>
+                                <h3 className="text-xl font-bold font-sans dark:text-white">Gerenciar Presentes</h3>
                                 <button onClick={openAddModal} className="flex items-center gap-2 bg-burgundy-600 text-white px-4 py-2 rounded-lg hover:bg-burgundy-700">
                                     <IoAdd /> Adicionar Novo
                                 </button>
@@ -259,6 +264,33 @@ const Dashboard = () => {
                                 <button type="submit" className="px-4 py-2 bg-burgundy-600 text-white rounded">Salvar</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Logout Confirmation Modal */}
+            {isLogoutModalOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-sm text-center">
+                        <div className="mx-auto w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
+                            <IoLogOutOutline size={24} className="text-red-600 dark:text-red-400" />
+                        </div>
+                        <h3 className="text-xl font-bold font-sans mb-2 dark:text-white">Sair do Painel?</h3>
+                        <p className="text-slate-500 mb-6">Você precisará fazer login novamente para acessar o painel.</p>
+                        <div className="flex gap-3 justify-center">
+                            <button
+                                onClick={() => setIsLogoutModalOpen(false)}
+                                className="px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={confirmLogout}
+                                className="px-5 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 font-medium transition-colors shadow-lg shadow-red-600/20"
+                            >
+                                Sim, Sair
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
