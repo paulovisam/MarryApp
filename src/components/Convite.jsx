@@ -101,8 +101,8 @@ const Convite = () => {
       <div className="absolute top-8 left-8 animate-bounce-slow">
         <div className="bg-gradient-to-br from-secondary-600 to-secondary-700 text-beige-100 p-4 rounded-lg shadow-lg">
           <FaGift className="text-2xl" />
-          <div className="text-xs mt-1 font-sans">Presença é o</div>
-          <div className="text-xs font-sans">nosso maior presente</div>
+          <div className="text-xs mt-1 font-sans">lorem ipsum</div>
+          <div className="text-xs font-sans">lorem ipsum</div>
         </div>
       </div>
 

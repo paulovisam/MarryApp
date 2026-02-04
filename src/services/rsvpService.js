@@ -1,6 +1,13 @@
 import { supabase } from '../lib/supabaseClient'
 
 export async function createRsvp(rsvpData) {
+    // Format message to include guest names if multiple
+    let finalMessage = rsvpData.message || '';
+    if (rsvpData.guestNames && rsvpData.guestNames.length > 0) {
+        const namesList = rsvpData.guestNames.map(n => `- ${n}`).join('\n');
+        finalMessage = `Convidados:\n${namesList}\n\nMensagem:\n${finalMessage}`;
+    }
+
     const { data, error } = await supabase
         .from('rsvps')
         .insert([
@@ -8,7 +15,7 @@ export async function createRsvp(rsvpData) {
                 name: rsvpData.name,
                 guests_count: rsvpData.guestsCount,
                 is_present: rsvpData.isPresent,
-                message: rsvpData.message,
+                message: finalMessage,
                 phone: rsvpData.phone
             }
         ])

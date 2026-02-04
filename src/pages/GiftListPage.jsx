@@ -53,7 +53,7 @@ const GiftListPage = () => {
                         Presenteie com Amor
                     </h2>
                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Sua presença é nosso maior presente! Se desejar nos presentear de outra forma, escolhemos alguns itens para nos ajudar a construir nosso novo lar.
+                        Escolhemos alguns itens para nos ajudar a construir nosso novo lar.
                     </p>
                 </div>
 
