@@ -10,15 +10,7 @@ const Convite = () => {
   const [clickCount, setClickCount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // Auto-avançar da tela de splash após 3 segundos
-  useEffect(() => {
-    if (currentScreen === 0) {
-      const timer = setTimeout(() => {
-        setCurrentScreen(1);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentScreen]);
+
 
   // Detectar duplo clique no toggle
   useEffect(() => {
@@ -44,12 +36,15 @@ const Convite = () => {
   };
 
   const openMap = () => {
-    window.open('https://maps.google.com/?q=R.+Sete,+313+-+Residencial+2,+Maracanaú+-+CE,+61913-325', '_blank');
+    window.open('https://maps.app.goo.gl/7rEsVvH3enzoVaZW7', '_blank');
   };
 
   // Tela de Splash
   const SplashScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 relative overflow-hidden flex items-center justify-center">
+    <div
+      onClick={() => setCurrentScreen(1)}
+      className="min-h-screen bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 relative overflow-hidden flex items-center justify-center cursor-pointer"
+    >
       {/* Padrão de folhagens */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTBDMTAgMTAgMTUgMCAyNSAwUzQwIDEwIDUwIDEwIDYwIDAgNzAgMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAuNSIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] bg-repeat"></div>
@@ -87,6 +82,12 @@ const Convite = () => {
           {/* Brilho */}
           <div className="absolute top-4 right-4 w-16 h-16 rounded-full bg-white/40 blur-xl animate-pulse"></div>
         </div>
+
+        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 w-full text-center">
+          <p className="text-white/60 font-sans text-sm tracking-[0.2em] uppercase animate-pulse">
+            Toque para abrir o convite
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -101,8 +102,8 @@ const Convite = () => {
       <div className="absolute top-8 left-8 animate-bounce-slow">
         <div className="bg-gradient-to-br from-secondary-600 to-secondary-700 text-beige-100 p-4 rounded-lg shadow-lg">
           <FaGift className="text-2xl" />
-          <div className="text-xs mt-1 font-sans">lorem ipsum</div>
-          <div className="text-xs font-sans">lorem ipsum</div>
+          <div className="text-xs mt-1 font-sans">Recadinhos</div>
+          <div className="text-xs font-sans">Lista de presentes</div>
         </div>
       </div>
 
@@ -112,27 +113,30 @@ const Convite = () => {
         <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-transparent via-beige-900/10 to-transparent transform rotate-12"></div>
 
         <div className="bg-gradient-to-br from-beige-50 to-beige-100 rounded-lg shadow-2xl p-8 md:p-12 relative border-2 border-beige-300">
-          {/* Data */}
-          <div className="text-center mb-8 animate-fadeIn">
-            <div className="font-script text-6xl md:text-8xl text-primary-700 mb-2">
-              15 de Agosto
-            </div>
-            <div className="font-script text-5xl md:text-7xl text-primary-700 italic">
-              2026
-            </div>
-          </div>
-
           {/* Nomes */}
           <div className="text-center mb-8 animate-slideIn">
-            <h1 className="font-script text-4xl md:text-6xl text-primary-900 tracking-wide">
+            <h1 className="font-script text-5xl sm:text-6xl md:text-6xl text-primary-900 tracking-wide whitespace-nowrap">
               Paulo & Sara
             </h1>
+          </div>
+
+          {/* Data */}
+          <div className="text-center mb-8 animate-fadeIn">
+            <div className="font-script text-4xl sm:text-5xl text-primary-700 mb-2 whitespace-nowrap">
+              15 de Agosto 2026
+            </div>
+            <div className="font-script text-4xl sm:text-5xl text-primary-700 italic whitespace-nowrap">
+              16h
+            </div>
           </div>
 
           {/* Texto do convite */}
           <div className="text-center mb-8 px-4 animate-fadeIn-delayed">
             <p className="font-script text-lg md:text-xl text-primary-800 leading-relaxed italic">
-              O dia do nosso casamento está chegando e estamos muito ansiosos para que vocês façam parte desse momento tão especial.
+              Estamos muito felizes em convidar você para celebrar conosco esse momento tão especial: o nosso casamento.
+            </p>
+            <p className="font-script text-lg md:text-xl text-primary-800 leading-relaxed italic">
+              Com alegria no coração, convidamos você para celebrar o início da nossa nova história.
             </p>
           </div>
 
@@ -144,15 +148,26 @@ const Convite = () => {
                 onClick={openMap}
                 className="text-left hover:text-secondary-700 transition-colors group"
               >
-                <span className="text-xs text-primary-700 group-hover:underline">←clique aqui</span>
+                {/* <span className="text-xs text-primary-700 group-hover:underline">←clique aqui</span> */}
               </button>
             </div>
             <div className="text-center">
+              <div className="mb-6 rounded-xl overflow-hidden shadow-lg border-2 border-beige-200 mx-auto w-[300px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15281.714432945437!2d-49.28928138405113!3d-16.75533834551021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935ef1d50c6ddf93%3A0x30a261e14bf1ca03!2sAD%20Cruzeiro%20do%20Sul%20-%20Igreja%20Evang%C3%A9lica%20Assembleia%20de%20Deus%20-%20Campo%20de%20Campinas!5e0!3m2!1spt-BR!2sbr!4v1770246186955!5m2!1spt-BR!2sbr"
+                  width="300"
+                  height="300"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
               <p className="font-serif text-base md:text-lg text-primary-900">
-                R. Sete, 313 - Residencial 2, Maracanaú - CE,
+                Assembleia de Deus Cruzeiro do Sul
               </p>
               <p className="font-serif text-base md:text-lg text-primary-900">
-                61913-325
+                Rua Damasco com Avenida São João - Jardim Nova Era, Aparecida de Goiânia - GO
               </p>
             </div>
           </div>
