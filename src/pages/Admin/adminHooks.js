@@ -10,18 +10,33 @@ export function useAdminGifts() {
     };
 
     const addGift = async (gift) => {
-        await supabase.from('gifts').insert([gift]);
-        fetchGifts();
+        const { error } = await supabase.from('gifts').insert([gift]);
+        if (error) {
+            console.error('Error adding gift:', error);
+            alert('Erro ao adicionar presente: ' + error.message);
+        } else {
+            fetchGifts();
+        }
     };
 
     const updateGift = async (id, updates) => {
-        await supabase.from('gifts').update(updates).eq('id', id);
-        fetchGifts();
+        const { error } = await supabase.from('gifts').update(updates).eq('id', id);
+        if (error) {
+            console.error('Error updating gift:', error);
+            alert('Erro ao atualizar presente: ' + error.message);
+        } else {
+            fetchGifts();
+        }
     };
 
     const deleteGift = async (id) => {
-        await supabase.from('gifts').delete().eq('id', id);
-        fetchGifts();
+        const { error } = await supabase.from('gifts').delete().eq('id', id);
+        if (error) {
+            console.error('Error deleting gift:', error);
+            alert('Erro ao excluir presente: ' + error.message);
+        } else {
+            fetchGifts();
+        }
     };
 
     useEffect(() => { fetchGifts(); }, []);

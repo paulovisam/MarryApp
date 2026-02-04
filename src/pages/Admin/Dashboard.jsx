@@ -45,10 +45,17 @@ const Dashboard = () => {
 
     const handleSaveGift = async (e) => {
         e.preventDefault();
+
+        const payload = {
+            ...formData,
+            price: parseFloat(formData.price),
+            total_quantity: parseInt(formData.total_quantity)
+        };
+
         if (editingGift) {
-            await updateGift(editingGift.id, formData);
+            await updateGift(editingGift.id, payload);
         } else {
-            await addGift(formData);
+            await addGift(payload);
         }
         setIsModalOpen(false);
     };
@@ -63,7 +70,7 @@ const Dashboard = () => {
         <div className="min-h-screen bg-slate-100 dark:bg-slate-900 font-sans">
             {/* Sidebar */}
             <aside className="fixed left-0 top-0 bottom-0 w-64 bg-slate-800 text-white p-6 hidden md:block">
-                <h2 className="text-2xl font-serif mb-8">Admin P&S</h2>
+                <h2 className="text-2xl font-sans mb-8">Admin</h2>
 
                 <nav className="space-y-2">
                     <button
@@ -183,8 +190,8 @@ const Dashboard = () => {
                                     <div key={gift.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex gap-4">
                                         <img src={gift.image_url} alt="" className="w-20 h-20 object-cover rounded-lg bg-slate-100" />
                                         <div className="flex-1 min-w-0">
-                                            <h4 className="font-bold text-sm truncate dark:text-white">{gift.title}</h4>
-                                            <p className="text-burgundy-600 font-bold text-sm">R$ {gift.price}</p>
+                                            <h4 className="font-semibold font-sans text-sm truncate dark:text-white">{gift.title}</h4>
+                                            <p className="text-white text-sm">R$ {gift.price}</p>
                                             <div className="flex gap-2 text-xs text-slate-500 mt-1">
                                                 <span>Vendidos: {gift.purchased_quantity}/{gift.total_quantity}</span>
                                             </div>
