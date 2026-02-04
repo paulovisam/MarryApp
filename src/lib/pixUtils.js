@@ -16,9 +16,9 @@ function crc16(buffer) {
 }
 
 export function generatePixPayload({
-    key = '12345678900', // Default dummy Key
-    name = 'Noivos',
-    city = 'Cidade',
+    key = 'cea244b6-8527-4503-abcf-3c90e343b92c', // Default dummy Key
+    name = 'Paulo e Sara',
+    city = 'Goiânia',
     amount = '0.00',
     txtId = '***'
 }) {
