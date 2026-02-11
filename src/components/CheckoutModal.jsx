@@ -1,140 +1,140 @@
+
 import React, { useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-import { generatePixPayload } from '../lib/pixUtils';
-import { purchaseGift } from '../services/giftService';
-import { IoClose, IoCopyOutline, IoCheckmarkCircle } from 'react-icons/io5';
+import { IoClose, IoLockClosed } from 'react-icons/io5';
 
 const CheckoutModal = ({ gift, onClose, onSuccess }) => {
-    const [step, setStep] = useState('confirm'); // confirm, paying, success
-    const [isCopied, setIsCopied] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState('');
 
-    // NOTE: Replace with REAL Pix Key from User in production or env
-    const pixKey = "12345678900";
-    const pixPayload = generatePixPayload({
-        key: pixKey,
-        name: 'Sara e Paulo',
-        city: 'Sao Paulo',
-        amount: gift.price
+    // Customer Info
+    const [customer, setCustomer] = useState({
+        name: '',
+        email: '',
+        phone: ''
     });
 
-    const handleConfirm = async () => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setCustomer(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handlePayment = async () => {
+        if (!customer.name || !customer.email || !customer.phone) {
+            setError('Por favor, preencha todos os dados pessoais.');
+            return;
+        }
+
         setLoading(true);
-        setError(null);
+        setError('');
+
         try {
-            // Reserve/Purchase implementation
-            // In a real app we might "reserve" first, then confirm payment. 
-            // Here we assume clicking "Confirmar" means they will pay now.
-            await purchaseGift(gift.id, 1);
-            setStep('paying');
+            const payload = {
+                giftId: gift.id,
+                giftTitle: gift.title,
+                giftDescription: gift.description,
+                amount: gift.price,
+                customer
+            };
+
+            const res = await fetch('/api/create-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Erro ao criar pagamento.');
+            }
+
+            // Redirect to AbacatePay
+            if (data.paymentUrl) {
+                window.location.href = data.paymentUrl;
+            } else {
+                throw new Error('URL de pagamento não recebida.');
+            }
+
         } catch (err) {
-            setError(err.message || 'Erro ao processar. Tente novamente.');
-        } finally {
+            console.error(err);
+            setError(err.message);
             setLoading(false);
         }
     };
 
-    const handleCopyPix = () => {
-        navigator.clipboard.writeText(pixPayload);
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-    };
-
-    const handleFinish = () => {
-        onSuccess();
-        onClose();
-    };
-
-    if (!gift) return null;
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl relative border border-slate-700">
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
-                >
-                    <IoClose size={24} />
-                </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
-                {step === 'confirm' && (
-                    <div className="space-y-6">
-                        <h3 className="text-2xl font-serif text-slate-900 dark:text-white">Confirmar Presente</h3>
+                {/* Header */}
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                    <h3 className="font-serif text-xl text-burgundy-700 dark:text-burgundy-400">
+                        Finalizar Presente
+                    </h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2">
+                        <IoClose size={24} />
+                    </button>
+                </div>
 
-                        <div className="flex gap-4 items-center bg-slate-100 dark:bg-slate-800 p-4 rounded-xl">
-                            <img
-                                src={gift.image_url}
-                                alt={gift.title}
-                                className="w-20 h-20 object-cover rounded-lg"
+                {/* Body */}
+                <div className="p-6 overflow-y-auto flex-1">
+                    {/* Summary */}
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl mb-6 flex gap-4 items-center">
+                        <img src={gift.image_url} alt="" className="w-16 h-16 object-cover rounded-lg bg-white" />
+                        <div>
+                            <h4 className="font-semibold text-slate-900 dark:text-white">{gift.title}</h4>
+                            <p className="text-burgundy-600 font-bold">R$ {gift.price}</p>
+                        </div>
+                    </div>
+
+                    {error && (
+                        <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="space-y-4 animate-fadeIn">
+                        <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-2">Seus Dados</h4>
+                        <input
+                            name="name"
+                            placeholder="Nome Completo"
+                            className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-burgundy-500"
+                            value={customer.name}
+                            onChange={handleInputChange}
+                        />
+                        <div className="grid grid-cols-2 gap-4">
+                            <input
+                                name="email"
+                                placeholder="Email"
+                                type="email"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-burgundy-500"
+                                value={customer.email}
+                                onChange={handleInputChange}
                             />
-                            <div>
-                                <h4 className="font-medium text-slate-900 dark:text-gray-100">{gift.title}</h4>
-                                <p className="text-burgundy-600 dark:text-burgundy-400 font-bold">
-                                    R$ {Number(gift.price).toFixed(2).replace('.', ',')}
-                                </p>
-                            </div>
+                            <input
+                                name="phone"
+                                placeholder="Celular"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-burgundy-500"
+                                value={customer.phone}
+                                onChange={handleInputChange}
+                            />
                         </div>
 
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">
-                            Ao confirmar, este item será marcado como comprado para evitar duplicidade.
-                            Em seguida, você verá o código Pix para realizar o pagamento.
-                        </p>
-
-                        {error && (
-                            <p className="text-red-500 text-sm bg-red-100 dark:bg-red-900/20 p-2 rounded">
-                                {error}
+                        <div className="pt-4">
+                            <button
+                                onClick={handlePayment}
+                                disabled={loading}
+                                className="w-full py-3 bg-burgundy-600 text-white rounded-xl font-medium hover:bg-burgundy-700 transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+                            >
+                                <IoLockClosed />
+                                {loading ? 'Processando...' : 'Ir para Pagamento Seguro'}
+                            </button>
+                            <p className="text-xs text-center text-slate-400 mt-2">
+                                Você será redirecionado para a AbacatePay para concluir o pagamento via Pix ou Cartão.
                             </p>
-                        )}
-
-                        <button
-                            onClick={handleConfirm}
-                            disabled={loading}
-                            className="w-full py-3 bg-burgundy-700 hover:bg-burgundy-800 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
-                        >
-                            {loading ? 'Processando...' : 'Confirmar e Pagar'}
-                        </button>
-                    </div>
-                )}
-
-                {step === 'paying' && (
-                    <div className="space-y-6 text-center">
-                        <h3 className="text-2xl font-serif text-slate-900 dark:text-white">Pagamento Pix</h3>
-
-                        <div className="bg-white p-4 rounded-xl inline-block mx-auto border-4 border-slate-100">
-                            <QRCodeSVG value={pixPayload} size={200} />
                         </div>
-
-                        <div className="space-y-2">
-                            <p className="text-slate-600 dark:text-slate-400 text-sm">
-                                Escaneie o QR Code ou copie o código abaixo:
-                            </p>
-
-                            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
-                                <input
-                                    type="text"
-                                    readOnly
-                                    value={pixPayload}
-                                    className="bg-transparent text-xs text-slate-500 flex-1 outline-none truncate"
-                                />
-                                <button
-                                    onClick={handleCopyPix}
-                                    className="text-burgundy-600 hover:text-burgundy-700 p-2"
-                                    title="Copiar"
-                                >
-                                    {isCopied ? <IoCheckmarkCircle size={20} /> : <IoCopyOutline size={20} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleFinish}
-                            className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors"
-                        >
-                            Já realizei o pagamento
-                        </button>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
