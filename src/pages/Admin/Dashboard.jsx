@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoGiftOutline, IoPeopleOutline, IoLogOutOutline, IoCashOutline, IoAdd, IoTrash, IoCreate } from 'react-icons/io5';
+import { IoGiftOutline, IoPeopleOutline, IoLogOutOutline, IoCashOutline, IoAdd, IoTrash, IoCreate, IoSearch } from 'react-icons/io5';
 import { useAdminGifts, useAdminRsvps } from './adminHooks';
 
 const Dashboard = () => {
@@ -14,6 +14,7 @@ const Dashboard = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [editingGift, setEditingGift] = useState(null);
     const [formData, setFormData] = useState({ title: '', price: '', image_url: '', total_quantity: 1, description: '' });
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         if (!localStorage.getItem('adminAuth')) {
@@ -34,6 +35,8 @@ const Dashboard = () => {
     const totalConfirmedGuests = rsvps.filter(r => r.is_present).reduce((acc, curr) => acc + curr.guests_count, 0);
     const totalMoney = gifts.reduce((acc, g) => acc + (g.purchased_quantity * g.price), 0);
     const totalGiftsSold = gifts.reduce((acc, g) => acc + g.purchased_quantity, 0);
+
+    const filteredGifts = gifts.filter(gift => gift.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     // Handlers
     const openAddModal = () => {
@@ -112,6 +115,30 @@ const Dashboard = () => {
                     <button onClick={handleLogout}><IoLogOutOutline size={24} className="dark:text-white" /></button>
                 </div>
 
+                {/* Mobile Navigation */}
+                <div className="md:hidden flex gap-2 mb-8 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <button
+                        onClick={() => setActiveTab('rsvps')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'rsvps'
+                            ? 'bg-burgundy-600 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                            }`}
+                    >
+                        <IoPeopleOutline size={18} />
+                        Presença
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('gifts')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'gifts'
+                            ? 'bg-burgundy-600 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                            }`}
+                    >
+                        <IoGiftOutline size={18} />
+                        Presentes
+                    </button>
+                </div>
+
                 {/* Top Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -183,15 +210,27 @@ const Dashboard = () => {
 
                     {activeTab === 'gifts' && (
                         <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                                 <h3 className="text-xl font-bold font-sans dark:text-white">Gerenciar Presentes</h3>
-                                <button onClick={openAddModal} className="flex items-center gap-2 bg-burgundy-600 text-white px-4 py-2 rounded-lg hover:bg-burgundy-700">
-                                    <IoAdd /> Adicionar Novo
-                                </button>
+                                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                                    <div className="relative">
+                                        <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar presente..."
+                                            className="pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg w-full dark:bg-slate-700 dark:text-white"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                    <button onClick={openAddModal} className="flex items-center justify-center gap-2 bg-burgundy-600 text-white px-4 py-2 rounded-lg hover:bg-burgundy-700 w-full sm:w-auto">
+                                        <IoAdd /> Adicionar Novo
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {gifts.map(gift => (
+                                {filteredGifts.map(gift => (
                                     <div key={gift.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex gap-4">
                                         <img src={gift.image_url} alt="" className="w-20 h-20 object-cover rounded-lg bg-slate-100" />
                                         <div className="flex-1 min-w-0">
