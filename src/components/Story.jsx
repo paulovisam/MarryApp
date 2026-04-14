@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRing, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { createPortal } from 'react-dom';
 
 // Importar todas as imagens
 import encontro1 from '../assets/story/encontro_1.webp';
@@ -41,6 +42,28 @@ const Story = () => {
       setLightboxImgReady(false);
     }
   }, [lightbox.isOpen, lightbox.currentPhoto, lightbox.currentIndex]);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (!lightbox.isOpen) return undefined;
+
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyTouchAction = body.style.touchAction;
+
+    // Bloqueia rolagem do documento inteiro enquanto a lightbox está aberta.
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    body.style.touchAction = 'none';
+
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+      body.style.touchAction = previousBodyTouchAction;
+    };
+  }, [lightbox.isOpen]);
 
   useEffect(() => {
     const MS_MINUTE = 1000 * 60;
@@ -109,7 +132,6 @@ const Story = () => {
       currentIndex: index,
       eventTitle: title
     });
-    document.body.style.overflow = 'hidden';
   };
 
   const closeLightbox = () => {
@@ -120,7 +142,6 @@ const Story = () => {
       currentIndex: 0,
       eventTitle: ''
     });
-    document.body.style.overflow = 'auto';
   };
 
   const navigateLightbox = (direction) => {
@@ -140,7 +161,7 @@ const Story = () => {
       color: 'burgundy',
       date: 'Março 2024',
       title: 'O Primeiro Encontro',
-      description: 'O primeiro encontro aconteceu em uma hamburgueria, mas nem tudo saiu como o esperado. Enquanto o lugar pedia um bom hambúrguer, ela escolheu uma tortilha de quatro queijos, arrancando risadas e já mostrando que seria tudo, menos comum. Foi ali que se conheceram melhor, conversaram por horas e sentiram que havia algo diferente. Um verdadeiro amor à primeira vista, simples e cheio de conexão.',
+      description: 'O primeiro encontro aconteceu em uma hamburgueria, mas nem tudo saiu como o esperado. Enquanto o lugar pedia um bom hambúrguer, ela escolheu uma tortilha de quatro queijos, arrancando risadas e já mostrando que seria tudo, menos comum. Foi ali que nos conhecemos melhor, conversamos por horas e sentimos que havia algo diferente. Um verdadeiro "amor à primeira vista", simples e cheio de conexão.',
       photos: [
         encontro3,
         encontro2,
@@ -153,7 +174,7 @@ const Story = () => {
       color: 'royal',
       date: '15 de Junho 2024',
       title: 'O Pedido de Namoro',
-      description: 'Paulo pediu Sara em namoro no dia 15 de junho de 2024, no restaurante Paris 6. Um momento planejado com carinho, emoção e aquele friozinho bom no coração. Depois do tão esperado "SIM", a noite continuou em um show de comédia, leve, divertido e com muitas risadas, do jeitinho que marca a história deles. Até hoje, Sara ainda não descobriu como Paulo conseguiu esconder o porta-aliança… um mistério que virou parte da memória afetiva desse dia tão especial',
+      description: 'Paulo pediu Sara em namoro no dia 15 de junho de 2024, no restaurante Paris 6. Um momento planejado com carinho, emoção e aquele friozinho bom no coração. Depois do tão esperado "SIM", a noite continuou em um show de comédia, leve, divertido e com muitas risadas, do jeitinho que marca nossa história. Até hoje, a Sara ainda não descobriu como Paulo conseguiu esconder o porta-aliança… um mistério que virou parte da memória afetiva desse dia tão especial',
       photos: [
         pedido1,
         pedido2,
@@ -166,7 +187,7 @@ const Story = () => {
       color: 'burgundy',
       date: '15 de Novembro 2025',
       title: 'O Pedido de Noivado',
-      description: 'O pedido de noivado aconteceu no dia 15 de novembro de 2025 na Vila Barro Branco e foi mais do que uma surpresa: foi uma resposta e um cuidado de Deus. Paulo levou Sara a um lugar cheio de significado, preparado em silêncio, com muito amor e intenção. Ali, começaram oficialmente um novo capítulo da história deles. Sara foi completamente surpreendida e até hoje se pergunta como ele conseguiu esconder tantas surpresas. Logo depois, a família se reuniu para abençoar esse momento, confirmando que esse amor é cercado por fé, propósito e pessoas que caminham junto.',
+      description: 'O pedido de noivado aconteceu no dia 15 de novembro de 2025 na Vila Barro Branco e foi mais do que uma surpresa: foi uma resposta e um cuidado de Deus. O Paulo levou Sara a um lugar cheio de significado, preparado em silêncio, com muito amor e intenção. Ali, começaram oficialmente um novo capítulo da nossa história. Sara foi completamente surpreendida e até hoje se pergunta como ele conseguiu esconder tantas surpresas. Logo depois, a família se reuniu para abençoar esse momento, confirmando que esse amor é cercado por fé, propósito e pessoas que caminham junto.',
       photos: [
         noivado1,
         noivado3,
@@ -406,9 +427,9 @@ const Story = () => {
       </div>
 
       {/* Lightbox Modal */}
-      {lightbox.isOpen && (
+      {lightbox.isOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-95 p-4 animate-fadeIn"
+          className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-95 p-4 animate-fadeIn"
           onClick={closeLightbox}
         >
           {/* Close Button */}
@@ -479,7 +500,8 @@ const Story = () => {
               onError={() => setLightboxImgReady(true)}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );
