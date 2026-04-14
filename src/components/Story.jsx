@@ -19,10 +19,10 @@ import noivado4 from '../assets/story/noivado_4.jpeg';
 const Story = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState({
+    months: 0,
     days: 0,
     hours: 0,
-    minutes: 0,
-    seconds: 0
+    minutes: 0
   });
 
   const [lightbox, setLightbox] = useState({
@@ -34,19 +34,39 @@ const Story = () => {
   });
 
   useEffect(() => {
+    const MS_MINUTE = 1000 * 60;
+    const MS_HOUR = MS_MINUTE * 60;
+    const MS_DAY = MS_HOUR * 24;
+
     const calculateTimeLeft = () => {
       const weddingDate = new Date('2026-08-15T16:00:00');
       const now = new Date();
       const difference = weddingDate - now;
 
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
-        });
+      if (difference <= 0) {
+        setTimeLeft({ months: 0, days: 0, hours: 0, minutes: 0 });
+        return;
       }
+
+      let months = 0;
+      let cursor = new Date(now.getTime());
+
+      while (true) {
+        const next = new Date(cursor);
+        next.setMonth(next.getMonth() + 1);
+        if (next > weddingDate) break;
+        cursor = next;
+        months++;
+      }
+
+      let remainder = weddingDate - cursor;
+      const days = Math.floor(remainder / MS_DAY);
+      remainder -= days * MS_DAY;
+      const hours = Math.floor(remainder / MS_HOUR);
+      remainder -= hours * MS_HOUR;
+      const minutes = Math.floor(remainder / MS_MINUTE);
+
+      setTimeLeft({ months, days, hours, minutes });
     };
 
     calculateTimeLeft();
@@ -323,7 +343,15 @@ const Story = () => {
 
               {/* Countdown */}
               <div className="mb-6">
-                <div className="grid grid-cols-4 gap-3 md:gap-4 max-w-lg mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 max-w-lg mx-auto">
+                  <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
+                    <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+                      {timeLeft.months}
+                    </div>
+                    <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
+                      Meses
+                    </div>
+                  </div>
                   <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
                     <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
                       {timeLeft.days}
@@ -346,14 +374,6 @@ const Story = () => {
                     </div>
                     <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
                       Min
-                    </div>
-                  </div>
-                  <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                    <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
-                      {timeLeft.seconds}
-                    </div>
-                    <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
-                      Seg
                     </div>
                   </div>
                 </div>

@@ -34,8 +34,8 @@ const About = () => {
                   {/* Image with heart clip */}
                   <image 
                     href={coupleImg}
-                    x="2" 
-                    y="0" 
+                    x="2"
+                    y="2" 
                     width="20" 
                     height="20"
                     preserveAspectRatio="xMidYMid slice"
@@ -61,7 +61,7 @@ const About = () => {
               <div className="space-y-4 text-beige-300 font-sans leading-relaxed">
                 <p className="font-script text-3xl md:text-4xl text-primary-400 drop-shadow-lg whitespace-nowrap">Paulo</p>
                 <p className="text-lg">
-                  Ele é sério quando precisa ser, calculador nas decisões e super inteligente. Provedor, gentil e amoroso, demonstra seu carinho com atitudes firmes, responsabilidade (um pouco de Código e Excel) e muito cuidado com quem ama.
+                  Ele é sério quando precisa ser, calculador nas decisões e inteligente. Provedor, gentil e amoroso, demonstra seu carinho com atitudes firmes, responsabilidade (um pouco de Código e Excel) e muito cuidado com quem ama.
                 </p>
               </div>
             </div>
