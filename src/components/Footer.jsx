@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
-import monogramaImg from '../assets/monograma.png';
 
 const Footer = () => {
   return (

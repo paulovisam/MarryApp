@@ -1,16 +1,19 @@
 import React from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import monogramaImg from '../assets/monograma.png';
-import homeImg from '../assets/home.jpg';
+import monogramaImg from '../assets/monograma.webp';
+import homeImg from '../assets/home.webp';
 
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${homeImg})` }}
-      ></div>
+      {/* Background: <img> com prioridade alta melhora LCP vs CSS background-image */}
+      <img
+        src={homeImg}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover object-center"
+        fetchPriority="high"
+        decoding="async"
+      />
 
       {/* Dark overlay for contrast */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/30 via-slate-900/50 to-gray-900/30"></div>

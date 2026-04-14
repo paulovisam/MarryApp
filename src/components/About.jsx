@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaHeart } from 'react-icons/fa';
-import coupleImg from '../assets/couple.jpg';
+import coupleImg from '../assets/couple.webp';
 
 const About = () => {
+  const [heartPhotoReady, setHeartPhotoReady] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHeartPhotoReady(true);
+    img.onerror = () => setHeartPhotoReady(true);
+    img.src = coupleImg;
+  }, []);
   return (
     <section id="about" className="py-20 md:py-32 bg-gradient-to-b from-gray-950 to-primary-800">
       <div className="container mx-auto px-4">
@@ -24,6 +32,11 @@ const About = () => {
 
               {/* Heart with image */}
               <div className="relative w-64 h-64 md:w-80 md:h-80">
+                {!heartPhotoReady && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-full bg-slate-900/60">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-beige-500/25 border-t-beige-300" />
+                  </div>
+                )}
                 <svg className="w-full h-full" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <clipPath id="heartClip">

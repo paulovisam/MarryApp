@@ -1,13 +1,14 @@
 import React from 'react';
 import { FaCamera, FaQuoteLeft } from 'react-icons/fa';
+import LazyImage from './LazyImage';
 
 // Importar todas as imagens
-import encontro1 from '../assets/story/encontro_1.jpeg';
-import encontro2 from '../assets/story/encontro_2.jpeg';
-import casaImg from '../assets/casa.jpeg';
-import pedido3 from '../assets/story/pedido_3.jpeg';
-import noivado1 from '../assets/story/noivado_1.jpeg';
-import noivado2 from '../assets/story/noivado_2.jpeg';
+import encontro1 from '../assets/story/encontro_1.webp';
+import encontro2 from '../assets/story/encontro_2.webp';
+import casaImg from '../assets/casa.webp';
+import pedido3 from '../assets/story/pedido_3.webp';
+import noivado1 from '../assets/story/noivado_1.webp';
+import noivado2 from '../assets/story/noivado_2.webp';
 
 const Memories = () => {
   const memories = [
@@ -73,14 +74,15 @@ const Memories = () => {
               >
                 {/* Photo */}
                 <div className="aspect-square relative overflow-hidden shadow-md">
-                  <img 
-                    src={memory.image} 
+                  <LazyImage
+                    src={memory.image}
                     alt={memory.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    wrapperClassName="absolute inset-0"
+                    imgClassName="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-700 via-primary-700/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                  <div className="absolute inset-0 z-[1] bg-gradient-to-t from-primary-700 via-primary-700/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white w-full">
                       <h3 className="font-serif text-xl mb-1">{memory.title}</h3>
                       <p className="font-sans text-sm opacity-90">{memory.description}</p>

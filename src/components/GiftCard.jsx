@@ -1,5 +1,6 @@
 import React from 'react';
 import { IoGiftOutline } from 'react-icons/io5';
+import LazyImage from './LazyImage';
 
 const GiftCard = ({ gift, onBuy }) => {
     const isSoldOut = gift.purchased_quantity >= gift.total_quantity;
@@ -11,10 +12,11 @@ const GiftCard = ({ gift, onBuy }) => {
       ${isSoldOut ? 'opacity-75 grayscale' : ''}
     `}>
             <div className="aspect-[4/3] overflow-hidden relative">
-                <img
+                <LazyImage
                     src={gift.image_url}
                     alt={gift.title}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                    wrapperClassName="absolute inset-0"
+                    imgClassName="object-cover transition-transform group-hover:scale-105"
                 />
                 {isSoldOut && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

@@ -3,18 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRing, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 // Importar todas as imagens
-import encontro1 from '../assets/story/encontro_1.jpeg';
-import encontro2 from '../assets/story/encontro_2.jpeg';
-import encontro3 from '../assets/story/encontro_3.jpeg';
-import encontro4 from '../assets/story/encontro_4.jpeg';
-import pedido1 from '../assets/story/pedido_1.jpeg';
-import pedido2 from '../assets/story/pedido_2.jpeg';
-import pedido4 from '../assets/story/pedido_4.jpeg';
+import encontro1 from '../assets/story/encontro_1.webp';
+import encontro2 from '../assets/story/encontro_2.webp';
+import encontro3 from '../assets/story/encontro_3.webp';
+import encontro4 from '../assets/story/encontro_4.webp';
+import pedido1 from '../assets/story/pedido_1.webp';
+import pedido2 from '../assets/story/pedido_2.webp';
+import pedido4 from '../assets/story/pedido_4.webp';
 import pedido5 from '../assets/story/pedido_5.webp';
-import noivado1 from '../assets/story/noivado_1.jpeg';
-import noivado2 from '../assets/story/noivado_2.jpeg';
-import noivado3 from '../assets/story/noivado_3.jpeg';
-import noivado4 from '../assets/story/noivado_4.jpeg';
+import noivado1 from '../assets/story/noivado_1.webp';
+import noivado2 from '../assets/story/noivado_2.webp';
+import noivado3 from '../assets/story/noivado_3.webp';
+import noivado4 from '../assets/story/noivado_4.webp';
+import LazyImage from './LazyImage';
 
 const Story = () => {
   const navigate = useNavigate();
@@ -32,6 +33,14 @@ const Story = () => {
     currentIndex: 0,
     eventTitle: ''
   });
+
+  const [lightboxImgReady, setLightboxImgReady] = useState(true);
+
+  useEffect(() => {
+    if (lightbox.isOpen && lightbox.currentPhoto) {
+      setLightboxImgReady(false);
+    }
+  }, [lightbox.isOpen, lightbox.currentPhoto, lightbox.currentIndex]);
 
   useEffect(() => {
     const MS_MINUTE = 1000 * 60;
@@ -249,12 +258,13 @@ const Story = () => {
                                 }`}
                               style={{ aspectRatio: photoIndex === 0 ? '1/2' : '1/1' }}
                             >
-                              <img
+                              <LazyImage
                                 src={photo}
                                 alt={`${item.title} - Foto ${photoIndex + 1}`}
-                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                                wrapperClassName="absolute inset-0"
+                                imgClassName="object-cover hover:scale-110 transition-transform duration-500"
                               />
-                              <div className={`absolute inset-0 bg-gradient-to-t ${item.color === 'burgundy'
+                              <div className={`pointer-events-none absolute inset-0 bg-gradient-to-t ${item.color === 'burgundy'
                                 ? 'from-burgundy-900/20 to-transparent'
                                 : 'from-royal-900/20 to-transparent'
                                 }`}></div>
@@ -314,12 +324,13 @@ const Story = () => {
                                 }`}
                               style={{ aspectRatio: photoIndex === 0 ? '1/2' : '1/1' }}
                             >
-                              <img
+                              <LazyImage
                                 src={photo}
                                 alt={`${item.title} - Foto ${photoIndex + 1}`}
-                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                                wrapperClassName="absolute inset-0"
+                                imgClassName="object-cover hover:scale-110 transition-transform duration-500"
                               />
-                              <div className={`absolute inset-0 bg-gradient-to-t ${item.color === 'burgundy'
+                              <div className={`pointer-events-none absolute inset-0 bg-gradient-to-t ${item.color === 'burgundy'
                                 ? 'from-burgundy-900/20 to-transparent'
                                 : 'from-royal-900/20 to-transparent'
                                 }`}></div>
@@ -442,7 +453,7 @@ const Story = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Event Title */}
-            <div className="absolute top-0 left-0 right-0 text-center py-4 bg-gradient-to-b from-black to-transparent">
+            <div className="absolute top-0 left-0 right-0 z-20 text-center py-4 bg-gradient-to-b from-black to-transparent">
               <h3 className="font-serif text-xl md:text-2xl text-white">
                 {lightbox.eventTitle}
               </h3>
@@ -451,11 +462,21 @@ const Story = () => {
               </p>
             </div>
 
+            {!lightboxImgReady && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-2 border-white/20 border-t-beige-300" />
+              </div>
+            )}
+
             {/* Image */}
             <img
+              key={`${lightbox.currentPhoto}-${lightbox.currentIndex}`}
               src={lightbox.currentPhoto}
               alt={`${lightbox.eventTitle} - Foto ${lightbox.currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-scaleIn"
+              className={`max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-scaleIn transition-opacity duration-300 ${lightboxImgReady ? 'opacity-100' : 'opacity-0'}`}
+              decoding="async"
+              onLoad={() => setLightboxImgReady(true)}
+              onError={() => setLightboxImgReady(true)}
             />
           </div>
         </div>

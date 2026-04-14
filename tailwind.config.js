@@ -80,6 +80,15 @@ export default {
         script: ['The Seasons', 'cursive'],
         display: ['Playfair Display', 'serif'],
       },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        'fade-in-slow': 'fadeIn 0.65s ease-out forwards',
+      },
     },
   },
   plugins: [],

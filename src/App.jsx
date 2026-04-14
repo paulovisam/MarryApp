@@ -10,19 +10,22 @@ import BackgroundMusic from './components/BackgroundMusic';
 import GiftListPage from './pages/GiftListPage';
 import LoginPage from './pages/Admin/LoginPage';
 import Dashboard from './pages/Admin/Dashboard';
+import HomeEntryLoader from './components/HomeEntryLoader';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={
-          <div className="min-h-screen overflow-x-hidden">
-            <Hero />
-            <About />
-            <Story />
-            <Memories />
-            <Footer />
-          </div>
+          <HomeEntryLoader>
+            <div className="min-h-screen overflow-x-hidden">
+              <Hero />
+              <About />
+              <Story />
+              <Memories />
+              <Footer />
+            </div>
+          </HomeEntryLoader>
         } />
         <Route path="/convite" element={<Convite />} />
         <Route path="/presentes" element={<GiftListPage />} />
