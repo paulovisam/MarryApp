@@ -99,8 +99,7 @@ const About = () => {
               {/* Content */}
               <div className="relative z-10">
                 <p className="font-sans text-lg md:text-xl text-beige-200 leading-relaxed italic">
-                  Eles acreditam que o amor se constrói nos detalhes do dia a dia, nas conversas sinceras, nas risadas inesperadas e com Deus no centro de tudo.
-                  Juntos, eles se completam com parceria e equilíbrio. Entre fé, amor, risadas e planos bem organizados, escolheram caminhar lado a lado, confiando que Deus é a base dessa história que agora começa um novo capítulo.
+                  Nós acreditamos que o amor se constrói no dia a dia, nas conversas sinceras, no cuidado e na presença um do outro, com Deus no centro de tudo. Seguimos juntos, com parceria e equilíbrio, fazendo planos e escolhendo, todos os dias, caminhar lado a lado. Com fé, confiamos que é Deus quem sustenta nossa história e conduz cada passo do que estamos construindo juntos.
                 </p>
               </div>
             </div>

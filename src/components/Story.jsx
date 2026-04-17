@@ -18,8 +18,10 @@ import noivado3 from '../assets/story/noivado_3.webp';
 import noivado4 from '../assets/story/noivado_4.webp';
 import LazyImage from './LazyImage';
 
+
 const Story = () => {
   const navigate = useNavigate();
+  const [ref, visible] = useReveal(0.2);
   const [timeLeft, setTimeLeft] = useState({
     months: 0,
     days: 0,
@@ -208,7 +210,7 @@ const Story = () => {
             </h2>
             {/* <div className="w-24 h-1 bg-gradient-to-r from-secondary-700 to-primary-500 mx-auto mb-6"></div> */}
             <p className="font-sans text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-              Uma jornada de amor, cumplicidade e sonhos compartilhados
+            Uma história construída no cuidado, na fé e na escolha diária.
             </p>
           </div>
 
@@ -503,6 +505,26 @@ const Story = () => {
         </div>,
         document.body
       )}
+      {/* <section className="venue">
+        <img src={casaImg} alt="Local do casamento" className="venue__bg" loading="lazy" />
+        <div className="venue__overlay" />
+        <div ref={ref} className={`venue__content${visible ? ' revealed' : ''}`}>
+          <p className="venue__label">O local</p>
+          <h2 className="venue__title">Assembleia de Deus<br />Cruzeiro do Sul</h2>
+          <p className="venue__address">
+            Rua Damasco com Avenida São João<br />
+            Jardim Nova Era · Aparecida de Goiânia — GO
+          </p>
+          <a
+            href="https://maps.google.com/?q=Assembleia+de+Deus+Cruzeiro+do+Sul+Aparecida+de+Goiania"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="v2-venue__btn"
+          >
+            Ver no mapa
+          </a>
+        </div>
+      </section> */}
     </section>
   );
 };
