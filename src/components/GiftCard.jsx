@@ -28,7 +28,7 @@ const GiftCard = ({ gift, onBuy, onSelect }) => {
                     {isSoldOut && (
                         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50">
                             <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-bold uppercase tracking-wider text-white">
-                                Esgotado
+                                Presenteado
                             </span>
                         </div>
                     )}
