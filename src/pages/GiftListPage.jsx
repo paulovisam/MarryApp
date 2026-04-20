@@ -3,15 +3,25 @@ import { getGifts } from '../services/giftService';
 import GiftCard from '../components/GiftCard';
 import GiftDetailModal from '../components/GiftDetailModal';
 import CheckoutModal from '../components/CheckoutModal';
+import PaymentSuccessCelebration from '../components/PaymentSuccessCelebration';
 import { IoArrowBack, IoCloseCircle, IoHeart, IoSearchOutline } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const GiftListPage = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [gifts, setGifts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedGift, setSelectedGift] = useState(null);
     const [detailGift, setDetailGift] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+
+    const showPaymentSuccess = searchParams.get('status') === 'success';
+
+    const dismissPaymentSuccess = () => {
+        const next = new URLSearchParams(searchParams);
+        next.delete('status');
+        setSearchParams(next, { replace: true });
+    };
 
     const filteredGifts = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
@@ -64,6 +74,14 @@ const GiftListPage = () => {
 
             {/* Main Content */}
             <main className="container mx-auto px-4 pt-24 pb-12">
+                {showPaymentSuccess && (
+                    <div className="max-w-3xl mx-auto mb-2">
+                        <PaymentSuccessCelebration
+                            onDismiss={dismissPaymentSuccess}
+                        />
+                    </div>
+                )}
+
                 <div className="max-w-2xl mx-auto text-center mb-8 space-y-4">
                     <h2 className="text-3xl sm:text-4xl font-serif text-slate-900 dark:text-white">
                         Presenteie com Amor
