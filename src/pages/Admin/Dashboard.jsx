@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoGiftOutline, IoPeopleOutline, IoLogOutOutline, IoCashOutline, IoAdd, IoTrash, IoCreate, IoSearch } from 'react-icons/io5';
+import {
+    IoGiftOutline,
+    IoPeopleOutline,
+    IoLogOutOutline,
+    IoCashOutline,
+    IoAdd,
+    IoTrash,
+    IoCreate,
+    IoSearch,
+    IoImageOutline,
+} from 'react-icons/io5';
 import { useAdminGifts, useAdminRsvps } from './adminHooks';
 
 const Dashboard = () => {
@@ -13,8 +23,17 @@ const Dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [editingGift, setEditingGift] = useState(null);
-    const [formData, setFormData] = useState({ title: '', price: '', image_url: '', total_quantity: 1, description: '' });
+    const [formData, setFormData] = useState({
+        title: '',
+        price: '',
+        image_url: '',
+        total_quantity: '1',
+        description: '',
+    });
     const [searchTerm, setSearchTerm] = useState('');
+    const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
+
+    const imagePreviewUrl = formData.image_url?.trim() || '';
 
     useEffect(() => {
         if (!localStorage.getItem('adminAuth')) {
@@ -41,15 +60,35 @@ const Dashboard = () => {
     // Handlers
     const openAddModal = () => {
         setEditingGift(null);
-        setFormData({ title: '', price: '', image_url: '', total_quantity: 1, description: '' });
+        setFormData({
+            title: '',
+            price: '',
+            image_url: '',
+            total_quantity: '1',
+            description: '',
+        });
+        setImagePreviewFailed(false);
         setIsModalOpen(true);
     };
 
     const openEditModal = (gift) => {
         setEditingGift(gift);
-        setFormData(gift);
+        setFormData({
+            title: gift.title ?? '',
+            description: gift.description ?? '',
+            price: gift.price != null ? String(gift.price) : '',
+            total_quantity:
+                gift.total_quantity != null ? String(gift.total_quantity) : '1',
+            image_url: gift.image_url ?? '',
+        });
+        setImagePreviewFailed(false);
         setIsModalOpen(true);
     };
+
+    useEffect(() => {
+        if (!isModalOpen) return;
+        setImagePreviewFailed(false);
+    }, [imagePreviewUrl, isModalOpen]);
 
     const handleSaveGift = async (e) => {
         e.preventDefault();
@@ -230,18 +269,54 @@ const Dashboard = () => {
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {filteredGifts.map(gift => (
-                                    <div key={gift.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex gap-4">
-                                        <img src={gift.image_url} alt="" className="w-20 h-20 object-cover rounded-lg bg-slate-100" />
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-semibold font-sans text-sm truncate dark:text-white">{gift.title}</h4>
-                                            <p className="text-white text-sm">R$ {gift.price}</p>
-                                            <div className="flex gap-2 text-xs text-slate-500 mt-1">
-                                                <span>Vendidos: {gift.purchased_quantity}/{gift.total_quantity}</span>
+                                {filteredGifts.map((gift) => (
+                                    <div
+                                        key={gift.id}
+                                        onClick={() => openEditModal(gift)}
+                                        className="flex cursor-pointer gap-4 rounded-xl border border-slate-200 p-4 transition-colors hover:border-burgundy-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-burgundy-700 dark:hover:bg-slate-800/80"
+                                    >
+                                        <img
+                                            src={gift.image_url}
+                                            alt=""
+                                            className="pointer-events-none h-20 w-20 shrink-0 rounded-lg bg-slate-100 object-cover"
+                                        />
+                                        <div className="min-w-0 flex-1">
+                                            <h4 className="truncate font-sans text-sm font-semibold dark:text-white">
+                                                {gift.title}
+                                            </h4>
+                                            <p className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400">
+                                                R$ {gift.price}
+                                            </p>
+                                            <div className="mt-1 flex gap-2 text-xs text-slate-500">
+                                                <span>
+                                                    Vendidos: {gift.purchased_quantity}/
+                                                    {gift.total_quantity}
+                                                </span>
                                             </div>
-                                            <div className="flex gap-2 mt-2">
-                                                <button onClick={() => openEditModal(gift)} className="text-blue-500 hover:text-blue-700"><IoCreate size={18} /></button>
-                                                <button onClick={() => handleDeleteGift(gift.id)} className="text-red-500 hover:text-red-700"><IoTrash size={18} /></button>
+                                            <div
+                                                className="mt-2 flex gap-2"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        openEditModal(gift)
+                                                    }
+                                                    className="cursor-pointer rounded-lg p-1.5 text-blue-500 transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-950/40"
+                                                    aria-label={`Editar ${gift.title}`}
+                                                >
+                                                    <IoCreate size={18} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleDeleteGift(gift.id)
+                                                    }
+                                                    className="cursor-pointer rounded-lg p-1.5 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/40"
+                                                    aria-label={`Excluir ${gift.title}`}
+                                                >
+                                                    <IoTrash size={18} />
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -254,55 +329,185 @@ const Dashboard = () => {
 
             {/* Add/Edit Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md">
-                        <h3 className="text-xl font-bold mb-4 dark:text-white">{editingGift ? 'Editar Presente' : 'Novo Presente'}</h3>
-                        <form onSubmit={handleSaveGift} className="space-y-4">
-                            <input
-                                placeholder="Título"
-                                className="w-full border p-2 rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                value={formData.title}
-                                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                required
-                            />
-                            <input
-                                placeholder="Descrição (curta)"
-                                className="w-full border p-2 rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                value={formData.description}
-                                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            />
-                            <div className="flex gap-2">
-                                <input
-                                    placeholder="Preço R$"
-                                    type="number"
-                                    step="0.01"
-                                    className="w-full border p-2 rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                    value={formData.price}
-                                    onChange={e => setFormData({ ...formData, price: e.target.value })}
-                                    required
-                                />
-                                <input
-                                    placeholder="Qtd Total"
-                                    type="number"
-                                    className="w-full border p-2 rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                    value={formData.total_quantity}
-                                    onChange={e => setFormData({ ...formData, total_quantity: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <input
-                                placeholder="URL da Imagem"
-                                className="w-full border p-2 rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                value={formData.image_url}
-                                onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                                required
-                            />
+                <div
+                    className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-[2px] sm:items-center sm:p-4"
+                    role="presentation"
+                >
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="gift-modal-title"
+                        className="max-h-[min(92dvh,100%)] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-2xl border border-slate-200 border-b-0 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 sm:rounded-2xl sm:border-b"
+                    >
+                        <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 sm:p-6 md:p-8">
+                            <h3
+                                id="gift-modal-title"
+                                className="mb-4 text-lg font-bold dark:text-white sm:mb-6 sm:text-xl"
+                            >
+                                {editingGift ? 'Editar presente' : 'Novo presente'}
+                            </h3>
+                            <form onSubmit={handleSaveGift}>
+                                <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-start md:gap-8">
+                                    <div className="w-full shrink-0 md:w-[240px] lg:w-[280px]">
+                                        <p className="mb-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 sm:mb-2 sm:text-sm">
+                                            Prévia da foto
+                                        </p>
+                                        <div className="relative h-32 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-600 dark:bg-slate-900/80 sm:h-40 md:aspect-[4/3] md:h-auto md:min-h-[140px]">
+                                            {imagePreviewUrl && !imagePreviewFailed ? (
+                                                <img
+                                                    src={imagePreviewUrl}
+                                                    alt=""
+                                                    className="h-full w-full object-cover"
+                                                    onError={() => setImagePreviewFailed(true)}
+                                                />
+                                            ) : (
+                                                <div className="flex h-full flex-col items-center justify-center gap-1.5 px-3 py-2 text-center text-slate-500 dark:text-slate-400 sm:gap-2 sm:px-4">
+                                                    <IoImageOutline
+                                                        className="h-8 w-8 opacity-50 sm:h-10 sm:w-10"
+                                                        aria-hidden
+                                                    />
+                                                    <span className="text-xs leading-snug sm:text-sm">
+                                                        {imagePreviewUrl && imagePreviewFailed
+                                                            ? 'Não foi possível carregar esta URL. Verifique o link.'
+                                                            : 'Cole a URL abaixo para ver a prévia.'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
 
-                            <div className="flex justify-end gap-2 mt-4">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600">Cancelar</button>
-                                <button type="submit" className="px-4 py-2 bg-burgundy-600 text-white rounded">Salvar</button>
-                            </div>
-                        </form>
+                                    <div className="min-w-0 flex-1 space-y-3 sm:space-y-4">
+                                        <div>
+                                            <label
+                                                htmlFor="gift-image-url"
+                                                className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                            >
+                                                URL da imagem
+                                            </label>
+                                            <input
+                                                id="gift-image-url"
+                                                type="text"
+                                                inputMode="url"
+                                                placeholder="https://…"
+                                                className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                                value={formData.image_url}
+                                                onChange={(e) =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        image_url: e.target.value,
+                                                    })
+                                                }
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                htmlFor="gift-title"
+                                                className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                            >
+                                                Título
+                                            </label>
+                                            <input
+                                                id="gift-title"
+                                                placeholder="Ex.: Jogo de panelas"
+                                                className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                                value={formData.title}
+                                                onChange={(e) =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        title: e.target.value,
+                                                    })
+                                                }
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label
+                                                htmlFor="gift-description"
+                                                className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                            >
+                                                Descrição (curta)
+                                            </label>
+                                            <input
+                                                id="gift-description"
+                                                placeholder="Opcional"
+                                                className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                                value={formData.description}
+                                                onChange={(e) =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        description: e.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-4 sm:flex-row">
+                                            <div className="flex-1">
+                                                <label
+                                                    htmlFor="gift-price"
+                                                    className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                                >
+                                                    Preço (R$)
+                                                </label>
+                                                <input
+                                                    id="gift-price"
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                                    value={formData.price}
+                                                    onChange={(e) =>
+                                                        setFormData({
+                                                            ...formData,
+                                                            price: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label
+                                                    htmlFor="gift-qty"
+                                                    className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                                >
+                                                    Quantidade total
+                                                </label>
+                                                <input
+                                                    id="gift-qty"
+                                                    type="number"
+                                                    min="1"
+                                                    className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                                    value={formData.total_quantity}
+                                                    onChange={(e) =>
+                                                        setFormData({
+                                                            ...formData,
+                                                            total_quantity: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 border-t border-slate-100 pt-4 dark:border-slate-700 sm:flex-row sm:justify-end sm:pt-6">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsModalOpen(false)}
+                                                className="min-h-[44px] rounded-lg px-4 py-2.5 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 sm:min-h-0"
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="min-h-[44px] rounded-lg bg-burgundy-600 px-4 py-2.5 text-white transition-colors hover:bg-burgundy-700 sm:min-h-0"
+                                            >
+                                                Salvar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}
