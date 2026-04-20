@@ -43,18 +43,21 @@ const GiftListPage = () => {
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-burgundy-600 transition-colors">
+                <div className="container relative mx-auto flex h-16 items-center px-4">
+                    <Link
+                        to="/"
+                        className="relative z-10 flex shrink-0 items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-burgundy-600 transition-colors"
+                    >
                         <IoArrowBack size={20} />
                         <span className="hidden sm:inline">Voltar ao Início</span>
                     </Link>
 
-                    <h1 className="font-serif text-xl sm:text-2xl text-burgundy-700 dark:text-burgundy-400">
+                    <h1 className="absolute left-1/2 top-1/2 w-[min(100%,18rem)] -translate-x-1/2 -translate-y-1/2 text-center font-serif text-xl text-burgundy-700 dark:text-burgundy-400 sm:w-auto sm:max-w-none sm:text-2xl">
                         Lista de Presentes
                     </h1>
 
-                    <div className="w-20 flex justify-end">
-                        <IoHeart className="text-burgundy-600" size={24} />
+                    <div className="relative z-10 ml-auto flex w-10 shrink-0 justify-end sm:w-20">
+                        <IoHeart className="text-burgundy-600" size={24} aria-hidden />
                     </div>
                 </div>
             </header>
