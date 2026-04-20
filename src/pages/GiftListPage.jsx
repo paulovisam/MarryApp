@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getGifts } from '../services/giftService';
 import GiftCard from '../components/GiftCard';
+import GiftDetailModal from '../components/GiftDetailModal';
 import CheckoutModal from '../components/CheckoutModal';
 import { IoArrowBack, IoCloseCircle, IoHeart, IoSearchOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
@@ -9,6 +10,7 @@ const GiftListPage = () => {
     const [gifts, setGifts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedGift, setSelectedGift] = useState(null);
+    const [detailGift, setDetailGift] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredGifts = useMemo(() => {
@@ -139,12 +141,24 @@ const GiftListPage = () => {
                             <GiftCard
                                 key={gift.id}
                                 gift={gift}
+                                onSelect={setDetailGift}
                                 onBuy={setSelectedGift}
                             />
                         ))}
                     </div>
                 )}
             </main>
+
+            {detailGift && (
+                <GiftDetailModal
+                    gift={detailGift}
+                    onClose={() => setDetailGift(null)}
+                    onPresentear={(gift) => {
+                        setDetailGift(null);
+                        setSelectedGift(gift);
+                    }}
+                />
+            )}
 
             {/* Checkout Modal */}
             {selectedGift && (

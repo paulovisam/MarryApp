@@ -69,7 +69,7 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                 {/* Header */}
                 <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
                     <h3 className="font-serif text-xl text-burgundy-700 dark:text-burgundy-400">
-                        Finalizar Presente
+                        Enviar Presente
                     </h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2">
                         <IoClose size={24} />
@@ -83,7 +83,7 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                         <img src={gift.image_url} alt="" className="w-16 h-16 object-cover rounded-lg bg-white" />
                         <div>
                             <h4 className="font-semibold text-slate-900 dark:text-white">{gift.title}</h4>
-                            <p className="text-burgundy-600 font-bold">R$ {gift.price}</p>
+                            <p className="text-600 font-bold">R$ {gift.price}</p>
                         </div>
                     </div>
 
