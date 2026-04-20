@@ -1,10 +1,31 @@
 
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'node:crypto';
 
 const supabase = createClient(
     process.env.VITE_SUPABASE_URL,
     process.env.VITE_SUPABASE_ANON_KEY
 );
+
+function timingSafeEqualBase64(a, b) {
+    const ba = Buffer.from(a, 'utf8');
+    const bb = Buffer.from(b, 'utf8');
+    if (ba.length !== bb.length) {
+        return false;
+    }
+    return crypto.timingSafeEqual(ba, bb);
+}
+
+function verifyWebhookHmac(rawBody, signatureHeader, secret) {
+    if (!secret || !signatureHeader) {
+        return false;
+    }
+    const expected = crypto
+        .createHmac('sha256', secret)
+        .update(rawBody, 'utf8')
+        .digest('base64');
+    return timingSafeEqualBase64(expected, signatureHeader);
+}
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -12,44 +33,94 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { event, data } = req.body;
-        // Verify Secret - AbacatePay sends secret as query param ?webhookSecret=... usually, or check docs
-        // Docs say: "Validating the secret in all incoming requests, typically sent as a query parameter (webhookSecret)."
-        // For now, let's assume we trust the payload or check a custom header if configured.
+        const webhookSecret = req.query.webhookSecret;
+        if (webhookSecret !== process.env.ABACATEPAY_WEBHOOK_SECRET) {
+            return res.status(401).json({ error: 'Invalid webhook secret' });
+        }
 
-        // Simple event mapping
-        // AbacatePay events: 'billing.paid', 'billing.failed', etc (need to verify exact event names, 
-        // but often status is inside object). 
-        // Based on docs, it sends the billing object.
+        let rawBody;
+        if (Buffer.isBuffer(req.body)) {
+            rawBody = req.body.toString('utf8');
+        } else if (typeof req.body === 'string') {
+            rawBody = req.body;
+        } else {
+            rawBody = JSON.stringify(req.body);
+        }
+
+        const sig =
+            req.headers['x-webhook-signature'] ||
+            req.headers['X-Webhook-Signature'];
+        if (
+            process.env.ABACATEPAY_WEBHOOK_SECRET &&
+            sig &&
+            !verifyWebhookHmac(
+                rawBody,
+                sig,
+                process.env.ABACATEPAY_WEBHOOK_SECRET
+            )
+        ) {
+            return res.status(401).json({ error: 'Invalid webhook signature' });
+        }
+
+        let payload;
+        try {
+            payload = JSON.parse(rawBody);
+        } catch {
+            return res.status(400).json({ error: 'Invalid JSON body' });
+        }
+
+        const { event, data } = payload;
 
         if (!event || !data) {
             return res.status(400).json({ error: 'Invalid payload' });
         }
 
-        let orderStatus = null;
+        const checkout = data.checkout;
+        const transparent = data.transparent;
+        const entityId = checkout?.id ?? transparent?.id;
 
-        if (event === 'billing.paid') {
+        let orderStatus = null;
+        if (
+            event === 'checkout.completed' ||
+            event === 'transparent.completed'
+        ) {
             orderStatus = 'PAID';
-        } else if (event === 'billing.failed' || event === 'billing.cancelled') {
-            orderStatus = 'FAILED';
-        } else if (event === 'billing.refunded') {
+        } else if (
+            event === 'checkout.refunded' ||
+            event === 'transparent.refunded'
+        ) {
             orderStatus = 'REFUNDED';
+        } else if (
+            event === 'checkout.disputed' ||
+            event === 'checkout.lost' ||
+            event === 'transparent.disputed' ||
+            event === 'transparent.lost'
+        ) {
+            orderStatus = 'FAILED';
         }
 
-        if (orderStatus && data.id) {
-            // Update Order Status
+        const paymentMethod =
+            data.payerInformation?.method ??
+            checkout?.methods?.[0] ??
+            transparent?.methods?.[0] ??
+            null;
+
+        if (orderStatus && entityId) {
+            const updatePayload = { status: orderStatus };
+            if (paymentMethod) {
+                updatePayload.payment_method = paymentMethod;
+            }
+
             const { data: order, error: orderError } = await supabase
                 .from('orders')
-                .update({ status: orderStatus })
-                .eq('asaas_payment_id', data.id) // We stored AbacatePay Billing ID in this column
+                .update(updatePayload)
+                .eq('asaas_payment_id', entityId)
                 .select()
                 .single();
 
             if (orderError) {
                 console.error('Error updating order:', orderError);
-                // Don't error out the webhook response
             } else if (orderStatus === 'PAID' && order) {
-                // Update Gift Quantity
                 const { data: gift } = await supabase
                     .from('gifts')
                     .select('purchased_quantity')
@@ -59,14 +130,15 @@ export default async function handler(req, res) {
                 if (gift) {
                     await supabase
                         .from('gifts')
-                        .update({ purchased_quantity: gift.purchased_quantity + 1 })
+                        .update({
+                            purchased_quantity: gift.purchased_quantity + 1,
+                        })
                         .eq('id', order.gift_id);
                 }
             }
         }
 
         res.status(200).json({ received: true });
-
     } catch (error) {
         console.error('Webhook Error:', error);
         res.status(500).json({ error: error.message });
