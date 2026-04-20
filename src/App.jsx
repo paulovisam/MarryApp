@@ -36,7 +36,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {/* Player de música de fundo - renderizado fora das rotas para persistir entre navegações */}
-      <BackgroundMusic audioSrc="/background-music.mp3" />
+      {/* //<BackgroundMusic audioSrc="/background-music.mp3" /> */}
     </Router>
   );
 }
