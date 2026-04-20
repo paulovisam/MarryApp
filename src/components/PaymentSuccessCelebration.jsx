@@ -232,8 +232,8 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                                 mais felizes por ter você nessa celebração.
                             </p>
                             <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Mal podemos esperar para brindar com você esse
-                                capítulo especial.
+                                O presente será entregue na casa dos noivos em
+                                algumas semanas.
                             </p>
 
                             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
