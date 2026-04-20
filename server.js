@@ -14,11 +14,8 @@ const app = express();
 const PORT = process.env.PORT || 3001; // Run API on 3001 to avoid conflict with Vite (3000)
 
 app.use(cors());
-app.use(express.json());
 
-// Load API routes dynamically or manually
 // Using manual import for simplicity and to match Vercel style handling
-// Load API routes dynamically or manually
 import createPaymentHandler from './api/create-payment.js';
 import webhookHandler from './api/webhook.js';
 
@@ -34,9 +31,15 @@ const adaptHandler = (handler) => async (req, res) => {
     }
 };
 
-// Define API Routes
+// Webhook AbacatePay v1: corpo bruto se a Abacate enviar X-Webhook-Signature (HMAC)
+app.post(
+    '/api/webhook',
+    express.raw({ type: 'application/json' }),
+    adaptHandler(webhookHandler)
+);
+
+app.use(express.json());
 app.all('/api/create-payment', adaptHandler(createPaymentHandler));
-app.all('/api/webhook', adaptHandler(webhookHandler));
 
 // Determine if we are in production (serving static files) or dev (API only)
 // For this setup, we will run this as a separate API server alongside Vite

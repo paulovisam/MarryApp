@@ -7,11 +7,16 @@ const supabase = createClient(
     process.env.VITE_SUPABASE_ANON_KEY
 );
 
+const ABACATE_V1_BILLING_CREATE =
+    'https://api.abacatepay.com/v1/billing/create';
+
 export default async function handler(req, res) {
-    // CORS Headers
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET,OPTIONS,PATCH,DELETE,POST,PUT'
+    );
     res.setHeader(
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
@@ -29,72 +34,88 @@ export default async function handler(req, res) {
     try {
         const { giftId, giftTitle, giftDescription, customer, amount } = req.body;
 
-        // Construct AbacatePay Payload
+        const origin =
+            req.headers.origin ||
+            req.headers.referer?.split('/').slice(0, 3).join('/') ||
+            'http://localhost:3000';
+
+        const priceCents = Math.round(parseFloat(amount) * 100);
+        // OpenAPI v1: mínimo 100 centavos (R$ 1,00) por unidade
+        const price = Math.max(100, priceCents);
+
         const payload = {
-            frequency: "ONE_TIME",
-            methods: ["PIX", "CARD"],
+            frequency: 'ONE_TIME',
+            methods: ['PIX', 'CARD'],
             products: [
                 {
-                    externalId: giftId,
-                    name: giftTitle || "Presente de Casamento",
-                    description: giftDescription || `Contribuição para: ${giftTitle || giftId}`,
+                    externalId: String(giftId),
+                    name: giftTitle || 'Presente de Casamento',
+                    description:
+                        giftDescription ||
+                        `Contribuição para: ${giftTitle || giftId}`,
                     quantity: 1,
-                    price: Math.round(parseFloat(amount) * 100) // Price in centavos
-                }
+                    price,
+                },
             ],
-            returnUrl: `${req.headers.origin || 'http://localhost:3000'}/presentes`,
-            completionUrl: `${req.headers.origin || 'http://localhost:3000'}/presentes?status=success`,
+            returnUrl: `${origin}/presentes`,
+            completionUrl: `${origin}/presentes?status=success`,
             customer: {
                 name: customer.name,
                 email: customer.email,
-                taxId: '',
-                cellphone: customer.phone
-            }
+                taxId: customer.taxId || '',
+                cellphone: customer.phone || '',
+            },
+            metadata: { giftId: String(giftId) },
         };
 
-        const response = await axios.post('https://api.abacatepay.com/v1/billing/create', payload, {
+        const response = await axios.post(ABACATE_V1_BILLING_CREATE, payload, {
             headers: {
-                'Authorization': `Bearer ${process.env.ABACATEPAY_API_KEY}`,
-                'Content-Type': 'application/json'
-            }
+                Authorization: `Bearer ${process.env.ABACATEPAY_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
         });
 
-        console.log('AbacatePay Response:', JSON.stringify(response.data));
+        console.log('AbacatePay v1:', JSON.stringify(response.data));
 
-        const billing = response.data.data;
-
-        if (!billing) {
-            throw new Error(response.data.error || 'Invalid response from AbacatePay: ' + JSON.stringify(response.data));
+        if (response.data?.success === false && response.data?.error) {
+            throw new Error(String(response.data.error));
         }
 
-        // Save to Database
+        const billing = response.data?.data;
+
+        if (!billing?.id || !billing?.url) {
+            throw new Error(
+                response.data?.error ||
+                    'Resposta inválida da AbacatePay v1: ' +
+                        JSON.stringify(response.data)
+            );
+        }
+
         const { data: order, error: dbError } = await supabase
             .from('orders')
             .insert({
                 gift_id: giftId,
                 customer_name: customer.name,
-                customer_cpf: '',
+                customer_cpf: customer.taxId || '',
                 customer_email: customer.email,
                 amount: amount,
                 status: 'PENDING',
-                asaas_payment_id: billing.id, // Storing AbacatePay ID here
-                payment_method: 'ABACATEPAY', // General method
+                asaas_payment_id: billing.id,
+                payment_method: 'ABACATEPAY',
                 payment_url: billing.url,
-                installments: 1
+                installments: 1,
             })
             .select()
             .single();
 
         if (dbError) {
             console.error('Database Error:', dbError);
-            // Non-blocking error for payment, but important for records
         }
 
         res.status(200).json({
             orderId: order?.id,
-            paymentUrl: billing.url
+            paymentUrl: billing.url,
         });
-
     } catch (error) {
         console.error('API Error:', error.response?.data || error.message);
         res.status(500).json({ error: 'Failed to create payment' });
