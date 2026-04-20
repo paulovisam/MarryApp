@@ -37,7 +37,9 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                 aria-label="Fechar"
                 onClick={onClose}
             />
-            <div className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900">
+            <div
+                className={`relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900 ${isSoldOut ? 'ring-2 ring-amber-200/70 dark:ring-amber-500/35' : ''}`}
+            >
                 <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 sm:px-5">
                     <h2 id="gift-detail-title" className="font-serif text-lg text-burgundy-700 dark:text-burgundy-400 sm:text-xl">
                         Detalhes do presente
@@ -61,8 +63,8 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                             imgClassName="object-cover"
                         />
                         {isSoldOut && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-bold uppercase tracking-wider text-white">
+                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-400/40 via-rose-300/30 to-burgundy-500/35 dark:from-amber-500/30 dark:via-rose-500/25 dark:to-burgundy-600/30">
+                                <span className="rounded-full bg-gradient-to-r from-amber-500 to-rose-500 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-lg">
                                     Presenteado
                                 </span>
                             </div>
@@ -70,6 +72,11 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                     </div>
 
                     <div className="space-y-4 p-4 sm:p-6">
+                        {isSoldOut && (
+                            <p className="rounded-xl border border-amber-200/90 bg-gradient-to-r from-amber-50 to-rose-50 px-4 py-3 text-center text-sm leading-snug text-amber-950 dark:border-amber-500/30 dark:from-amber-950/40 dark:to-rose-950/35 dark:text-amber-50">
+                                Alguém já escolheu este presente com muito carinho. Obrigado por celebrar com a gente!
+                            </p>
+                        )}
                         <div>
                             <h3 className="font-serif text-xl text-slate-900 dark:text-white sm:text-2xl">
                                 {gift.title}
@@ -106,10 +113,14 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                         type="button"
                         disabled={isSoldOut}
                         onClick={() => onPresentear(gift)}
-                        className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-base font-medium text-white transition-colors hover:bg-burgundy-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:bg-white dark:text-slate-900 dark:hover:bg-burgundy-100 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
+                        className={`flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl text-base font-medium transition-colors disabled:cursor-not-allowed ${
+                            isSoldOut
+                                ? 'border border-amber-300/90 bg-gradient-to-r from-amber-50 to-rose-50 text-amber-950 dark:border-amber-500/40 dark:from-amber-950/50 dark:to-rose-950/40 dark:text-amber-100'
+                                : 'bg-slate-900 text-white hover:bg-burgundy-700 dark:bg-white dark:text-slate-900 dark:hover:bg-burgundy-100'
+                        }`}
                     >
                         <IoGiftOutline className="h-5 w-5 shrink-0" aria-hidden />
-                        {isSoldOut ? 'Indisponível' : 'Presentear'}
+                        {isSoldOut ? 'Recebido com carinho' : 'Presentear'}
                     </button>
                 </div>
             </div>

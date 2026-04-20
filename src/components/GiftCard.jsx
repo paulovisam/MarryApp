@@ -9,8 +9,10 @@ const GiftCard = ({ gift, onBuy, onSelect }) => {
     return (
         <article
             className={`
-      group relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-transform hover:-translate-y-1 dark:border-slate-700 dark:bg-slate-800
-      ${isSoldOut ? 'opacity-75 grayscale' : ''}
+      group relative overflow-hidden rounded-2xl border bg-white shadow-lg transition-transform dark:bg-slate-800
+      ${isSoldOut
+                ? 'border-amber-200/90 ring-2 ring-amber-200/60 dark:border-amber-500/35 dark:ring-amber-400/25'
+                : 'border-slate-100 hover:-translate-y-1 dark:border-slate-700'}
     `}
         >
             <button
@@ -23,11 +25,11 @@ const GiftCard = ({ gift, onBuy, onSelect }) => {
                         src={gift.image_url}
                         alt=""
                         wrapperClassName="absolute inset-0"
-                        imgClassName="object-cover transition-transform group-hover:scale-105"
+                        imgClassName={`object-cover transition-transform ${isSoldOut ? '' : 'group-hover:scale-105'}`}
                     />
                     {isSoldOut && (
-                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50">
-                            <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-bold uppercase tracking-wider text-white">
+                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-400/35 via-rose-300/25 to-burgundy-500/30 dark:from-amber-500/25 dark:via-rose-500/20 dark:to-burgundy-600/25">
+                            <span className="rounded-full bg-gradient-to-r from-amber-500 to-rose-500 px-3 py-1.5 text-center text-xs font-bold uppercase tracking-wide text-white shadow-lg sm:px-4 sm:text-sm">
                                 Presenteado
                             </span>
                         </div>
@@ -62,12 +64,12 @@ const GiftCard = ({ gift, onBuy, onSelect }) => {
                     className={`
               flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors sm:w-auto sm:justify-start sm:gap-2 sm:px-4 sm:py-2 sm:text-sm
               ${isSoldOut
-                            ? 'cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-700 dark:text-slate-500'
+                            ? 'cursor-not-allowed border border-amber-300/80 bg-gradient-to-r from-amber-50 to-rose-50 text-amber-900 dark:border-amber-500/40 dark:from-amber-950/50 dark:to-rose-950/40 dark:text-amber-100'
                             : 'bg-slate-900 text-white hover:bg-burgundy-700 dark:bg-white dark:text-slate-900 dark:hover:bg-burgundy-100'}
             `}
                 >
                     <IoGiftOutline className="h-4 w-4 shrink-0" aria-hidden />
-                    {isSoldOut ? 'Comprado' : 'Presentear'}
+                    {isSoldOut ? 'Obrigado!' : 'Presentear'}
                 </button>
             </div>
         </article>
