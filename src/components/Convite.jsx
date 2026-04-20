@@ -153,21 +153,13 @@ const Convite = () => {
             </div>
             <div className="text-center">
               <div className="mb-6 rounded-xl overflow-hidden shadow-lg border-2 border-beige-200 mx-auto w-[300px]">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15281.714432945437!2d-49.28928138405113!3d-16.75533834551021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935ef1d50c6ddf93%3A0x30a261e14bf1ca03!2sAD%20Cruzeiro%20do%20Sul%20-%20Igreja%20Evang%C3%A9lica%20Assembleia%20de%20Deus%20-%20Campo%20de%20Campinas!5e0!3m2!1spt-BR!2sbr!4v1770246186955!5m2!1spt-BR!2sbr"
-                  width="300"
-                  height="300"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.311536674392!2d-49.22018179999999!3d-16.761169099999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935efac0b5335f7b%3A0x9eeb1523ef70191!2sCh%C3%A1cara%20Primos%20-%20Eventos%20e%20Buffet!5e0!3m2!1spt-BR!2sbr!4v1776725739931!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
               </div>
               <p className="font-serif text-base md:text-lg text-primary-900">
-                Assembleia de Deus Cruzeiro do Sul
+                Chácara Primos - Eventos
               </p>
               <p className="font-serif text-base md:text-lg text-primary-900">
-                Rua Damasco com Avenida São João - Jardim Nova Era, Aparecida de Goiânia - GO
+                Rua X-033, 174 Sítio santa luzia Sitio - Sítios Santa Luzia, Aparecida de Goiânia - GO, 74921-410
               </p>
             </div>
           </div>
