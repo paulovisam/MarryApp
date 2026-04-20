@@ -122,12 +122,26 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
 
                         <div className="pt-4">
                             <button
+                                type="button"
                                 onClick={handlePayment}
                                 disabled={loading}
-                                className="w-full py-3 bg-burgundy-600 text-white rounded-xl font-medium hover:bg-burgundy-700 transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+                                aria-busy={loading}
+                                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-burgundy-600 py-3 font-medium text-white transition-colors hover:bg-burgundy-700 disabled:cursor-wait disabled:hover:bg-burgundy-600"
                             >
-                                <IoLockClosed />
-                                {loading ? 'Processando...' : 'Ir para Pagamento Seguro'}
+                                {loading ? (
+                                    <>
+                                        <span
+                                            className="inline-block h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-white/25 border-t-white motion-reduce:animate-none motion-reduce:border-white/60"
+                                            aria-hidden
+                                        />
+                                        <span>Processando...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <IoLockClosed className="shrink-0" aria-hidden />
+                                        <span>Ir para Pagamento Seguro</span>
+                                    </>
+                                )}
                             </button>
                             <p className="text-xs text-center text-slate-400 mt-2">
                                 Você será redirecionado para a AbacatePay para concluir o pagamento via Pix ou Cartão.
