@@ -7,6 +7,7 @@ import {
     IoImagesOutline,
 } from 'react-icons/io5';
 import LazyImage from './LazyImage';
+import ScrollReveal from './ScrollReveal';
 
 const imageModules = import.meta.glob('../assets/prewedding/*.webp', {
     eager: true,
@@ -174,21 +175,23 @@ export default function PreweddingGallery() {
         >
             {lightbox}
             <div className="container mx-auto max-w-6xl px-4">
-                <header className="mb-10 text-center md:mb-14">
-                    <IoImagesOutline
-                        className="mx-auto mb-5 h-10 w-10 text-burgundy-400/90 md:h-12 md:w-12"
-                        aria-hidden
-                    />
-                    <h2
-                        id="prewedding-heading"
-                        className="font-serif text-3xl text-beige-200 md:text-4xl lg:text-5xl"
-                    >
-                        Galeria de Fotos
-                    </h2>
-                    <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-beige-400/90 md:text-base">
-                        Alguns momentos do nosso ensaio
-                    </p>
-                </header>
+                <ScrollReveal className="mb-10 text-center md:mb-14">
+                    <header>
+                        <IoImagesOutline
+                            className="mx-auto mb-5 h-10 w-10 text-burgundy-400/90 md:h-12 md:w-12"
+                            aria-hidden
+                        />
+                        <h2
+                            id="prewedding-heading"
+                            className="font-serif text-3xl text-beige-200 md:text-4xl lg:text-5xl"
+                        >
+                            Galeria de Fotos
+                        </h2>
+                        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-beige-400/90 md:text-base">
+                            Alguns momentos do nosso ensaio
+                        </p>
+                    </header>
+                </ScrollReveal>
 
                 <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 lg:gap-3">
                     {PREWEDDING_PHOTOS.map((photo, index) => (
@@ -196,6 +199,11 @@ export default function PreweddingGallery() {
                             key={photo.id}
                             className="[content-visibility:auto] [contain-intrinsic-size:200px_280px]"
                         >
+                            <ScrollReveal
+                                className="h-full"
+                                delay={Math.min(index * 0.04, 0.36)}
+                                amount={0.08}
+                            >
                             <button
                                 type="button"
                                 onClick={() => openAt(index)}
@@ -215,6 +223,7 @@ export default function PreweddingGallery() {
                                     aria-hidden
                                 />
                             </button>
+                            </ScrollReveal>
                         </li>
                     ))}
                 </ul>

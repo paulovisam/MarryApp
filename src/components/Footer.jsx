@@ -1,11 +1,12 @@
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
+import ScrollReveal from './ScrollReveal';
 
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-950 via-slate-950 to-blue-950 text-white py-16 border-t border-burgundy-500 border-opacity-20">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
+        <ScrollReveal className="max-w-4xl mx-auto text-center">
           {/* Monogram */}
           <div className="flex justify-center mb-8">
             <h3 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-none tracking-wider font-light">P | S</h3>
@@ -49,7 +50,7 @@ const Footer = () => {
               © 2026 Sara & Paulo. Feito com muito amor e carinho.
             </p>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </footer>
   );

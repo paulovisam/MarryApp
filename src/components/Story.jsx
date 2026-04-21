@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReveal } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRing, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { createPortal } from 'react-dom';
@@ -17,11 +17,10 @@ import noivado2 from '../assets/story/noivado_2.webp';
 import noivado3 from '../assets/story/noivado_3.webp';
 import noivado4 from '../assets/story/noivado_4.webp';
 import LazyImage from './LazyImage';
-
+import ScrollReveal from './ScrollReveal';
 
 const Story = () => {
   const navigate = useNavigate();
-  // const [ref, visible] = useReveal(0.2);
   const [timeLeft, setTimeLeft] = useState({
     months: 0,
     days: 0,
@@ -204,7 +203,7 @@ const Story = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           {/* Section title */}
-          <div className="text-center mb-20">
+          <ScrollReveal className="text-center mb-20">
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-4">
               Nossa História
             </h2>
@@ -212,7 +211,7 @@ const Story = () => {
             <p className="font-sans text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
             Uma história construída no cuidado, na fé e na escolha diária.
             </p>
-          </div>
+          </ScrollReveal>
 
           {/* Timeline */}
           <div className="relative">
@@ -228,9 +227,10 @@ const Story = () => {
                 const isLeft = index % 2 === 0;
 
                 return (
-                  <div
+                  <ScrollReveal
                     key={index}
                     className="relative flex flex-row md:items-center items-start"
+                    delay={Math.min(index * 0.055, 0.45)}
                   >
                     {/* Mobile Layout: Icon on left, content on right stacked */}
                     <div className="md:hidden w-auto flex justify-center shrink-0">
@@ -362,7 +362,7 @@ const Story = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </ScrollReveal>
                 );
               })}
             </div>
@@ -373,60 +373,62 @@ const Story = () => {
             id="confirmar-presenca"
             className="mt-20 scroll-mt-20 text-center md:scroll-mt-24"
           >
-            <div className="inline-block bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-primary-500 border-opacity-30">
-              <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-beige-400 mb-10 leading-normal pb-2">
-                15 de Agosto 2026
-              </p>
+            <ScrollReveal className="inline-block max-w-full">
+              <div className="inline-block bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-primary-500 border-opacity-30">
+                <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-beige-400 mb-10 leading-normal pb-2">
+                  15 de Agosto 2026
+                </p>
 
-              {/* Countdown */}
-              <div className="mb-6">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 max-w-lg mx-auto">
-                  <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                    <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
-                      {timeLeft.months}
+                {/* Countdown */}
+                <div className="mb-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 max-w-lg mx-auto">
+                    <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
+                      <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+                        {timeLeft.months}
+                      </div>
+                      <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
+                        Meses
+                      </div>
                     </div>
-                    <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
-                      Meses
+                    <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
+                      <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+                        {timeLeft.days}
+                      </div>
+                      <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
+                        Dias
+                      </div>
                     </div>
-                  </div>
-                  <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                    <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
-                      {timeLeft.days}
+                    <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
+                      <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+                        {timeLeft.hours}
+                      </div>
+                      <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
+                        Horas
+                      </div>
                     </div>
-                    <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
-                      Dias
-                    </div>
-                  </div>
-                  <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                    <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
-                      {timeLeft.hours}
-                    </div>
-                    <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
-                      Horas
-                    </div>
-                  </div>
-                  <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                    <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
-                      {timeLeft.minutes}
-                    </div>
-                    <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
-                      Min
+                    <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
+                      <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+                        {timeLeft.minutes}
+                      </div>
+                      <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">
+                        Min
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                <p className="font-sans text-lg md:text-xl text-beige-300 leading-relaxed">
+                  Estamos prontos para o próximo capítulo da nossa história, e queremos você ao nosso lado para celebrar esse momento tão especial!
+                </p>
+
+                <button
+                  onClick={() => navigate('/convite')}
+                  className="mt-8 px-8 py-4 bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-full font-serif text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 animate-pulse-slow"
+                >
+                  Confirmar Presença
+                </button>
               </div>
-
-              <p className="font-sans text-lg md:text-xl text-beige-300 leading-relaxed">
-                Estamos prontos para o próximo capítulo da nossa história, e queremos você ao nosso lado para celebrar esse momento tão especial!
-              </p>
-
-              <button
-                onClick={() => navigate('/convite')}
-                className="mt-8 px-8 py-4 bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-full font-serif text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 animate-pulse-slow"
-              >
-                Confirmar Presença
-              </button>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </div>
