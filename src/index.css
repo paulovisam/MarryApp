@@ -22,8 +22,19 @@
 }
 
 @layer base {
+  /* Suave: Lenis (html.lenis) ou fallback CSS quando não há Lenis */
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.lenis) {
+      scroll-behavior: smooth;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   html {
-    scroll-behavior: smooth;
     overflow-x: hidden;
   }
   
@@ -149,11 +160,6 @@
       transform: translateX(0);
     }
   }
-}
-
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Custom scrollbar - Transparent/Hidden */

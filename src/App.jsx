@@ -13,12 +13,14 @@ import GiftListPage from './pages/GiftListPage';
 import LoginPage from './pages/Admin/LoginPage';
 import Dashboard from './pages/Admin/Dashboard';
 import HomeEntryLoader from './components/HomeEntryLoader';
+import SmoothScroll from './components/SmoothScroll';
 // import AppV2 from './v2/App';
 
 function App() {
   return (
     <Router>
-      <Routes>
+      <SmoothScroll>
+        <Routes>
         <Route path="/" element={
           <HomeEntryLoader>
             <div className="min-h-screen overflow-x-hidden">
@@ -38,7 +40,8 @@ function App() {
         <Route path="/admin/login" element={<LoginPage />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+        </Routes>
+      </SmoothScroll>
       {/* Player de música de fundo - renderizado fora das rotas para persistir entre navegações */}
     </Router>
   );
