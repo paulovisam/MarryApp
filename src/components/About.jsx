@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { FaHeart } from 'react-icons/fa';
 import coupleImg from '../assets/couple.webp';
+import { useAboutParallax } from '../hooks/useHomeParallax';
 
 const About = () => {
   const [heartPhotoReady, setHeartPhotoReady] = useState(false);
+  const { ref: sectionRef, heartY, quoteY } = useAboutParallax();
 
   useEffect(() => {
     const img = new Image();
@@ -12,7 +15,11 @@ const About = () => {
     img.src = coupleImg;
   }, []);
   return (
-    <section id="about" className="py-20 md:py-32 bg-gradient-to-b from-gray-950 to-primary-800">
+    <section
+      id="about"
+      ref={sectionRef}
+      className="overflow-hidden bg-gradient-to-b from-gray-950 to-primary-800 py-20 md:py-32"
+    >
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Section title */}
@@ -25,7 +32,10 @@ const About = () => {
           </div>
 
           {/* Single Heart with Photo */}
-          <div className="flex justify-center">
+          <motion.div
+            className="flex justify-center will-change-transform"
+            style={{ y: heartY }}
+          >
             <div className="relative">
               {/* Glow effect */}
               <div className="absolute inset-0 bg-burgundy-600 opacity-10 blur-2xl scale-110"></div>
@@ -65,7 +75,7 @@ const About = () => {
                 </svg>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Content */}
           <div className="grid md:grid-cols-2 gap-32 md:gap-18">
@@ -91,8 +101,11 @@ const About = () => {
           </div>
 
           {/* Together section */}
-          <div className="mt-20 text-center max-w-3xl mx-auto">
-            <div className="relative overflow-hidden rounded-2xl p-8 md:p-12 shadow-2xl backdrop-blur-lg bg-white/10 border border-white/20">
+          <motion.div
+            className="mx-auto mt-20 max-w-3xl text-center will-change-transform"
+            style={{ y: quoteY }}
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-lg md:p-12">
               {/* Glass effect gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-primary-500/10 pointer-events-none"></div>
               
@@ -103,7 +116,7 @@ const About = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

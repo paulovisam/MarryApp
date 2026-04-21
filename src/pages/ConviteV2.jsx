@@ -411,16 +411,7 @@ const ConviteV2 = () => {
 
                   {/* Map embed */}
                   <div className="cv2-map-wrap">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15281.714432945437!2d-49.28928138405113!3d-16.75533834551021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935ef1d50c6ddf93%3A0x30a261e14bf1ca03!2sAD%20Cruzeiro%20do%20Sul%20-%20Igreja%20Evang%C3%A9lica%20Assembleia%20de%20Deus%20-%20Campo%20de%20Campinas!5e0!3m2!1spt-BR!2sbr!4v1770246186955!5m2!1spt-BR!2sbr"
-                      width="100%"
-                      height="230"
-                      style={{ border: 0, display: 'block' }}
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Local do casamento"
-                    />
+                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.311536674392!2d-49.22018179999999!3d-16.761169099999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935efac0b5335f7b%3A0x9eeb1523ef70191!2sCh%C3%A1cara%20Primos%20-%20Eventos%20e%20Buffet!5e0!3m2!1spt-BR!2sbr!4v1776725739931!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                   </div>
 
                   <div style={{ textAlign: 'center' }}>
@@ -431,7 +422,7 @@ const ConviteV2 = () => {
                       fontWeight: 600,
                       marginBottom: '6px',
                     }}>
-                      Assembleia de Deus Cruzeiro do Sul
+                      Chácara Primos - Eventos
                     </p>
                     <p style={{
                       fontFamily: 'Montserrat, sans-serif',
@@ -440,8 +431,7 @@ const ConviteV2 = () => {
                       opacity: 0.65,
                       lineHeight: 1.7,
                     }}>
-                      Rua Damasco com Avenida São João<br />
-                      Jardim Nova Era, Aparecida de Goiânia — GO
+                      Rua X-033, 174 Sítio santa luzia Sitio - Sítios Santa Luzia, Aparecida de Goiânia - GO, 74921-410<br />
                     </p>
                     <button className="cv2-btn-map" onClick={openMap}>
                       <FaMapMarkerAlt /> Ver no mapa
