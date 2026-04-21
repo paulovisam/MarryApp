@@ -92,10 +92,10 @@ const Hero = () => {
 
               <div className="py-8">
                 <a
-                  href="/presentes"
+                  href="#confirmar-presenca"
                   className="inline-block px-8 py-3 border border-white text-white font-serif tracking-widest hover:bg-white hover:text-slate-900 transition-all duration-300"
                 >
-                  LISTA DE PRESENTES
+                  CONFIRMAR PRESENÇA
                 </a>
               </div>
 

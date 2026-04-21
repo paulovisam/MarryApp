@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReveal } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRing, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { createPortal } from 'react-dom';
@@ -21,7 +21,7 @@ import LazyImage from './LazyImage';
 
 const Story = () => {
   const navigate = useNavigate();
-  const [ref, visible] = useReveal(0.2);
+  // const [ref, visible] = useReveal(0.2);
   const [timeLeft, setTimeLeft] = useState({
     months: 0,
     days: 0,
@@ -368,8 +368,11 @@ const Story = () => {
             </div>
           </div>
 
-          {/* Final message */}
-          <div className="mt-20 text-center">
+          {/* Final message — âncora para CTA “Confirmar presença” (Hero etc.) */}
+          <div
+            id="confirmar-presenca"
+            className="mt-20 scroll-mt-20 text-center md:scroll-mt-24"
+          >
             <div className="inline-block bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-primary-500 border-opacity-30">
               <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-beige-400 mb-10 leading-normal pb-2">
                 15 de Agosto 2026

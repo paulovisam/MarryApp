@@ -82,7 +82,7 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                     <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl mb-6 flex gap-4 items-center">
                         <img src={gift.image_url} alt="" className="w-16 h-16 object-cover rounded-lg bg-white" />
                         <div>
-                            <h4 className="font-semibold text-slate-900 dark:text-white">{gift.title}</h4>
+                            <h4 className="font-sans font-semibold text-slate-900 dark:text-white">{gift.title}</h4>
                             <p className="text-600 font-bold">R$ {gift.price}</p>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                     )}
 
                     <div className="space-y-4 animate-fadeIn">
-                        <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-2">Seus Dados</h4>
+                        <h4 className="font-sans text-slate-700 dark:text-slate-300 mb-2">Seus Dados</h4>
                         <input
                             name="name"
                             placeholder="Nome Completo"

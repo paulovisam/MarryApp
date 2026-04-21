@@ -9,6 +9,7 @@ const LazyImage = ({
   wrapperClassName = '',
   imgClassName = '',
   loading = 'lazy',
+  sizes,
 }) => {
   const [ready, setReady] = useState(false);
 
@@ -32,6 +33,7 @@ const LazyImage = ({
         alt={alt}
         loading={loading}
         decoding="async"
+        sizes={sizes}
         className={`h-full w-full transition-opacity duration-500 ${ready ? 'opacity-100' : 'opacity-0'} ${imgClassName}`}
         onLoad={() => setReady(true)}
         onError={() => setReady(true)}

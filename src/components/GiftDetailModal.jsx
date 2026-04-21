@@ -41,7 +41,7 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                 className={`relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900 ${isSoldOut ? 'ring-2 ring-amber-200/70 dark:ring-amber-500/35' : ''}`}
             >
                 <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 sm:px-5">
-                    <h2 id="gift-detail-title" className="font-serif text-lg text-burgundy-700 dark:text-burgundy-400 sm:text-xl">
+                    <h2 id="gift-detail-title" className="font-sans text-lg text-burgundy-700 dark:text-burgundy-400 sm:text-xl">
                         Detalhes do presente
                     </h2>
                     <button
@@ -78,7 +78,7 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                             </p>
                         )}
                         <div>
-                            <h3 className="font-serif text-xl text-slate-900 dark:text-white sm:text-2xl">
+                            <h3 className="font-sans text-xl text-slate-900 dark:text-white sm:text-2xl">
                                 {gift.title}
                             </h3>
                             {gift.description ? (
@@ -102,7 +102,7 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                             </div>
                         )}
 
-                        <p className="font-serif text-2xl font-semibold tabular-nums text-burgundy-700 dark:text-burgundy-400">
+                        <p className="font-sans text-2xl font-semibold tabular-nums text-burgundy-700 dark:text-burgundy-400">
                             {priceLabel}
                         </p>
                     </div>
