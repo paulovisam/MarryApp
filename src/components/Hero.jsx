@@ -77,7 +77,7 @@ const Hero = () => {
           </header>
 
           {/* Mobile: centro vertical; desktop: fluxo normal */}
-          <div className="flex min-h-0 flex-1 flex-col justify-center py-6 md:flex-none md:justify-start md:py-">
+          <div className="flex min-h-0 flex-1 flex-col justify-center py-6 md:flex-none md:justify-start md:py-0">
             <h1 className="mx-auto max-w-[min(100%,24rem)] text-center font-serif text-[clamp(2.35rem,10.5vw,4rem)] font-light leading-[1.06] tracking-wider text-white sm:max-w-none sm:text-6xl sm:leading-none md:max-w-none md:pt-20 md:pb-32 md:text-8xl lg:text-9xl">
               <span className="block sm:inline">Paulo &</span>{' '}
               <span className="block sm:inline">Sara</span>
@@ -147,13 +147,16 @@ const Hero = () => {
       </motion.div>
 
       <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-gray-950 to-transparent" />
-      <a
-        href="#about"
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce"
-        aria-label="Rolar para a seção sobre os noivos"
-      >
-        <FaChevronDown className="text-2xl text-burgundy-400 opacity-50 transition-opacity hover:opacity-100" />
-      </a>
+      {/* Wrapper flex: bounce usa transform no <a> e anula left-1/2 -translate-x-1/2 no mesmo nó */}
+      <div className="pointer-events-none absolute bottom-10 left-0 right-0 z-20 flex justify-center px-3 sm:px-4">
+        <a
+          href="#about"
+          className="pointer-events-auto animate-bounce"
+          aria-label="Rolar para a seção sobre os noivos"
+        >
+          <FaChevronDown className="text-2xl text-burgundy-400 opacity-50 transition-opacity hover:opacity-100" />
+        </a>
+      </div>
     </section>
   );
 };
