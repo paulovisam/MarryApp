@@ -18,7 +18,7 @@ export default function AmbientMuteButton() {
     <button
       type="button"
       onClick={toggleMuted}
-      className="fixed z-50 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/30 text-white/45 shadow-sm backdrop-blur-md transition-[color,background-color,opacity,transform] duration-200 hover:scale-105 hover:bg-black/45 hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-beige-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent motion-reduce:transition-none"
+      className="fixed z-50 flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-full border border-white/15 bg-black/30 text-white/45 shadow-sm backdrop-blur-md transition-[color,background-color,opacity,transform] duration-200 hover:scale-105 hover:bg-black/45 hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-beige-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent motion-reduce:transition-none sm:min-h-9 sm:min-w-9"
       style={{
         right: 'max(0.75rem, env(safe-area-inset-right, 0px))',
         bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))',

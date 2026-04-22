@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import hallelujahSrc from '../assets/hallelujah.mp3';
+import hallelujahMp3 from '../assets/hallelujah_cut.mp3';
 
 const AmbientAudioContext = createContext(null);
 const AMBIENT_MUSIC_VOLUME = 0.35;
@@ -11,7 +11,7 @@ const AMBIENT_MUSIC_VOLUME = 0.35;
 export function AmbientAudioProvider({ children }) {
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
-  /** Só fica true após a música realmente iniciar (clique em Confirmar presença + play OK). */
+  /** True quando o áudio está ou já esteve a tocar (autoplay, 1.º gesto ou CTA). */
   const [isAmbientActive, setIsAmbientActive] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function AmbientAudioProvider({ children }) {
     if (el) el.volume = AMBIENT_MUSIC_VOLUME;
   }, []);
 
-  const playAmbient = useCallback(() => {
+  const tryStartAmbient = useCallback(() => {
     const el = audioRef.current;
     if (!el) return;
     el.volume = AMBIENT_MUSIC_VOLUME;
@@ -28,12 +28,39 @@ export function AmbientAudioProvider({ children }) {
         .play()
         .then(() => setIsAmbientActive(true))
         .catch(() => {
-          // Sem botão de mute se o áudio não puder tocar
+          // Política de autoplay: comum falhar até haver gesto do utilizador
         });
     } else {
       setIsAmbientActive(true);
     }
   }, []);
+
+  const playAmbient = tryStartAmbient;
+
+  /**
+   * 1) Tenta tocar ao montar (geralmente bloqueado sem gesto).
+   * 2) Primeiro gesto: listeners em document com capture:true (antes do Lenis) + touch para mobile.
+   */
+  useEffect(() => {
+    tryStartAmbient();
+
+    const onGesture = () => {
+      tryStartAmbient();
+    };
+
+    const captureOnce = { capture: true, passive: true, once: true };
+    document.addEventListener('touchstart', onGesture, captureOnce);
+    document.addEventListener('touchend', onGesture, captureOnce);
+    document.addEventListener('pointerdown', onGesture, captureOnce);
+    window.addEventListener('keydown', onGesture, { once: true });
+
+    return () => {
+      document.removeEventListener('touchstart', onGesture, { capture: true });
+      document.removeEventListener('touchend', onGesture, { capture: true });
+      document.removeEventListener('pointerdown', onGesture, { capture: true });
+      window.removeEventListener('keydown', onGesture);
+    };
+  }, [tryStartAmbient]);
 
   const toggleMuted = useCallback(() => {
     const el = audioRef.current;
@@ -48,7 +75,7 @@ export function AmbientAudioProvider({ children }) {
       {children}
       <audio
         ref={audioRef}
-        src={hallelujahSrc}
+        src={hallelujahMp3}
         preload="none"
         loop
         playsInline

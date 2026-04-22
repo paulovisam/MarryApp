@@ -47,7 +47,7 @@ const Hero = () => {
       >
         <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col md:block md:flex-none">
           {/* Mobile: topo da tela — monograma + Nosso / Amor */}
-          <header className="shrink-0 space-y-3 px-1 sm:space-y-4 sm:px-2 md:space-y-0 md:px-0">
+          <header className="shrink-0 space-y-3 px-1 pt-12 sm:space-y-4 sm:px-2 md:space-y-0 md:px-0">
             <div className="flex animate-fadeIn justify-center md:mb-4">
               <h3 className="font-serif text-4xl font-light leading-none tracking-wider text-white sm:text-5xl md:text-6xl lg:text-7xl">
                 P | S
@@ -79,7 +79,7 @@ const Hero = () => {
           </header>
 
           {/* Mobile: centro vertical; desktop: fluxo normal */}
-          <div className="flex min-h-0 flex-1 flex-col justify-center py-6 md:flex-none md:justify-start md:py-0">
+          <div className="flex min-h-0 flex-1 flex-col justify-upwards pt-20 md:flex-none md:justify-start md:py-0">
             <h1 className="mx-auto max-w-[min(100%,24rem)] text-center font-serif text-[clamp(2.35rem,10.5vw,4rem)] font-light leading-[1.06] tracking-wider text-white sm:max-w-none sm:text-6xl sm:leading-none md:max-w-none md:pt-20 md:pb-32 md:text-8xl lg:text-9xl">
               <span className="block sm:inline">Paulo &</span>{' '}
               <span className="block sm:inline">Sara</span>
