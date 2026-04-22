@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
-import { useAmbientAudio } from '../contexts/AmbientAudioContext';
+import { isAmbientAudioBlocked, useAmbientAudio } from '../contexts/AmbientAudioContext';
 
 /**
  * Controle discreto de mute da música ambiente — canto inferior direito, baixo contraste até hover.
@@ -10,7 +10,7 @@ export default function AmbientMuteButton() {
   const { pathname } = useLocation();
   const { isMuted, toggleMuted, isAmbientActive } = useAmbientAudio();
 
-  if (pathname.startsWith('/admin') || !isAmbientActive) {
+  if (isAmbientAudioBlocked(pathname) || !isAmbientActive) {
     return null;
   }
 

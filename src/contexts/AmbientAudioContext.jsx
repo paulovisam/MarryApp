@@ -1,14 +1,24 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import hallelujahMp3 from '../assets/hallelujah_cut.mp3';
 
 const AmbientAudioContext = createContext(null);
 const AMBIENT_MUSIC_VOLUME = 0.35;
+
+/** Rotas em que a música ambiente não deve tocar nem ser iniciada. */
+export function isAmbientAudioBlocked(pathname) {
+  return pathname.startsWith('/admin') || pathname === '/presentes';
+}
 
 /**
  * Áudio em streaming progressivo: preload="none" evita download até o primeiro play
  * (melhor em redes lentas); o navegador continua recebendo o arquivo aos poucos durante a reprodução.
  */
 export function AmbientAudioProvider({ children }) {
+  const { pathname } = useLocation();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
+
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
   /** True quando o áudio está ou já esteve a tocar (autoplay, 1.º gesto ou CTA). */
@@ -20,6 +30,7 @@ export function AmbientAudioProvider({ children }) {
   }, []);
 
   const tryStartAmbient = useCallback(() => {
+    if (isAmbientAudioBlocked(pathnameRef.current)) return;
     const el = audioRef.current;
     if (!el) return;
     el.volume = AMBIENT_MUSIC_VOLUME;
@@ -37,11 +48,25 @@ export function AmbientAudioProvider({ children }) {
 
   const playAmbient = tryStartAmbient;
 
+  /** Em rotas bloqueadas: pausa e esconde o controlo de mute. */
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    if (isAmbientAudioBlocked(pathname)) {
+      el.pause();
+      setIsAmbientActive(false);
+    }
+  }, [pathname]);
+
   /**
-   * 1) Tenta tocar ao montar (geralmente bloqueado sem gesto).
-   * 2) Primeiro gesto: listeners em document com capture:true (antes do Lenis) + touch para mobile.
+   * 1) Tenta tocar ao entrar numa rota permitida (geralmente bloqueado sem gesto).
+   * 2) Primeiro gesto: listeners só quando a rota permite música.
    */
   useEffect(() => {
+    if (isAmbientAudioBlocked(pathname)) {
+      return undefined;
+    }
+
     tryStartAmbient();
 
     const onGesture = () => {
@@ -60,9 +85,10 @@ export function AmbientAudioProvider({ children }) {
       document.removeEventListener('pointerdown', onGesture, { capture: true });
       window.removeEventListener('keydown', onGesture);
     };
-  }, [tryStartAmbient]);
+  }, [tryStartAmbient, pathname]);
 
   const toggleMuted = useCallback(() => {
+    if (isAmbientAudioBlocked(pathnameRef.current)) return;
     const el = audioRef.current;
     if (!el) return;
     const next = !el.muted;
