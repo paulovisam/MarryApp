@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaChevronDown } from 'react-icons/fa';
 import homeImg from '../assets/home.webp';
+import homeMobileImg from '../assets/home_mobile.webp';
 import { useHeroParallax } from '../hooks/useHomeParallax';
 
 const Hero = () => {
@@ -10,16 +11,19 @@ const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+      className="relative flex min-h-[100dvh] flex-col items-stretch overflow-hidden md:min-h-screen md:flex md:items-center md:justify-center"
     >
-      <motion.img
-        src={homeImg}
-        alt=""
-        fetchPriority="high"
-        decoding="async"
-        style={{ y: bgY, scale: bgScale }}
-        className="absolute inset-0 h-[115%] w-full origin-center object-cover object-center will-change-transform"
-      />
+      <picture className="absolute inset-0">
+        <source media="(min-width: 768px)" srcSet={homeImg} />
+        <motion.img
+          src={homeMobileImg}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          style={{ y: bgY, scale: bgScale }}
+          className="absolute inset-0 h-[115%] w-full origin-center object-cover object-center will-change-transform"
+        />
+      </picture>
 
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/30 via-slate-900/50 to-gray-900/30" />
 
@@ -36,47 +40,81 @@ const Hero = () => {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDIiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20" />
 
       <motion.div
-        className="container relative z-10 mx-auto px-4 py-20 will-change-transform"
+        className="container relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col px-3 pt-[max(0.75rem,env(safe-area-inset-top))] will-change-transform sm:px-4 md:flex-none md:px-4 md:py-20 md:pb-24 md:pt-20"
         style={{ y: contentY }}
       >
-        <div className="">
-          <div className="mb-4 flex animate-fadeIn justify-center">
-            <h3 className="mb-4 font-serif text-5xl font-light leading-none tracking-wider text-white md:text-6xl lg:text-7xl">
-              P | S
-            </h3>
-          </div>
+        <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col md:block md:flex-none">
+          {/* Mobile: topo da tela — monograma + Nosso / Amor */}
+          <header className="shrink-0 space-y-3 px-1 sm:space-y-4 sm:px-2 md:space-y-0 md:px-0">
+            <div className="flex animate-fadeIn justify-center md:mb-4">
+              <h3 className="font-serif text-4xl font-light leading-none tracking-wider text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                P | S
+              </h3>
+            </div>
 
-          <div className="mx-auto mb-16 flex max-w-4xl items-center justify-center">
-            <div className="flex-1 pr-6 text-right">
-              <p className="mb-2 font-sans text-xs uppercase tracking-[0.25em] text-gray-400 md:text-sm">
-                Nosso
-              </p>
-              <p className="font-serif text-base text-white md:text-lg">
-                Celebração
-              </p>
+            <div className="mx-auto flex max-w-4xl items-center justify-center md:mb-16">
+              <div className="min-w-0 flex-1 pr-2 text-right sm:pr-4 md:pr-6">
+                <p className="mb-1 font-sans text-[10px] uppercase tracking-[0.18em] text-gray-400 sm:mb-2 sm:text-xs sm:tracking-[0.25em] md:text-sm">
+                  Nosso
+                </p>
+                <p className="font-serif text-sm text-white sm:text-base md:text-lg">
+                  Celebração
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-col items-center px-1 sm:px-2">
+                <div className="h-10 w-0.5 bg-gradient-to-b from-transparent to-secondary-500 opacity-60 sm:h-12 md:h-16 md:w-0.5" />
+                <div className="h-10 w-0.5 bg-gradient-to-t from-transparent to-secondary-500 opacity-60 sm:h-12 md:h-16 md:w-0.5" />
+              </div>
+              <div className="min-w-0 flex-1 pl-2 text-left sm:pl-4 md:pl-6">
+                <p className="mb-1 font-sans text-[10px] uppercase tracking-[0.18em] text-gray-400 sm:mb-2 sm:text-xs sm:tracking-[0.25em] md:text-sm">
+                  Amor
+                </p>
+                <p className="font-serif text-sm text-white sm:text-base md:text-lg">
+                  Casamento
+                </p>
+              </div>
             </div>
-            <div className="">
-              <div className="h-16 w-[2px] bg-gradient-to-b from-transparent to-secondary-500 opacity-50" />
-              <div className="h-16 w-[2px] bg-gradient-to-t from-transparent to-secondary-500 opacity-50" />
-            </div>
-            <div className="flex-1 pl-6 text-left">
-              <p className="mb-2 font-sans text-xs uppercase tracking-[0.25em] text-gray-400 md:text-sm">
-                Amor
-              </p>
-              <p className="font-serif text-base text-white md:text-lg">
-                Casamento
-              </p>
-            </div>
-          </div>
+          </header>
 
-          <div className="space-y-12 text-center">
-            <h1 className="pb-52 font-serif text-7xl font-light leading-none tracking-wider text-white md:text-8xl lg:text-9xl">
-              Paulo & Sara
+          {/* Mobile: centro vertical; desktop: fluxo normal */}
+          <div className="flex min-h-0 flex-1 flex-col justify-center py-6 md:flex-none md:justify-start md:py-0">
+            <h1 className="mx-auto max-w-[min(100%,24rem)] text-center font-serif text-[clamp(2.35rem,10.5vw,4rem)] font-light leading-[1.06] tracking-wider text-white sm:max-w-none sm:text-6xl sm:leading-none md:max-w-none md:pb-52 md:text-8xl lg:text-9xl">
+              <span className="block sm:inline">Paulo &</span>{' '}
+              <span className="block sm:inline">Sara</span>
             </h1>
           </div>
 
-          <div className="flex items-center justify-center pt-8">
-            <div className="flex-1 pr-6 text-right">
+          {/* Mobile: rodapé da tela — grid + CTA (margem + safe area + espaço do chevron) */}
+          <div className="mt-auto flex w-full shrink-0 flex-col items-center gap-6 px-1 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+5rem))] pt-2 sm:gap-7 sm:px-2 md:hidden">
+            <div className="grid w-full grid-cols-2 gap-x-3 gap-y-1 sm:gap-x-6">
+              <div className="min-w-0 text-right">
+                <p className="mb-1 font-sans text-[10px] uppercase tracking-[0.18em] text-gray-400 sm:text-xs sm:tracking-[0.25em]">
+                  História
+                </p>
+                <p className="font-serif text-sm leading-snug text-white sm:text-base">
+                  15 de Agosto, 2026
+                </p>
+              </div>
+              <div className="min-w-0 text-left">
+                <p className="mb-1 font-sans text-[10px] uppercase tracking-[0.18em] text-gray-400 sm:text-xs sm:tracking-[0.25em]">
+                  Memórias
+                </p>
+                <p className="font-serif text-sm leading-snug text-white sm:text-base">
+                  Para Sempre
+                </p>
+              </div>
+            </div>
+            <a
+              href="#confirmar-presenca"
+              className="flex min-h-[48px] w-full max-w-sm items-center justify-center border border-white px-4 py-3.5 text-center font-serif text-[11px] tracking-[0.18em] text-white transition-all duration-300 active:bg-white/10 hover:bg-white hover:text-slate-900 sm:text-xs sm:tracking-widest"
+            >
+              CONFIRMAR PRESENÇA
+            </a>
+          </div>
+
+          {/* Tablet+ : layout original em três colunas */}
+          <div className="hidden items-center justify-center pt-6 md:flex md:pt-8">
+            <div className="min-w-0 flex-1 pr-4 text-right md:pr-6">
               <p className="mb-2 font-sans text-xs uppercase tracking-[0.25em] text-gray-400 md:text-sm">
                 História
               </p>
@@ -84,9 +122,8 @@ const Hero = () => {
                 15 de Agosto, 2026
               </p>
             </div>
-            <div className="">
-              <div className="h-16 w-[2px] bg-gradient-to-b from-transparent to-primary-500 opacity-50" />
-
+            <div className="flex shrink-0 flex-col items-center">
+              <div className="h-16 w-0.5 bg-gradient-to-b from-transparent to-primary-500 opacity-50" />
               <div className="py-8">
                 <a
                   href="#confirmar-presenca"
@@ -95,10 +132,9 @@ const Hero = () => {
                   CONFIRMAR PRESENÇA
                 </a>
               </div>
-
-              <div className="h-16 w-[2px] bg-gradient-to-t from-transparent to-primary-500 opacity-50" />
+              <div className="h-16 w-0.5 bg-gradient-to-t from-transparent to-primary-500 opacity-50" />
             </div>
-            <div className="flex-1 pl-6 text-left">
+            <div className="min-w-0 flex-1 pl-4 text-left md:pl-6">
               <p className="mb-2 font-sans text-xs uppercase tracking-[0.25em] text-gray-400 md:text-sm">
                 Memórias
               </p>
