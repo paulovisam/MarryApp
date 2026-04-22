@@ -159,7 +159,7 @@ const Convite = () => {
                 Chácara Primos - Eventos
               </p>
               <p className="font-serif text-base md:text-lg text-primary-900">
-                Rua X-033, 174 Sítio santa luzia Sitio - Sítios Santa Luzia, Aparecida de Goiânia - GO, 74921-410
+                Rua X-033, 174 - Sítios Santa Luzia, Aparecida de Goiânia - GO, 74921-410
               </p>
             </div>
           </div>
