@@ -4,9 +4,11 @@ import { FaChevronDown } from 'react-icons/fa';
 import homeImg from '../assets/home.webp';
 import homeMobileImg from '../assets/home_mobile.webp';
 import { useHeroParallax } from '../hooks/useHomeParallax';
+import { useAmbientAudio } from '../contexts/AmbientAudioContext';
 
 const Hero = () => {
   const { ref: sectionRef, bgY, bgScale, contentY, blobY } = useHeroParallax();
+  const { playAmbient } = useAmbientAudio();
 
   return (
     <section
@@ -106,6 +108,7 @@ const Hero = () => {
             </div>
             <a
               href="#confirmar-presenca"
+              onClick={() => playAmbient()}
               className="flex min-h-[48px] w-full max-w-sm items-center justify-center border border-white px-4 py-3.5 text-center font-serif text-[11px] tracking-[0.18em] text-white transition-all duration-300 active:bg-white/10 hover:bg-white hover:text-slate-900 sm:text-xs sm:tracking-widest"
             >
               CONFIRMAR PRESENÇA
@@ -127,6 +130,7 @@ const Hero = () => {
               <div className="py-8">
                 <a
                   href="#confirmar-presenca"
+                  onClick={() => playAmbient()}
                   className="inline-block border border-white px-8 py-3 font-serif tracking-widest text-white transition-all duration-300 hover:bg-white hover:text-slate-900"
                 >
                   CONFIRMAR PRESENÇA

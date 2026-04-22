@@ -14,11 +14,14 @@ import LoginPage from './pages/Admin/LoginPage';
 import Dashboard from './pages/Admin/Dashboard';
 import HomeEntryLoader from './components/HomeEntryLoader';
 import SmoothScroll from './components/SmoothScroll';
+import { AmbientAudioProvider } from './contexts/AmbientAudioContext';
+import AmbientMuteButton from './components/AmbientMuteButton';
 // import AppV2 from './v2/App';
 
 function App() {
   return (
     <Router>
+      <AmbientAudioProvider>
       <SmoothScroll>
         <Routes>
         <Route path="/" element={
@@ -42,6 +45,8 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </SmoothScroll>
+      <AmbientMuteButton />
+      </AmbientAudioProvider>
       {/* Player de música de fundo - renderizado fora das rotas para persistir entre navegações */}
     </Router>
   );

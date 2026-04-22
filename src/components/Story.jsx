@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import confetti from 'canvas-confetti';
+import { useReducedMotion } from 'framer-motion';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRing, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { createPortal } from 'react-dom';
 
@@ -19,8 +21,63 @@ import noivado4 from '../assets/story/noivado_4.webp';
 import LazyImage from './LazyImage';
 import ScrollReveal from './ScrollReveal';
 
+/** Dourado e bege — alinhado à paleta do site (celebração discreta). */
+const CONFIRMAR_PRESENCA_CONFETTI_COLORS = [
+  '#B8942E',
+  '#C9A227',
+  '#D4AF37',
+  '#E6C65C',
+  '#E8DCC8',
+  '#E0D0BA',
+  '#D4BE9F',
+  '#F2E8D5',
+];
+
+function fireConfirmarPresencaConfetti() {
+  const base = {
+    colors: CONFIRMAR_PRESENCA_CONFETTI_COLORS,
+    ticks: 260,
+    gravity: 0.88,
+    scalar: 0.92,
+    drift: 0.04,
+    zIndex: 120,
+  };
+
+  // 1
+  confetti({
+    ...base,
+    angle: 125,
+    particleCount: 88,
+    spread: 100,
+    startVelocity: 40,
+    origin: { x: 0.25, y: 0.42 },
+  });
+  // 3
+  confetti({
+    ...base,
+    angle: 60,
+    particleCount: 88,
+    spread: 100,
+    startVelocity: 40,
+    origin: { x: 0.75, y: 0.42 },
+  });
+  // 2
+  window.setTimeout(() => {
+    confetti({
+      ...base,
+      particleCount: 100,
+      spread: 100,
+      startVelocity: 34,
+      origin: { x: 0.5, y: 0.2 },
+    });
+  }, 200);
+}
+
 const Story = () => {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
+  const confirmarPresencaRef = useRef(null);
+  const confettiPresencaFired = useRef(false);
   const [timeLeft, setTimeLeft] = useState({
     months: 0,
     days: 0,
@@ -107,6 +164,25 @@ const Story = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    const el = confirmarPresencaRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || confettiPresencaFired.current) return;
+        confettiPresencaFired.current = true;
+        fireConfirmarPresencaConfetti();
+        observer.disconnect();
+      },
+      { threshold: 0.32, rootMargin: '0px 0px -6% 0px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [reduceMotion]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -371,6 +447,7 @@ const Story = () => {
           {/* Final message — âncora para CTA “Confirmar presença” (Hero etc.) */}
           <div
             id="confirmar-presenca"
+            ref={confirmarPresencaRef}
             className="mt-20 scroll-mt-20 text-center md:scroll-mt-24"
           >
             <ScrollReveal className="inline-block max-w-full">
