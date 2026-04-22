@@ -40,7 +40,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDIiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20" />
 
       <motion.div
-        className="container relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col px-3 pt-[max(0.75rem,env(safe-area-inset-top))] will-change-transform sm:px-4 md:flex-none md:px-4 md:py-20 md:pb-24 md:pt-20"
+        className="container relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col px-3 pt-[max(0.75rem,env(safe-area-inset-top))] will-change-transform sm:px-4 md:flex-none md:px-4 md:py-20 md:pb-10 md:pt-10"
         style={{ y: contentY }}
       >
         <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col md:block md:flex-none">
@@ -77,8 +77,8 @@ const Hero = () => {
           </header>
 
           {/* Mobile: centro vertical; desktop: fluxo normal */}
-          <div className="flex min-h-0 flex-1 flex-col justify-center py-6 md:flex-none md:justify-start md:py-0">
-            <h1 className="mx-auto max-w-[min(100%,24rem)] text-center font-serif text-[clamp(2.35rem,10.5vw,4rem)] font-light leading-[1.06] tracking-wider text-white sm:max-w-none sm:text-6xl sm:leading-none md:max-w-none md:pb-52 md:text-8xl lg:text-9xl">
+          <div className="flex min-h-0 flex-1 flex-col justify-center py-6 md:flex-none md:justify-start md:py-">
+            <h1 className="mx-auto max-w-[min(100%,24rem)] text-center font-serif text-[clamp(2.35rem,10.5vw,4rem)] font-light leading-[1.06] tracking-wider text-white sm:max-w-none sm:text-6xl sm:leading-none md:max-w-none md:pt-20 md:pb-32 md:text-8xl lg:text-9xl">
               <span className="block sm:inline">Paulo &</span>{' '}
               <span className="block sm:inline">Sara</span>
             </h1>
