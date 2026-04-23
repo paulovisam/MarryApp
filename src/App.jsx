@@ -40,6 +40,7 @@ function App() {
         {/* <Route path="/convite-v2" element={<ConviteV2 />} /> */}
         <Route path="/presentes" element={<GiftListPage />} />
         {/* <Route path="/v2" element={<AppV2 />} /> */}
+        <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />

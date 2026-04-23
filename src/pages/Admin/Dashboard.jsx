@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     IoGiftOutline,
@@ -31,6 +31,7 @@ const Dashboard = () => {
         description: '',
     });
     const [searchTerm, setSearchTerm] = useState('');
+    const [giftSort, setGiftSort] = useState('name-asc');
     const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
 
     const imagePreviewUrl = formData.image_url?.trim() || '';
@@ -55,7 +56,34 @@ const Dashboard = () => {
     const totalMoney = gifts.reduce((acc, g) => acc + (g.purchased_quantity * g.price), 0);
     const totalGiftsSold = gifts.reduce((acc, g) => acc + g.purchased_quantity, 0);
 
-    const filteredGifts = gifts.filter(gift => gift.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredGifts = useMemo(() => {
+        const term = searchTerm.toLowerCase();
+        const filtered = gifts.filter((gift) =>
+            gift.title.toLowerCase().includes(term)
+        );
+        const sorted = [...filtered].sort((a, b) => {
+            const titleA = a.title ?? '';
+            const titleB = b.title ?? '';
+            const priceA = Number(a.price) || 0;
+            const priceB = Number(b.price) || 0;
+            switch (giftSort) {
+                case 'name-desc':
+                    return titleB.localeCompare(titleA, 'pt-BR', {
+                        sensitivity: 'base',
+                    });
+                case 'price-asc':
+                    return priceA - priceB;
+                case 'price-desc':
+                    return priceB - priceA;
+                case 'name-asc':
+                default:
+                    return titleA.localeCompare(titleB, 'pt-BR', {
+                        sensitivity: 'base',
+                    });
+            }
+        });
+        return sorted;
+    }, [gifts, searchTerm, giftSort]);
 
     // Handlers
     const openAddModal = () => {
@@ -125,7 +153,7 @@ const Dashboard = () => {
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'rsvps' ? 'bg-burgundy-600' : 'hover:bg-slate-700'}`}
                     >
                         <IoPeopleOutline size={20} />
-                        Presença ({rsvps.length})
+                        Convidados ({rsvps.length})
                     </button>
 
                     <button
@@ -164,7 +192,7 @@ const Dashboard = () => {
                             }`}
                     >
                         <IoPeopleOutline size={18} />
-                        Presença
+                        Convidados
                     </button>
                     <button
                         onClick={() => setActiveTab('gifts')}
@@ -251,8 +279,8 @@ const Dashboard = () => {
                         <div className="p-6">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                                 <h3 className="text-xl font-bold font-sans dark:text-white">Gerenciar Presentes</h3>
-                                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                                    <div className="relative">
+                                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:flex-wrap md:justify-end">
+                                    <div className="relative w-full sm:min-w-[200px] sm:flex-1 md:w-auto md:max-w-xs">
                                         <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <input
                                             type="text"
@@ -262,6 +290,20 @@ const Dashboard = () => {
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
                                     </div>
+                                    <label className="flex w-full flex-col gap-1 sm:w-auto">
+                                        <span className="sr-only">Ordenar por</span>
+                                        <select
+                                            value={giftSort}
+                                            onChange={(e) => setGiftSort(e.target.value)}
+                                            className="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white sm:min-w-[220px]"
+                                            aria-label="Ordenar presentes por nome ou valor"
+                                        >
+                                            <option value="name-asc">Nome (A–Z)</option>
+                                            <option value="name-desc">Nome (Z–A)</option>
+                                            <option value="price-asc">Valor (menor primeiro)</option>
+                                            <option value="price-desc">Valor (maior primeiro)</option>
+                                        </select>
+                                    </label>
                                     <button onClick={openAddModal} className="flex items-center justify-center gap-2 bg-burgundy-600 text-white px-4 py-2 rounded-lg hover:bg-burgundy-700 w-full sm:w-auto">
                                         <IoAdd /> Adicionar Novo
                                     </button>

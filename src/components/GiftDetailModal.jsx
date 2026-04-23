@@ -3,8 +3,13 @@ import { IoClose, IoGiftOutline } from 'react-icons/io5';
 import LazyImage from './LazyImage';
 
 const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
-    const isSoldOut = gift.purchased_quantity >= gift.total_quantity;
-    const percent = Math.min((gift.purchased_quantity / gift.total_quantity) * 100, 100);
+    const purchasedQty = Math.max(0, Number(gift.purchased_quantity) || 0);
+    const totalQty = Math.max(0, Number(gift.total_quantity) || 0);
+    const isSoldOut = totalQty > 0 && purchasedQty >= totalQty;
+    const percent =
+        totalQty > 0 ? Math.min((purchasedQty / totalQty) * 100, 100) : 0;
+    const cotasText =
+        totalQty > 0 ? `${purchasedQty}/${totalQty}` : `${purchasedQty}/—`;
 
     useEffect(() => {
         const prev = document.body.style.overflow;
@@ -88,10 +93,10 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                             ) : null}
                         </div>
 
-                        {!isSoldOut && percent > 0 && (
+                        {!isSoldOut && totalQty > 0 && percent > 0 && (
                             <div>
                                 <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
-                                    Arrecadação parcial
+                                    Cotas presenteadas
                                 </p>
                                 <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                                     <div
@@ -102,9 +107,17 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                             </div>
                         )}
 
-                        <p className="font-sans text-2xl font-semibold tabular-nums text-burgundy-700 dark:text-burgundy-400">
-                            {priceLabel}
-                        </p>
+                        <div className="flex flex-col gap-0.5">
+                            <p className="font-sans text-2xl font-semibold tabular-nums text-burgundy-700 dark:text-burgundy-400">
+                                {priceLabel}
+                            </p>
+                            <p
+                                className="text-xs font-normal tabular-nums leading-snug text-slate-500 dark:text-slate-400 sm:text-sm"
+                                aria-label={`Cotas: ${cotasText.replace('/', ' de ')}`}
+                            >
+                                Cotas · {cotasText}
+                            </p>
+                        </div>
                     </div>
                 </div>
 

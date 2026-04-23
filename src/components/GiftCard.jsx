@@ -3,8 +3,13 @@ import { IoGiftOutline } from 'react-icons/io5';
 import LazyImage from './LazyImage';
 
 const GiftCard = ({ gift, onBuy, onSelect }) => {
-    const isSoldOut = gift.purchased_quantity >= gift.total_quantity;
-    const percent = Math.min((gift.purchased_quantity / gift.total_quantity) * 100, 100);
+    const purchasedQty = Math.max(0, Number(gift.purchased_quantity) || 0);
+    const totalQty = Math.max(0, Number(gift.total_quantity) || 0);
+    const isSoldOut = totalQty > 0 && purchasedQty >= totalQty;
+    const percent =
+        totalQty > 0 ? Math.min((purchasedQty / totalQty) * 100, 100) : 0;
+    const cotasText =
+        totalQty > 0 ? `${purchasedQty}/${totalQty}` : `${purchasedQty}/—`;
 
     return (
         <article
@@ -53,9 +58,17 @@ const GiftCard = ({ gift, onBuy, onSelect }) => {
             </button>
 
             <div className="flex min-h-0 flex-col gap-2 border-t border-slate-100 px-2 pb-2 pt-2 dark:border-slate-700 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-5 sm:pb-5 sm:pt-3">
-                <span className="shrink-0 text-xs font-bold tabular-nums text-burgundy-700 dark:text-burgundy-400 sm:text-lg">
-                    R$ {Number(gift.price).toFixed(2).replace('.', ',')}
-                </span>
+                <div className="flex min-w-0 flex-col gap-0.5">
+                    <span className="shrink-0 text-xs font-bold tabular-nums text-burgundy-700 dark:text-burgundy-400 sm:text-lg">
+                        R$ {Number(gift.price).toFixed(2).replace('.', ',')}
+                    </span>
+                    <p
+                        className="text-[11px] font-normal tabular-nums leading-snug text-slate-500 dark:text-slate-400 sm:text-xs"
+                        aria-label={`Cotas: ${cotasText.replace('/', ' de ')}`}
+                    >
+                        Cotas · {cotasText}
+                    </p>
+                </div>
 
                 <button
                     type="button"
