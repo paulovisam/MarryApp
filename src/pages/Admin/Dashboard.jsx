@@ -194,7 +194,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-green-100 text-green-600 rounded-lg"><IoGiftOutline size={24} /></div>
                             <div>
-                                <p className="text-sm text-slate-500">Presentes Vendidos</p>
+                                <p className="text-sm text-slate-500">Presentes Ganhados</p>
                                 <p className="text-2xl font-bold dark:text-white">{totalGiftsSold}</p>
                             </div>
                         </div>
@@ -289,7 +289,7 @@ const Dashboard = () => {
                                             </p>
                                             <div className="mt-1 flex gap-2 text-xs text-slate-500">
                                                 <span>
-                                                    Vendidos: {gift.purchased_quantity}/
+                                                    Ganhados: {gift.purchased_quantity}/
                                                     {gift.total_quantity}
                                                 </span>
                                             </div>
@@ -470,7 +470,7 @@ const Dashboard = () => {
                                                     htmlFor="gift-qty"
                                                     className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
                                                 >
-                                                    Quantidade total
+                                                    Cotas disponíveis
                                                 </label>
                                                 <input
                                                     id="gift-qty"
