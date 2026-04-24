@@ -3,19 +3,19 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Hero from './components/Hero';
 import About from './components/About';
 import Story from './components/Story';
-import Memories from './components/Memories';
+import ConfirmarPresencaSection from './components/ConfirmarPresencaSection';
+import Details from './components/Details';
 import PreweddingGallery from './components/PreweddingGallery';
 import Footer from './components/Footer';
 import Convite from './components/Convite';
-// import BackgroundMusic from './components/BackgroundMusic';
 import GiftListPage from './pages/GiftListPage';
-// import ConviteV2 from './pages/ConviteV2';
 import LoginPage from './pages/Admin/LoginPage';
 import Dashboard from './pages/Admin/Dashboard';
 import HomeEntryLoader from './components/HomeEntryLoader';
 import SmoothScroll from './components/SmoothScroll';
 import { AmbientAudioProvider } from './contexts/AmbientAudioContext';
 import AmbientMuteButton from './components/AmbientMuteButton';
+import GiftListFab from './components/GiftListFab';
 // import AppV2 from './v2/App';
 
 function App() {
@@ -30,16 +30,15 @@ function App() {
               <Hero />
               <About />
               <Story />
+              <Details />
+              <ConfirmarPresencaSection />
               <PreweddingGallery />
-              {/* <Memories /> */}
               <Footer />
             </div>
           </HomeEntryLoader>
         } />
         <Route path="/convite" element={<Convite />} />
-        {/* <Route path="/convite-v2" element={<ConviteV2 />} /> */}
         <Route path="/presentes" element={<GiftListPage />} />
-        {/* <Route path="/v2" element={<AppV2 />} /> */}
         <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -47,6 +46,7 @@ function App() {
         </Routes>
       </SmoothScroll>
       <AmbientMuteButton />
+      <GiftListFab />
       </AmbientAudioProvider>
       {/* Player de música de fundo - renderizado fora das rotas para persistir entre navegações */}
     </Router>

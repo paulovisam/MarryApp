@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useReducedMotion } from 'framer-motion';
 import ScrollReveal from './ScrollReveal';
+import ConfirmarPresencaModal from './ConfirmarPresencaModal';
 
 /** Dourado e bege — alinhado à paleta do site (celebração discreta). */
 const CONFIRMAR_PRESENCA_CONFETTI_COLORS = [
@@ -58,7 +58,7 @@ function fireConfirmarPresencaConfetti() {
  * Confete dourado/bege ao entrar na viewport (uma vez), exceto com prefers-reduced-motion.
  */
 export default function ConfirmarPresencaCard({ timeLeft }) {
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
   const reduceMotion = useReducedMotion();
   const confirmarPresencaRef = useRef(null);
   const confettiPresencaFired = useRef(false);
@@ -86,8 +86,9 @@ export default function ConfirmarPresencaCard({ timeLeft }) {
     <div
       id="confirmar-presenca"
       ref={confirmarPresencaRef}
-      className="mt-20 scroll-mt-20 text-center md:scroll-mt-24"
+      className="my-20 scroll-my-20 text-center md:scroll-my-24"
     >
+      <ConfirmarPresencaModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <ScrollReveal className="inline-block max-w-full">
         <div className="inline-block bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-primary-500 border-opacity-30">
           <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-beige-400 mb-10 leading-normal pb-2">
@@ -130,7 +131,7 @@ export default function ConfirmarPresencaCard({ timeLeft }) {
 
           <button
             type="button"
-            onClick={() => navigate('/convite')}
+            onClick={() => setModalOpen(true)}
             className="mt-8 px-8 py-4 bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-full font-serif text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 animate-pulse-slow"
           >
             Confirmar Presença

@@ -18,17 +18,9 @@ import noivado3 from '../assets/story/noivado_3.webp';
 import noivado4 from '../assets/story/noivado_4.webp';
 import LazyImage from './LazyImage';
 import ScrollReveal from './ScrollReveal';
-import ConfirmarPresencaCard from './ConfirmarPresencaCard';
-import CerimoniaRecepcao from './CerimoniaRecepcao';
 
 const Story = () => {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState({
-    months: 0,
-    days: 0,
-    hours: 0,
-    minutes: 0
-  });
 
   const [lightbox, setLightbox] = useState({
     isOpen: false,
@@ -67,48 +59,6 @@ const Story = () => {
       body.style.touchAction = previousBodyTouchAction;
     };
   }, [lightbox.isOpen]);
-
-  useEffect(() => {
-    const MS_MINUTE = 1000 * 60;
-    const MS_HOUR = MS_MINUTE * 60;
-    const MS_DAY = MS_HOUR * 24;
-
-    const calculateTimeLeft = () => {
-      const weddingDate = new Date('2026-08-15T16:00:00');
-      const now = new Date();
-      const difference = weddingDate - now;
-
-      if (difference <= 0) {
-        setTimeLeft({ months: 0, days: 0, hours: 0, minutes: 0 });
-        return;
-      }
-
-      let months = 0;
-      let cursor = new Date(now.getTime());
-
-      while (true) {
-        const next = new Date(cursor);
-        next.setMonth(next.getMonth() + 1);
-        if (next > weddingDate) break;
-        cursor = next;
-        months++;
-      }
-
-      let remainder = weddingDate - cursor;
-      const days = Math.floor(remainder / MS_DAY);
-      remainder -= days * MS_DAY;
-      const hours = Math.floor(remainder / MS_HOUR);
-      remainder -= hours * MS_HOUR;
-      const minutes = Math.floor(remainder / MS_MINUTE);
-
-      setTimeLeft({ months, days, hours, minutes });
-    };
-
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -201,7 +151,7 @@ const Story = () => {
   ];
 
   return (
-    <section id="story" className="py-20 md:py-32 bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
+    <section id="story" className="py-20 md:py-20 bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           {/* Section title */}
@@ -369,9 +319,6 @@ const Story = () => {
               })}
             </div>
           </div>
-
-          <CerimoniaRecepcao />
-          <ConfirmarPresencaCard timeLeft={timeLeft} />
         </div>
       </div>
 
