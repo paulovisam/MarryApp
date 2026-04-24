@@ -1,6 +1,5 @@
 
 import { createClient } from '@supabase/supabase-js';
-import axios from 'axios';
 
 const supabase = createClient(
     process.env.VITE_SUPABASE_URL,
@@ -68,26 +67,51 @@ export default async function handler(req, res) {
             metadata: { giftId: String(giftId) },
         };
 
-        const response = await axios.post(ABACATE_V1_BILLING_CREATE, payload, {
+        const abacateRes = await fetch(ABACATE_V1_BILLING_CREATE, {
+            method: 'POST',
             headers: {
                 Authorization: `Bearer ${process.env.ABACATEPAY_API_KEY}`,
                 'Content-Type': 'application/json',
             },
+            body: JSON.stringify(payload),
         });
 
-        console.log('AbacatePay v1:', JSON.stringify(response.data));
-
-        if (response.data?.success === false && response.data?.error) {
-            throw new Error(String(response.data.error));
+        let responseData = {};
+        try {
+            const text = await abacateRes.text();
+            if (text.trim()) {
+                responseData = JSON.parse(text);
+            }
+        } catch {
+            responseData = {};
         }
 
-        const billing = response.data?.data;
+        if (!abacateRes.ok) {
+            console.error(
+                'AbacatePay HTTP:',
+                abacateRes.status,
+                JSON.stringify(responseData)
+            );
+            throw new Error(
+                responseData?.error ||
+                    responseData?.message ||
+                    `AbacatePay ${abacateRes.status}`
+            );
+        }
+
+        console.log('AbacatePay v1:', JSON.stringify(responseData));
+
+        if (responseData?.success === false && responseData?.error) {
+            throw new Error(String(responseData.error));
+        }
+
+        const billing = responseData?.data;
 
         if (!billing?.id || !billing?.url) {
             throw new Error(
-                response.data?.error ||
+                responseData?.error ||
                     'Resposta inválida da AbacatePay v1: ' +
-                        JSON.stringify(response.data)
+                        JSON.stringify(responseData)
             );
         }
 
@@ -117,7 +141,7 @@ export default async function handler(req, res) {
             paymentUrl: billing.url,
         });
     } catch (error) {
-        console.error('API Error:', error.response?.data || error.message);
+        console.error('API Error:', error.message);
         res.status(500).json({ error: 'Failed to create payment' });
     }
 }
