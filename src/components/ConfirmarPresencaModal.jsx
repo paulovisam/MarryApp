@@ -10,11 +10,6 @@ const labelBase =
 const btnGrid =
   'py-3 text-center font-sans text-xs font-medium uppercase tracking-wide transition';
 
-const COMPANION = [
-  { v: 1, label: 'Sozinho(a)' },
-  { v: 2, label: '+ 1 acompanhante' },
-];
-
 function digitsOnly(s) {
   return s.replace(/\D/g, '');
 }
@@ -27,6 +22,12 @@ function isValidBrPhone(s) {
   return ddd >= 11 && ddd <= 99;
 }
 
+/** Pelo menos duas partes (nome e sobrenome), separadas por espaço. */
+function isFullName(s) {
+  const parts = s.trim().split(/\s+/).filter(Boolean);
+  return parts.length >= 2;
+}
+
 /**
  * Modal RSVP — paleta primary/burgundy/beige (alinhada ao restante do site); envia via createRsvp.
  */
@@ -34,8 +35,6 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
   const [isPresent, setIsPresent] = useState(true);
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [companion, setCompanion] = useState(1);
-  const [dietary, setDietary] = useState('');
   const [recado, setRecado] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -63,8 +62,6 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
     setIsPresent(true);
     setFullName('');
     setPhone('');
-    setCompanion(1);
-    setDietary('');
     setRecado('');
     setError('');
     setSuccess(false);
@@ -79,12 +76,13 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
     e.preventDefault();
     setError('');
     const name = fullName.trim();
-    if (!name) {
+    if (!isFullName(name)) {
       setError('Preencha o nome completo.');
       return;
     }
-    if (!isValidBrPhone(phone)) {
-      setError('Informe um telefone válido (DDD + número, 10 ou 11 dígitos).');
+    const phoneT = phone.trim();
+    if (phoneT && !isValidBrPhone(phoneT)) {
+      setError('Se informar WhatsApp, use DDD + número (10 ou 11 dígitos).');
       return;
     }
 
@@ -93,11 +91,10 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
       await createRsvp({
         name,
         guestNames: [],
-        guestsCount: isPresent ? companion : 0,
+        guestsCount: isPresent ? 1 : 0,
         isPresent,
         message: recado.trim(),
-        dietary: dietary.trim(),
-        phone: phone.trim(),
+        phone: phoneT || undefined,
       });
       setSuccess(true);
     } catch (err) {
@@ -144,7 +141,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 text-beige-200 sm:px-6 sm:py-6">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 text-beige-200 sm:px-12 sm:py-8">
           {!success ? (
             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
               <div>
@@ -177,7 +174,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
 
               <div>
                 <label className={labelBase} htmlFor="rsvp-name">
-                  Nome completo
+                  Nome Completo
                 </label>
                 <input
                   id="rsvp-name"
@@ -186,57 +183,27 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className={inputBase}
-                  placeholder="Como gostaria de ser anunciado"
+                  placeholder="Seu nome completo"
                   autoComplete="name"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-3">
-                <div>
-                  <label className={labelBase} htmlFor="rsvp-phone">
-                    WhatsApp
-                  </label>
-                  <input
-                    id="rsvp-phone"
-                    type="tel"
-                    name="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className={inputBase}
-                    placeholder="(00) 00000-0000"
-                    autoComplete="tel"
-                    inputMode="tel"
-                    required
-                  />
-                </div>
-                {isPresent ? (
-                  <div>
-                    <label className={labelBase} htmlFor="rsvp-companion">
-                      Acompanhante
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="rsvp-companion"
-                        value={companion}
-                        onChange={(e) => setCompanion(parseInt(e.target.value, 10))}
-                        className={`${inputBase} appearance-none pr-8 text-beige-100`}
-                      >
-                        {COMPANION.map((o) => (
-                          <option key={o.v} value={o.v} className="bg-primary-900 text-beige-100">
-                            {o.label}
-                          </option>
-                        ))}
-                      </select>
-                      <span
-                        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-beige-400"
-                        aria-hidden
-                      >
-                        ▼
-                      </span>
-                    </div>
-                  </div>
-                ) : null}
+              <div>
+                <label className={labelBase} htmlFor="rsvp-phone">
+                  WhatsApp (opcional)
+                </label>
+                <input
+                  id="rsvp-phone"
+                  type="tel"
+                  name="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={inputBase}
+                  placeholder="(00) 00000-0000"
+                  autoComplete="tel"
+                  inputMode="tel"
+                />
               </div>
 
               <div>
@@ -250,7 +217,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
                   onChange={(e) => setRecado(e.target.value)}
                   rows={4}
                   className={`${inputBase} min-h-[100px] resize-y`}
-                  placeholder="Uma mensagem, uma música para a pista…"
+                  placeholder="Uma mensagem, uma música para a festa..."
                 />
               </div>
 
@@ -278,7 +245,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
               </div>
               <h3 className="font-serif text-xl">Obrigado!</h3>
               <p className="text-sm text-beige-300">
-                Sua resposta foi registrada. {isPresent ? 'Nos vemos no grande dia!' : ''}
+                {isPresent ? 'Te esperamos no grande dia ♥️' : 'Obrigado por nos avisar ♥️'}
               </p>
               <button
                 type="button"

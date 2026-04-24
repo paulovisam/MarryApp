@@ -221,7 +221,7 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                                     className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400"
                                     aria-hidden
                                 />
-                                Pagamento recebido
+                                Presente recebido
                             </p>
                             <h2 className="font-serif text-2xl leading-tight text-slate-900 dark:text-white sm:text-3xl">
                                 Obrigado pelo carinho!
@@ -229,13 +229,8 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                             <p className="max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
                                 Seu presente significa muito para nós. É um
                                 gesto que aquece o coração e nos deixa ainda
-                                mais felizes por ter você nessa celebração.
+                                mais felizes.
                             </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                O presente será entregue na casa dos noivos em
-                                algumas semanas.
-                            </p>
-
                             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
                                 <button
                                     type="button"

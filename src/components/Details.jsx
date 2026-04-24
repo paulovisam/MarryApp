@@ -66,7 +66,7 @@ const details = [
     id: 'desscode',
     label: '',
     value: 'Dress Code',
-    footer: 'Casual, mas elegante. Evite branco, off-white e vermelho.',
+    footer: 'Casual Elegante. Evite branco, off-white e vermelho.',
     Icon: Shirt,
   },
 ];
