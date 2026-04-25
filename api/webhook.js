@@ -1,36 +1,11 @@
 
 import { createClient } from '@supabase/supabase-js';
-import crypto from 'node:crypto';
 
 const supabase = createClient(
     process.env.VITE_SUPABASE_URL,
     process.env.VITE_SUPABASE_ANON_KEY
 );
 
-function timingSafeEqualBase64(a, b) {
-    const ba = Buffer.from(a, 'utf8');
-    const bb = Buffer.from(b, 'utf8');
-    if (ba.length !== bb.length) {
-        return false;
-    }
-    return crypto.timingSafeEqual(ba, bb);
-}
-
-function verifyWebhookHmac(rawBody, signatureHeader, secret) {
-    if (!secret || !signatureHeader) {
-        return false;
-    }
-    const expected = crypto
-        .createHmac('sha256', secret)
-        .update(rawBody, 'utf8')
-        .digest('base64');
-    return timingSafeEqualBase64(expected, signatureHeader);
-}
-
-/**
- * Webhook AbacatePay API v1 — payload: { event, devMode?, data: { id, ... } }
- * @see https://docs.abacatepay.com/pages/v1/webhooks.md
- */
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -44,6 +19,7 @@ export default async function handler(req, res) {
             expectedSecret !== '' &&
             webhookSecret !== expectedSecret
         ) {
+            console.log('Invalid webhook secret', expectedSecret, webhookSecret);
             return res.status(401).json({ error: 'Invalid webhook secret' });
         }
 
@@ -54,17 +30,6 @@ export default async function handler(req, res) {
             rawBody = req.body;
         } else {
             rawBody = JSON.stringify(req.body);
-        }
-
-        const sig =
-            req.headers['x-webhook-signature'] ||
-            req.headers['X-Webhook-Signature'];
-        if (
-            expectedSecret &&
-            sig &&
-            !verifyWebhookHmac(rawBody, sig, expectedSecret)
-        ) {
-            return res.status(401).json({ error: 'Invalid webhook signature' });
         }
 
         let payload;
@@ -80,7 +45,8 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid payload' });
         }
 
-        const billingId = data.id;
+        const billingId = data.billing.id;
+        console.log('data', data);
         if (!billingId) {
             return res.status(400).json({ error: 'Missing billing id' });
         }
@@ -132,8 +98,6 @@ export default async function handler(req, res) {
                 }
             }
         }
-
-        res.status(200).json({ received: true });
     } catch (error) {
         console.error('Webhook Error:', error);
         res.status(500).json({ error: error.message });
