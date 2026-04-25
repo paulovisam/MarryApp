@@ -13,22 +13,7 @@ function formatBrPhoneDisplay(digits) {
 
 export async function createRsvp(rsvpData) {
     const phoneDigits = (rsvpData.phone && String(rsvpData.phone).replace(/\D/g, '')) || ''
-    const head = []
-    if (phoneDigits) {
-        head.push(`Telefone: ${formatBrPhoneDisplay(phoneDigits)}`)
-    } else if (rsvpData.email) {
-        head.push(`E-mail: ${rsvpData.email}`)
-    }
-
-    // Format message to include guest names if multiple
     let finalMessage = rsvpData.message || '';
-    if (head.length) {
-        finalMessage = [head.join('\n'), finalMessage].filter(Boolean).join('\n\n');
-    }
-    if (rsvpData.guestNames && rsvpData.guestNames.length > 0) {
-        const namesList = rsvpData.guestNames.map(n => `- ${n}`).join('\n');
-        finalMessage = `Convidados:\n${namesList}\n\nMensagem:\n${finalMessage}`;
-    }
 
     const { data, error } = await supabase
         .from('rsvps')

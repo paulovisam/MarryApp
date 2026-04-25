@@ -109,7 +109,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
 
   const panel = (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-3 backdrop-blur-sm sm:p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-10 backdrop-blur-sm sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="rsvp-modal-title"
@@ -124,7 +124,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
         className="relative z-10 flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-primary-500/30 bg-gradient-to-br from-primary-800 to-primary-900 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-beige-500/15 px-4 py-3 sm:px-5">
+        <div className="flex shrink-0 items-center justify-between border-b border-beige-500/15 px-8 py-4 sm:px-5">
           <h2
             id="rsvp-modal-title"
             className="font-serif text-lg font-medium text-beige-100 sm:text-xl"
@@ -134,14 +134,14 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
           <button
             type="button"
             onClick={() => !loading && onClose()}
-            className="rounded-lg p-1.5 text-beige-400 transition hover:bg-primary-700/50 hover:text-beige-100"
+            className="rounded-lg text-beige-400 transition hover:bg-primary-700/50 hover:text-beige-100"
             aria-label="Fechar"
           >
             <IoClose size={26} />
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 text-beige-200 sm:px-12 sm:py-8">
+        <div className="min-h-0 flex-1 overflow-y-auto px-8 py-5 text-beige-200 sm:px-12 sm:py-8">
           {!success ? (
             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
               <div>
@@ -227,7 +227,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
                 </p>
               ) : null}
 
-              <div className="pt-1">
+              <div className="pt-1 pb-4">
                 <button
                   type="submit"
                   disabled={loading}

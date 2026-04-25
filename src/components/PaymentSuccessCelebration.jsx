@@ -177,18 +177,18 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                     aria-hidden
                 />
 
-                <div className="relative px-5 py-6 sm:px-8 sm:py-8">
+                <div className="relative px-5 pb-6 pt-12 sm:px-8 sm:py-8">
                     <button
                         type="button"
                         onClick={onDismiss}
-                        className="absolute right-3 top-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white/80 hover:text-slate-800 dark:hover:bg-slate-800/80 dark:hover:text-slate-200"
+                        className="absolute right-2 top-2 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white/80 hover:text-slate-800 sm:right-3 sm:top-3 dark:hover:bg-slate-800/80 dark:hover:text-slate-200"
                         aria-label="Fechar mensagem de agradecimento"
                     >
                         <IoClose className="h-6 w-6" aria-hidden />
                     </button>
 
-                    <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left sm:gap-6">
-                        <div className="relative mb-4 flex shrink-0 sm:mb-0">
+                    <div className="flex w-full flex-col items-center text-center sm:flex-row sm:items-start sm:gap-6 sm:text-left">
+                        <div className="relative mb-4 flex shrink-0 justify-center self-center sm:mb-0 sm:self-start">
                             <motion.div
                                 className="flex h-16 w-16 items-center justify-center rounded-2xl bg-burgundy-600 text-white shadow-md dark:bg-burgundy-500"
                                 initial={reduceMotion ? false : { scale: 0.85 }}
@@ -215,8 +215,8 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                             />
                         </div>
 
-                        <div className="min-w-0 flex-1 space-y-3 pr-8 sm:pr-10">
-                            <p className="inline-flex items-center justify-center gap-1.5 text-sm font-medium uppercase tracking-wide text-burgundy-700 dark:text-burgundy-300 sm:justify-start">
+                        <div className="w-full min-w-0 max-w-2xl flex-1 space-y-3 sm:pr-2">
+                            <p className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-medium uppercase tracking-wide text-burgundy-700 dark:text-burgundy-300 sm:justify-start sm:text-left">
                                 <IoHeart
                                     className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400"
                                     aria-hidden
@@ -226,12 +226,12 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                             <h2 className="font-serif text-2xl leading-tight text-slate-900 dark:text-white sm:text-3xl">
                                 Obrigado pelo carinho!
                             </h2>
-                            <p className="max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+                            <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-600 sm:mx-0 dark:text-slate-300">
                                 Seu presente significa muito para nós. É um
                                 gesto que aquece o coração e nos deixa ainda
                                 mais felizes.
                             </p>
-                            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
+                            <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start">
                                 <button
                                     type="button"
                                     onClick={() => setRecadoOpen(true)}

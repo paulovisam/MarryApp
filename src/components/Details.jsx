@@ -103,8 +103,9 @@ const Details = () => {
 
         <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 sm:mt-16 md:grid-cols-3 md:gap-5 lg:gap-8">
           {details.map((item, index) => {
+            const isLast = index === details.length - 1;
             const { Icon, link } = item;
-            const cardClassName = `group w-full max-w-sm rounded-2xl border ${champagne.cardBorder} ${champagne.cardBg} px-6 py-8 text-center shadow-[0_4px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out will-change-transform hover:-translate-y-1 hover:border-[#C9A96E]/35 hover:shadow-[0_14px_48px_rgba(0,0,0,0.45)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:px-5 md:py-9`;
+            const cardClassName = `group w-full max-w-xs rounded-2xl border ${champagne.cardBorder} ${champagne.cardBg} px-6 py-8 text-center shadow-[0_4px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out will-change-transform hover:-translate-y-1 hover:border-[#C9A96E]/35 hover:shadow-[0_14px_48px_rgba(0,0,0,0.45)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:px-5 md:py-9`;
 
             const body = (
               <>
@@ -140,7 +141,7 @@ const Details = () => {
                 key={item.id}
                 from="bottom"
                 delay={0.08 * (index + 1)}
-                className="flex justify-center"
+                className={`flex justify-center ${isLast ? 'w-full md:col-span-3' : ''}`}
               >
                 {link ? (
                   <a
@@ -153,7 +154,7 @@ const Details = () => {
                     {body}
                   </a>
                 ) : (
-                  <article className={cardClassName}>{body}</article>
+                  <article className={`${cardClassName} ${isLast ? '' : ''}`}>{body}</article>
                 )}
               </ScrollReveal>
             );
