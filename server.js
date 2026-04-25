@@ -2,22 +2,14 @@ import 'dotenv/config';
 /* eslint-disable no-undef */
 import express from 'express';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import fs from 'fs';
-
-// Helper to handle ESM imports
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import createPaymentHandler from './api/create-payment.js';
+import webhookAbacatepayHandler from './api/webhook-abacatepay.js';
+import webhookAsaasHandler from './api/webhook-asaas.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001; // Run API on 3001 to avoid conflict with Vite (3000)
 
 app.use(cors());
-
-// Using manual import for simplicity and to match Vercel style handling
-import createPaymentHandler from './api/create-payment.js';
-import webhookHandler from './api/webhook.js';
 
 // Wrapper to adapt Vercel/Next.js style handler (req, res) to Express
 const adaptHandler = (handler) => async (req, res) => {
@@ -31,14 +23,21 @@ const adaptHandler = (handler) => async (req, res) => {
     }
 };
 
-// Webhook AbacatePay v1: corpo bruto se a Abacate enviar X-Webhook-Signature (HMAC)
+// Webhooks: um endpoint por provedor (corpo bruto só onde necessário)
+app.post(
+    '/api/webhook/abacatepay',
+    express.raw({ type: 'application/json' }),
+    adaptHandler(webhookAbacatepayHandler)
+);
 app.post(
     '/api/webhook',
     express.raw({ type: 'application/json' }),
-    adaptHandler(webhookHandler)
+    adaptHandler(webhookAbacatepayHandler)
 );
 
 app.use(express.json());
+
+app.post('/api/webhook/asaas', adaptHandler(webhookAsaasHandler));
 app.all('/api/create-payment', adaptHandler(createPaymentHandler));
 
 // Determine if we are in production (serving static files) or dev (API only)

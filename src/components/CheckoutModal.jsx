@@ -2,6 +2,15 @@
 import React, { useState } from 'react';
 import { IoClose, IoLockClosed } from 'react-icons/io5';
 
+const paymentProvider = (
+    import.meta.env.VITE_PAYMENT_PROVIDER || 'abacatepay'
+).toLowerCase();
+const isAsaas = paymentProvider === 'asaas';
+const asaasMaxInstallments = (() => {
+    const n = parseInt(import.meta.env.VITE_ASAAS_MAX_INSTALLMENT_COUNT || '12', 10);
+    return Number.isFinite(n) && n > 0 ? n : 12;
+})();
+
 const CheckoutModal = ({ gift, onClose, onSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -10,7 +19,8 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
     const [customer, setCustomer] = useState({
         name: '',
         email: '',
-        phone: ''
+        phone: '',
+        taxId: '',
     });
 
     const handleInputChange = (e) => {
@@ -24,6 +34,14 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
             return;
         }
 
+        if (isAsaas) {
+            const doc = String(customer.taxId || '').replace(/\D/g, '');
+            if (doc.length !== 11 && doc.length !== 14) {
+                setError('Informe um CPF ou CNPJ válido para o pagamento Asaas.');
+                return;
+            }
+        }
+
         setLoading(true);
         setError('');
 
@@ -33,7 +51,12 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                 giftTitle: gift.title,
                 giftDescription: gift.description,
                 amount: gift.price,
-                customer
+                customer: {
+                    ...customer,
+                    taxId: isAsaas
+                        ? String(customer.taxId || '').replace(/\D/g, '')
+                        : customer.taxId || '',
+                },
             };
 
             const res = await fetch('/api/create-payment', {
@@ -48,7 +71,6 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                 throw new Error(data.error || 'Erro ao criar pagamento.');
             }
 
-            // Redirect to AbacatePay
             if (data.paymentUrl) {
                 window.location.href = data.paymentUrl;
             } else {
@@ -102,7 +124,7 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                             value={customer.name}
                             onChange={handleInputChange}
                         />
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <input
                                 name="email"
                                 placeholder="Email"
@@ -113,12 +135,26 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                             />
                             <input
                                 name="phone"
-                                placeholder="Celular"
+                                placeholder="Celular (DDD + número)"
+                                inputMode="tel"
+                                autoComplete="tel"
                                 className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-burgundy-500"
                                 value={customer.phone}
                                 onChange={handleInputChange}
                             />
                         </div>
+
+                        {isAsaas ? (
+                            <input
+                                name="taxId"
+                                placeholder="CPF ou CNPJ (obrigatório)"
+                                inputMode="numeric"
+                                autoComplete="off"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-burgundy-500"
+                                value={customer.taxId}
+                                onChange={handleInputChange}
+                            />
+                        ) : null}
 
                         <div className="pt-4">
                             <button
@@ -144,7 +180,9 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                                 )}
                             </button>
                             <p className="text-xs text-center text-slate-400 mt-2">
-                                Você será redirecionado para a AbacatePay para concluir o pagamento via Pix ou Cartão.
+                                {isAsaas
+                                    ? `Você será redirecionado para o link seguro do Asaas: Pix à vista ou cartão em até ${asaasMaxInstallments}x (conforme opções na página do Asaas).`
+                                    : 'Você será redirecionado para a AbacatePay para concluir o pagamento via Pix ou Cartão.'}
                             </p>
                         </div>
                     </div>
