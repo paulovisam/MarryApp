@@ -1,4 +1,4 @@
-import { getPaymentProvider } from './lib/payment-provider.js';
+import { getPaymentProvider } from '../src/lib/payment-provider.js';
 import { createAbacatePayment } from './lib/create-abacate-payment.js';
 import { createAsaasPayment } from './lib/create-asaas-payment.js';
 
@@ -23,12 +23,27 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    const body = req.body;
+    if (!body || typeof body !== 'object') {
+        return res.status(400).json({ error: 'JSON inválido ou corpo vazio.' });
+    }
+    const { giftId, customer, amount } = body;
+    if (giftId == null || giftId === '') {
+        return res.status(400).json({ error: 'Presente (giftId) é obrigatório.' });
+    }
+    if (!customer || typeof customer !== 'object') {
+        return res.status(400).json({ error: 'Dados do cliente são obrigatórios.' });
+    }
+    if (amount == null || amount === '' || Number.isNaN(parseFloat(amount))) {
+        return res.status(400).json({ error: 'Valor (amount) inválido.' });
+    }
+
     try {
         const provider = getPaymentProvider();
         const result =
             provider === 'asaas'
-                ? await createAsaasPayment(req.body, req)
-                : await createAbacatePayment(req.body, req);
+                ? await createAsaasPayment(body, req)
+                : await createAbacatePayment(body, req);
 
         res.status(200).json({
             orderId: result.orderId,
@@ -36,12 +51,23 @@ export default async function handler(req, res) {
             provider: result.provider,
         });
     } catch (error) {
-        console.error('create-payment:', error.message);
-        const msg = error.message || 'Failed to create payment';
-        const clientError =
-            /obrigatório|mínimo|inválido|CPF|Celular|CNPJ/i.test(msg);
-        res.status(clientError ? 400 : 500).json({
-            error: clientError ? msg : 'Failed to create payment',
-        });
+        console.error('create-payment:', error);
+        const msg =
+            (error && error.message) || 'Falha ao criar pagamento.';
+        const userInput =
+            /obrigatório|mínimo|inválido|CPF|Celular|CNPJ|Resposta inválida ao criar/i.test(
+                msg
+            );
+        const config =
+            /não configurada|Variáveis Supabase|Não foi possível registrar o pedido/i.test(
+                msg
+            );
+        const upstream =
+            /AbacatePay|Asaas HTTP|Asaas \d|HTTP \d{3}/i.test(msg);
+        let status = 500;
+        if (userInput) status = 400;
+        else if (config) status = 503;
+        else if (upstream) status = 502;
+        res.status(status).json({ error: msg });
     }
 }

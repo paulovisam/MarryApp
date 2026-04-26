@@ -15,6 +15,13 @@ const ABACATE_V1_BILLING_CREATE =
 export async function createAbacatePayment(body, req) {
     const { giftId, giftTitle, giftDescription, customer, amount } = body;
 
+    if (!process.env.ABACATEPAY_API_KEY?.trim()) {
+        throw new Error('ABACATEPAY_API_KEY não configurada no servidor.');
+    }
+    if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error('Variáveis Supabase (VITE_SUPABASE_URL / ANON_KEY) ausentes.');
+    }
+
     const origin =
         req.headers.origin ||
         req.headers.referer?.split('/').slice(0, 3).join('/') ||
@@ -113,6 +120,9 @@ export async function createAbacatePayment(body, req) {
 
     if (dbError) {
         console.error('Database Error:', dbError);
+        throw new Error(
+            `Não foi possível registrar o pedido: ${dbError.message || 'erro Supabase'}`
+        );
     }
 
     return {

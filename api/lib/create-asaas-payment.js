@@ -21,6 +21,13 @@ function getMaxInstallmentCount() {
 export async function createAsaasPayment(body, req) {
     const { giftId, giftTitle, giftDescription, customer, amount } = body;
 
+    if (!process.env.ASAAS_API_KEY?.trim()) {
+        throw new Error('ASAAS_API_KEY não configurada no servidor.');
+    }
+    if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error('Variáveis Supabase (VITE_SUPABASE_URL / ANON_KEY) ausentes.');
+    }
+
     const cpfCnpj = normalizeDigits(customer.taxId);
     if (!cpfCnpj || (cpfCnpj.length !== 11 && cpfCnpj.length !== 14)) {
         throw new Error(
@@ -46,7 +53,7 @@ export async function createAsaasPayment(body, req) {
         'http://localhost:3000';
 
     const maxInstallmentCount = getMaxInstallmentCount();
-
+    console.log(`${origin}/presentes?status=success`)
     const linkPayload = {
         name: `Presente: ${String(giftTitle || 'Casamento').slice(0, 80)}`,
         description: String(
@@ -56,13 +63,13 @@ export async function createAsaasPayment(body, req) {
         billingType: 'UNDEFINED',
         chargeType: 'DETACHED',
         maxInstallmentCount,
-        dueDateLimitDays: 10,
+        dueDateLimitDays: 3,
         externalReference: String(giftId),
         notificationEnabled: false,
-        callback: {
-            successUrl: `${origin}/presentes?status=success`,
-            autoRedirect: true,
-        },
+        // callback: {
+        //     successUrl: `https://localhost:3000/presentes?status=success`,
+        //     autoRedirect: true,
+        // },
     };
 
     const link = await asaasPost('/v3/paymentLinks', linkPayload);
@@ -94,6 +101,9 @@ export async function createAsaasPayment(body, req) {
 
     if (dbError) {
         console.error('Database Error:', dbError);
+        throw new Error(
+            `Não foi possível registrar o pedido: ${dbError.message || 'erro Supabase'}`
+        );
     }
 
     return {

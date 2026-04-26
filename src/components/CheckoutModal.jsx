@@ -1,19 +1,35 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoClose, IoLockClosed } from 'react-icons/io5';
+import { getPaymentProvider } from '../lib/payment-provider.js';
 
-const paymentProvider = (
-    import.meta.env.VITE_PAYMENT_PROVIDER || 'abacatepay'
-).toLowerCase();
-const isAsaas = paymentProvider === 'asaas';
 const asaasMaxInstallments = (() => {
     const n = parseInt(import.meta.env.VITE_ASAAS_MAX_INSTALLMENT_COUNT || '12', 10);
     return Number.isFinite(n) && n > 0 ? n : 12;
 })();
 
 const CheckoutModal = ({ gift, onClose, onSuccess }) => {
+    const [paymentProvider, setPaymentProvider] = useState(() =>
+        getPaymentProvider()
+    );
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch('/api/payment-config')
+            .then((r) => (r.ok ? r.json() : Promise.reject()))
+            .then((data) => {
+                if (cancelled || !data?.provider) return;
+                setPaymentProvider(String(data.provider).toLowerCase());
+            })
+            .catch(() => {});
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const isAsaas = paymentProvider === 'asaas';
 
     // Customer Info
     const [customer, setCustomer] = useState({

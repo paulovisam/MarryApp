@@ -1,13 +1,33 @@
+const DEFAULT_PROD = 'https://api.asaas.com';
+const DEFAULT_SANDBOX = 'https://api-sandbox.asaas.com';
 
+/**
+ * Prioridade: ASAAS_API_URL → ASAAS_ENV (sandbox | production) → sandbox.
+ * Evita 500 por valor inesperado em ASAAS_ENV.
+ */
 export function getAsaasBaseUrl() {
-    const env = process.env.ASAAS_ENV || 'sandbox';
-    if (env === 'sandbox' || env === 'hml') {
-        return 'https://api-sandbox.asaas.com';
-    } else if (env === 'production' || env === 'prod') {
-        return 'https://api.asaas.com';
-    } else {
-        throw new Error('ASAAS_ENV inválido');
+    const custom = process.env.ASAAS_API_URL?.trim();
+    if (custom) {
+        return custom.replace(/\/$/, '');
     }
+
+    const env = (process.env.ASAAS_ENV || 'sandbox').toLowerCase().trim();
+    if (env === 'production' || env === 'prod') {
+        return DEFAULT_PROD;
+    }
+    if (
+        env === 'sandbox' ||
+        env === 'hml' ||
+        env === 'homolog' ||
+        env === 'dev' ||
+        env === ''
+    ) {
+        return DEFAULT_SANDBOX;
+    }
+    console.warn(
+        `[Asaas] ASAAS_ENV="${process.env.ASAAS_ENV}" não reconhecido; usando sandbox (${DEFAULT_SANDBOX})`
+    );
+    return DEFAULT_SANDBOX;
 }
 
 function asaasHeaders() {
