@@ -1,16 +1,5 @@
 import { supabase } from '../lib/supabaseClient'
 
-function formatBrPhoneDisplay(digits) {
-    if (!digits) return ''
-    if (digits.length === 11) {
-        return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
-    }
-    if (digits.length === 10) {
-        return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
-    }
-    return digits
-}
-
 export async function createRsvp(rsvpData) {
     const phoneDigits = (rsvpData.phone && String(rsvpData.phone).replace(/\D/g, '')) || ''
     let finalMessage = rsvpData.message || '';
@@ -29,18 +18,5 @@ export async function createRsvp(rsvpData) {
         .select()
 
     if (error) throw error
-    return data
-}
-
-export async function getRsvps() {
-    const { data, error } = await supabase
-        .from('rsvps')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-    if (error) {
-        console.error('Error fetching RSVPs:', error)
-        return []
-    }
     return data
 }

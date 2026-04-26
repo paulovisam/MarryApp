@@ -16,7 +16,6 @@ import SmoothScroll from './components/SmoothScroll';
 import { AmbientAudioProvider } from './contexts/AmbientAudioContext';
 import AmbientMuteButton from './components/AmbientMuteButton';
 import GiftListFab from './components/GiftListFab';
-// import AppV2 from './v2/App';
 
 function App() {
   return (

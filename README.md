@@ -86,7 +86,6 @@ Edite os componentes em `src/components/` para personalizar:
 - **Hero.jsx**: Nomes do casal, data do casamento
 - **About.jsx**: Informações sobre os noivos
 - **Story.jsx**: Timeline da história do casal
-- **Memories.jsx**: Galeria de fotos e citações
 
 ### Monograma
 
@@ -110,11 +109,9 @@ MarryApp/
 │   │       └── noivado_*.jpeg
 │   ├── components/
 │   │   ├── About.jsx
-│   │   ├── BackgroundMusic.jsx
 │   │   ├── Convite.jsx
 │   │   ├── Footer.jsx
 │   │   ├── Hero.jsx
-│   │   ├── Memories.jsx
 │   │   └── Story.jsx
 │   ├── App.jsx
 │   ├── index.css
