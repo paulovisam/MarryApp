@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import createPaymentHandler from './api/create-payment.js';
+import paymentConfigHandler from './api/payment-config.js';
 import webhookAbacatepayHandler from './api/webhook-abacatepay.js';
 import webhookAsaasHandler from './api/webhook-asaas.js';
 
@@ -37,6 +38,7 @@ app.post(
 
 app.use(express.json());
 
+app.get('/api/payment-config', adaptHandler(paymentConfigHandler));
 app.post('/api/webhook/asaas', adaptHandler(webhookAsaasHandler));
 app.all('/api/create-payment', adaptHandler(createPaymentHandler));
 
