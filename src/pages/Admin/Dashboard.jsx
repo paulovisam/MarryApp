@@ -10,8 +10,17 @@ import {
     IoCreate,
     IoSearch,
     IoImageOutline,
+    IoClose,
 } from 'react-icons/io5';
 import { useAdminGifts, useAdminRsvps } from './adminHooks';
+
+function formatRsvpPhone(value) {
+    if (value == null || value === '') return '—';
+    const d = String(value).replace(/\D/g, '');
+    if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return String(value);
+}
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -31,6 +40,9 @@ const Dashboard = () => {
         description: '',
     });
     const [searchTerm, setSearchTerm] = useState('');
+    const [rsvpSearch, setRsvpSearch] = useState('');
+    const [rsvpStatusFilter, setRsvpStatusFilter] = useState('all');
+    const [selectedRsvp, setSelectedRsvp] = useState(null);
     const [giftSort, setGiftSort] = useState('name-asc');
     const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
 
@@ -55,6 +67,17 @@ const Dashboard = () => {
     const totalConfirmedGuests = rsvps.filter(r => r.is_present).reduce((acc, curr) => acc + curr.guests_count, 0);
     const totalMoney = gifts.reduce((acc, g) => acc + (g.purchased_quantity * g.price), 0);
     const totalGiftsSold = gifts.reduce((acc, g) => acc + g.purchased_quantity, 0);
+
+    const filteredRsvps = useMemo(() => {
+        const q = rsvpSearch.trim().toLowerCase();
+        return rsvps.filter((r) => {
+            const name = (r.name || '').toLowerCase();
+            if (q && !name.includes(q)) return false;
+            if (rsvpStatusFilter === 'present' && !r.is_present) return false;
+            if (rsvpStatusFilter === 'absent' && r.is_present) return false;
+            return true;
+        });
+    }, [rsvps, rsvpSearch, rsvpStatusFilter]);
 
     const filteredGifts = useMemo(() => {
         const term = searchTerm.toLowerCase();
@@ -141,6 +164,15 @@ const Dashboard = () => {
         }
     };
 
+    useEffect(() => {
+        if (!selectedRsvp) return undefined;
+        const onKey = (e) => {
+            if (e.key === 'Escape') setSelectedRsvp(null);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [selectedRsvp]);
+
     return (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-900 font-sans">
             {/* Sidebar */}
@@ -157,7 +189,10 @@ const Dashboard = () => {
                     </button>
 
                     <button
-                        onClick={() => setActiveTab('gifts')}
+                        onClick={() => {
+                            setSelectedRsvp(null);
+                            setActiveTab('gifts');
+                        }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'gifts' ? 'bg-burgundy-600' : 'hover:bg-slate-700'}`}
                     >
                         <IoGiftOutline size={20} />
@@ -195,7 +230,10 @@ const Dashboard = () => {
                         Convidados
                     </button>
                     <button
-                        onClick={() => setActiveTab('gifts')}
+                        onClick={() => {
+                            setSelectedRsvp(null);
+                            setActiveTab('gifts');
+                        }}
                         className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'gifts'
                             ? 'bg-burgundy-600 text-white shadow-sm'
                             : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
@@ -244,31 +282,83 @@ const Dashboard = () => {
                     {activeTab === 'rsvps' && (
                         <div className="p-6">
                             <h3 className="text-xl font-bold font-sans mb-6 dark:text-white">Lista de Confirmação</h3>
+                            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+                                <div className="relative w-full sm:min-w-[220px] sm:max-w-md sm:flex-1">
+                                    <IoSearch className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" aria-hidden />
+                                    <input
+                                        type="search"
+                                        placeholder="Buscar por nome…"
+                                        className="min-h-[44px] w-full rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-slate-900 dark:border-slate-700 dark:bg-slate-700 dark:text-white"
+                                        value={rsvpSearch}
+                                        onChange={(e) => setRsvpSearch(e.target.value)}
+                                        autoComplete="off"
+                                        aria-label="Buscar convidado por nome"
+                                    />
+                                </div>
+                                <div className="w-full sm:w-auto sm:min-w-[200px]">
+                                    <label htmlFor="rsvp-status-filter" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                        Status
+                                    </label>
+                                    <select
+                                        id="rsvp-status-filter"
+                                        className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white sm:min-w-[200px]"
+                                        value={rsvpStatusFilter}
+                                        onChange={(e) => setRsvpStatusFilter(e.target.value)}
+                                    >
+                                        <option value="all">Todos</option>
+                                        <option value="present">Confirmado</option>
+                                        <option value="absent">Recusado</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-xs">
                                         <tr>
                                             <th className="p-4">Nome</th>
-                                            <th className="p-4">Qtde</th>
+                                            <th className="p-4">Telefone</th>
                                             <th className="p-4">Status</th>
                                             <th className="p-4">Mensagem</th>
                                             <th className="p-4">Data</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                                        {rsvps.map(rsvp => (
-                                            <tr key={rsvp.id} className="dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750">
-                                                <td className="p-4 font-medium">{rsvp.name}</td>
-                                                <td className="p-4">{rsvp.guests_count}</td>
-                                                <td className="p-4">
-                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${rsvp.is_present ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                                        {rsvp.is_present ? 'Confirmado' : 'Recusado'}
-                                                    </span>
+                                        {filteredRsvps.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={5} className="p-8 text-center text-slate-500 dark:text-slate-400">
+                                                    Nenhum registro encontrado com os filtros atuais.
                                                 </td>
-                                                <td className="p-4 text-sm text-slate-500 max-w-xs truncate" title={rsvp.message}>{rsvp.message}</td>
-                                                <td className="p-4 text-xs text-slate-500">{new Date(rsvp.created_at).toLocaleDateString()}</td>
                                             </tr>
-                                        ))}
+                                        ) : (
+                                            filteredRsvps.map((rsvp) => (
+                                                <tr
+                                                    key={rsvp.id}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    className="cursor-pointer dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-burgundy-500"
+                                                    onClick={() => setSelectedRsvp(rsvp)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter' || e.key === ' ') {
+                                                            e.preventDefault();
+                                                            setSelectedRsvp(rsvp);
+                                                        }
+                                                    }}
+                                                    aria-label={`Abrir detalhes de ${rsvp.name || 'convidado'}`}
+                                                >
+                                                    <td className="p-4 font-medium">{rsvp.name}</td>
+                                                    <td className="p-4 whitespace-nowrap font-mono text-sm tabular-nums" title={rsvp.phone || undefined}>
+                                                        {formatRsvpPhone(rsvp.phone)}
+                                                    </td>
+                                                    <td className="p-4">
+                                                        <span className={`px-2 py-1 rounded text-xs font-bold ${rsvp.is_present ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'}`}>
+                                                            {rsvp.is_present ? 'Confirmado' : 'Recusado'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 text-sm text-slate-500 max-w-xs truncate" title={rsvp.message}>{rsvp.message || '—'}</td>
+                                                    <td className="p-4 text-xs text-slate-500">{new Date(rsvp.created_at).toLocaleDateString('pt-BR')}</td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -549,6 +639,86 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Detalhe do convidado (RSVP) */}
+            {selectedRsvp && (
+                <div
+                    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="rsvp-detail-title"
+                >
+                    <button
+                        type="button"
+                        className="absolute inset-0 cursor-default"
+                        aria-label="Fechar"
+                        onClick={() => setSelectedRsvp(null)}
+                    />
+                    <div className="relative z-10 w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+                        <div className="mb-4 flex items-start justify-between gap-4">
+                            <h3 id="rsvp-detail-title" className="font-sans text-xl font-bold dark:text-white">
+                                Detalhes do convidado
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={() => setSelectedRsvp(null)}
+                                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                                aria-label="Fechar"
+                            >
+                                <IoClose size={22} />
+                            </button>
+                        </div>
+                        <dl className="space-y-4 text-sm">
+                            <div>
+                                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Nome</dt>
+                                <dd className="mt-1 font-medium text-slate-900 dark:text-white">{selectedRsvp.name || '—'}</dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Telefone</dt>
+                                <dd className="mt-1 font-mono tabular-nums text-slate-800 dark:text-slate-200">{formatRsvpPhone(selectedRsvp.phone)}</dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Quantidade (pessoas)</dt>
+                                <dd className="mt-1 text-slate-900 dark:text-white">{selectedRsvp.guests_count ?? '—'}</dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</dt>
+                                <dd className="mt-1">
+                                    <span className={`inline-flex rounded px-2 py-1 text-xs font-bold ${selectedRsvp.is_present ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'}`}>
+                                        {selectedRsvp.is_present ? 'Confirmado' : 'Recusado'}
+                                    </span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Mensagem</dt>
+                                <dd className="mt-1 whitespace-pre-wrap break-words text-slate-700 dark:text-slate-300">
+                                    {selectedRsvp.message?.trim() ? selectedRsvp.message : '—'}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Registrado em</dt>
+                                <dd className="mt-1 text-slate-800 dark:text-slate-200">
+                                    {selectedRsvp.created_at
+                                        ? new Date(selectedRsvp.created_at).toLocaleString('pt-BR', {
+                                              dateStyle: 'short',
+                                              timeStyle: 'short',
+                                          })
+                                        : '—'}
+                                </dd>
+                            </div>
+                        </dl>
+                        <div className="mt-6 flex justify-end border-t border-slate-100 pt-4 dark:border-slate-700">
+                            <button
+                                type="button"
+                                onClick={() => setSelectedRsvp(null)}
+                                className="min-h-[44px] rounded-lg bg-burgundy-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-burgundy-700"
+                            >
+                                Fechar
+                            </button>
                         </div>
                     </div>
                 </div>
