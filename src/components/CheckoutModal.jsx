@@ -30,6 +30,7 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
     }, []);
 
     const isAsaas = paymentProvider === 'asaas';
+    const isInfinitepay = paymentProvider === 'infinitepay';
 
     // Customer Info
     const [customer, setCustomer] = useState({
@@ -198,7 +199,9 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                             <p className="text-xs text-center text-slate-400 mt-2">
                                 {isAsaas
                                     ? `Você será redirecionado para o link seguro do Asaas: Pix à vista ou cartão em até ${asaasMaxInstallments}x (conforme opções na página do Asaas).`
-                                    : 'Você será redirecionado para a AbacatePay para concluir o pagamento via Pix ou Cartão.'}
+                                    : isInfinitepay
+                                      ? 'Você será redirecionado para o checkout seguro da InfinitePay (Pix ou cartão, conforme opções na página).'
+                                      : 'Você será redirecionado para a AbacatePay para concluir o pagamento via Pix ou Cartão.'}
                             </p>
                         </div>
                     </div>

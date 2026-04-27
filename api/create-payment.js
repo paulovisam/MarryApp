@@ -1,6 +1,7 @@
 import { getPaymentProvider } from '../src/lib/payment-provider.js';
 import { createAbacatePayment } from './lib/create-abacate-payment.js';
 import { createAsaasPayment } from './lib/create-asaas-payment.js';
+import { createInfinitepayPayment } from './lib/create-infinitepay-payment.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -40,10 +41,14 @@ export default async function handler(req, res) {
 
     try {
         const provider = getPaymentProvider();
-        const result =
-            provider === 'asaas'
-                ? await createAsaasPayment(body, req)
-                : await createAbacatePayment(body, req);
+        let result;
+        if (provider === 'asaas') {
+            result = await createAsaasPayment(body, req);
+        } else if (provider === 'infinitepay') {
+            result = await createInfinitepayPayment(body, req);
+        } else {
+            result = await createAbacatePayment(body, req);
+        }
 
         res.status(200).json({
             orderId: result.orderId,
@@ -63,7 +68,9 @@ export default async function handler(req, res) {
                 msg
             );
         const upstream =
-            /AbacatePay|Asaas HTTP|Asaas \d|HTTP \d{3}/i.test(msg);
+            /AbacatePay|Asaas HTTP|Asaas \d|InfinitePay HTTP|HTTP \d{3}/i.test(
+                msg
+            );
         let status = 500;
         if (userInput) status = 400;
         else if (config) status = 503;

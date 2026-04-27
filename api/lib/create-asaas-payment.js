@@ -53,7 +53,6 @@ export async function createAsaasPayment(body, req) {
         'http://localhost:3000';
 
     const maxInstallmentCount = getMaxInstallmentCount();
-    console.log(`${origin}/presentes?status=success`)
     const linkPayload = {
         name: `Presente: ${String(giftTitle || 'Casamento').slice(0, 80)}`,
         description: String(

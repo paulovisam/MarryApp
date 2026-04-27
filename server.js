@@ -6,6 +6,7 @@ import createPaymentHandler from './api/create-payment.js';
 import paymentConfigHandler from './api/payment-config.js';
 import webhookAbacatepayHandler from './api/webhook-abacatepay.js';
 import webhookAsaasHandler from './api/webhook-asaas.js';
+import webhookInfinitepayHandler from './api/webhook-infinitepay.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001; // Run API on 3001 to avoid conflict with Vite (3000)
@@ -40,6 +41,10 @@ app.use(express.json());
 
 app.get('/api/payment-config', adaptHandler(paymentConfigHandler));
 app.post('/api/webhook/asaas', adaptHandler(webhookAsaasHandler));
+app.post(
+    '/api/webhook/infinitepay',
+    adaptHandler(webhookInfinitepayHandler)
+);
 app.all('/api/create-payment', adaptHandler(createPaymentHandler));
 
 // Determine if we are in production (serving static files) or dev (API only)
