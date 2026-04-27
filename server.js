@@ -31,20 +31,19 @@ app.post(
     express.raw({ type: 'application/json' }),
     adaptHandler(webhookAbacatepayHandler)
 );
-app.post(
-    '/api/webhook',
-    express.raw({ type: 'application/json' }),
-    adaptHandler(webhookAbacatepayHandler)
-);
 
 app.use(express.json());
 
-app.get('/api/payment-config', adaptHandler(paymentConfigHandler));
-app.post('/api/webhook/asaas', adaptHandler(webhookAsaasHandler));
+app.post(
+    '/api/webhook/asaas',
+    adaptHandler(webhookAsaasHandler)
+);
 app.post(
     '/api/webhook/infinitepay',
     adaptHandler(webhookInfinitepayHandler)
 );
+
+app.get('/api/payment-config', adaptHandler(paymentConfigHandler));
 app.all('/api/create-payment', adaptHandler(createPaymentHandler));
 
 // Determine if we are in production (serving static files) or dev (API only)
