@@ -4,7 +4,13 @@ import GiftCard from '../components/GiftCard';
 import GiftDetailModal from '../components/GiftDetailModal';
 import CheckoutModal from '../components/CheckoutModal';
 import PaymentSuccessCelebration from '../components/PaymentSuccessCelebration';
-import { IoArrowBack, IoCloseCircle, IoHeart, IoSearchOutline } from 'react-icons/io5';
+import {
+    IoArrowBack,
+    IoCloseCircle,
+    IoHeart,
+    IoSearchOutline,
+} from 'react-icons/io5';
+import CotasFloatingTip from '../components/CotasFloatingTip';
 import { Link, useSearchParams } from 'react-router-dom';
 
 const GiftListPage = () => {
@@ -192,6 +198,8 @@ const GiftListPage = () => {
                     }}
                 />
             )}
+
+            <CotasFloatingTip />
         </div>
     );
 };
