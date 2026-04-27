@@ -13,6 +13,16 @@ import {
 import CotasFloatingTip from '../components/CotasFloatingTip';
 import { Link, useSearchParams } from 'react-router-dom';
 
+/** Embaralha a ordem de exibição após cada carregamento (Fisher–Yates). */
+function shuffleGifts(items) {
+    const arr = [...items];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 const GiftListPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [gifts, setGifts] = useState([]);
@@ -43,7 +53,7 @@ const GiftListPage = () => {
         setLoading(true);
         try {
             const data = await getGifts();
-            setGifts(data);
+            setGifts(shuffleGifts(data));
         } catch (error) {
             console.error(error);
         } finally {
