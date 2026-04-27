@@ -97,7 +97,7 @@ export async function createInfinitepayPayment(body, req) {
             payload.customer.phone_number = `+55${phoneDigits}`;
         }
     }
-
+    console.log('Link checkout para InfinitePay:', payload);
     const infRes = await fetch(CHECKOUT_LINKS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

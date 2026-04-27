@@ -231,7 +231,7 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                                 gesto que aquece o coração e nos deixa ainda
                                 mais felizes.
                             </p>
-                            <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start">
+                            {/* <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start">
                                 <button
                                     type="button"
                                     onClick={() => setRecadoOpen(true)}
@@ -243,7 +243,7 @@ export default function PaymentSuccessCelebration({ onDismiss }) {
                                     />
                                     Enviar recado aos noivos
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
