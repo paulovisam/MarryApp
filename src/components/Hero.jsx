@@ -87,7 +87,7 @@ const Hero = () => {
           </div>
 
           {/* Mobile: rodapé da tela — grid + CTA (margem + safe area + espaço do chevron) */}
-          <div className="mt-auto flex w-full shrink-0 flex-col items-center gap-6 px-1 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+5rem))] pt-2 sm:gap-7 sm:px-2 md:hidden">
+          <div className="mt-auto flex w-full shrink-0 flex-col items-center gap-6 px-1 pb-[max(7.5rem,calc(env(safe-area-inset-bottom,0px)+5rem))] pt-2 sm:gap-7 sm:px-2 md:hidden">
             <div className="grid w-full grid-cols-2 gap-x-3 gap-y-1 sm:gap-x-6">
               <div className="min-w-0 text-right">
                 <p className="mb-1 font-sans text-[10px] uppercase tracking-[0.18em] text-gray-400 sm:text-xs sm:tracking-[0.25em]">
@@ -116,7 +116,7 @@ const Hero = () => {
           </div>
 
           {/* Tablet+ : layout original em três colunas */}
-          <div className="hidden items-center justify-center pt-6 md:flex md:pt-8">
+          <div className="hidden items-center justify-center pt-6 pb-1 md:flex md:pt-8">
             <div className="min-w-0 flex-1 pr-4 text-right md:pr-6">
               <p className="mb-2 font-sans text-xs uppercase tracking-[0.25em] text-gray-400 md:text-sm">
                 História
@@ -125,8 +125,7 @@ const Hero = () => {
                 15 de Agosto, 2026
               </p>
             </div>
-            <div className="flex shrink-0 flex-col items-center">
-              <div className="h-16 w-0.5 bg-gradient-to-b from-transparent to-primary-500 opacity-50" />
+            <div className="flex shrink-0 flex-col items-center py-16">
               <div className="py-8">
                 <a
                   href="#details"
@@ -136,7 +135,6 @@ const Hero = () => {
                   CONFIRMAR PRESENÇA
                 </a>
               </div>
-              <div className="h-16 w-0.5 bg-gradient-to-t from-transparent to-primary-500 opacity-50" />
             </div>
             <div className="min-w-0 flex-1 pl-4 text-left md:pl-6">
               <p className="mb-2 font-sans text-xs uppercase tracking-[0.25em] text-gray-400 md:text-sm">
@@ -151,14 +149,19 @@ const Hero = () => {
       </motion.div>
 
       <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-gray-950 to-transparent" />
-      {/* Wrapper flex: bounce usa transform no <a> e anula left-1/2 -translate-x-1/2 no mesmo nó */}
-      <div className="pointer-events-none absolute bottom-10 left-0 right-0 z-20 flex justify-center px-3 sm:px-4">
+      <div className="pointer-events-none absolute bottom-8 left-0 right-0 z-20 flex justify-center px-3 sm:bottom-10 sm:px-4">
         <a
           href="#about"
-          className="pointer-events-auto animate-bounce"
-          aria-label="Rolar para a seção sobre os noivos"
+          className="pointer-events-auto group flex min-h-[48px] flex-col items-center justify-center gap-2 rounded-lg px-4 py-2 text-center outline-none transition-[color,opacity] focus-visible:ring-2 focus-visible:ring-champagne-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          aria-label="Conheça nossa história — rolar para a seção sobre os noivos"
         >
-          <FaChevronDown className="text-2xl text-burgundy-400 opacity-50 transition-opacity hover:opacity-100" />
+          <span className="max-w-[16rem] font-sans text-[10px] pb-1 font-medium uppercase tracking-[0.22em] text-champagne-200/95 transition-colors group-hover:text-champagne-100 sm:text-[11px] sm:tracking-[0.26em]">
+            Conheça nossa história
+          </span>
+          <FaChevronDown
+            className="animate-bounce text-xl text-burgundy-400 opacity-60 transition-opacity motion-reduce:animate-none motion-reduce:opacity-80 group-hover:opacity-100 sm:text-2xl"
+            aria-hidden
+          />
         </a>
       </div>
     </section>
