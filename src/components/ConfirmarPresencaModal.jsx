@@ -39,6 +39,8 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  /** Incrementado a cada erro para remontar o botão e repetir a animação shake. */
+  const [submitShakeKey, setSubmitShakeKey] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -66,23 +68,37 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
     setError('');
     setSuccess(false);
     setLoading(false);
+    setSubmitShakeKey(0);
+  };
+
+  const shakeAndSetError = (msg) => {
+    setSubmitShakeKey((k) => k + 1);
+    setError(msg);
   };
 
   useEffect(() => {
     if (isOpen) reset();
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!error) return undefined;
+    const id = window.setTimeout(() => setError(''), 4000);
+    return () => window.clearTimeout(id);
+  }, [error]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     const name = fullName.trim();
     if (!isFullName(name)) {
-      setError('Preencha o nome completo.');
+      shakeAndSetError('Preencha o nome completo.');
       return;
     }
     const phoneT = phone.trim();
     if (phoneT && !isValidBrPhone(phoneT)) {
-      setError('Se informar WhatsApp, use DDD + número (10 ou 11 dígitos).');
+      shakeAndSetError(
+        'Se informar WhatsApp, use DDD + número (10 ou 11 dígitos).'
+      );
       return;
     }
 
@@ -99,13 +115,25 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
       setSuccess(true);
     } catch (err) {
       console.error(err);
-      setError('Não foi possível enviar. Tente de novo em instantes.');
+      shakeAndSetError('Não foi possível enviar. Tente de novo em instantes.');
     } finally {
       setLoading(false);
     }
   };
 
   if (!isOpen) return null;
+
+  const errorToast = error ? (
+    <div
+      className="fixed left-1/2 top-6 md:top-12 z-[110] flex max-w-[min(calc(100vw-2rem),22rem)] -translate-x-1/2 px-3 motion-safe:animate-[fadeIn_0.25s_ease-out]"
+      role="alert"
+      aria-live="assertive"
+    >
+      <p className="w-full rounded-xl border border-red-400/35 bg-red-950/95 px-4 py-3 text-center font-sans text-sm leading-snug text-red-100 shadow-lg shadow-black/40 backdrop-blur-sm">
+        {error}
+      </p>
+    </div>
+  ) : null;
 
   const panel = (
     <div
@@ -152,7 +180,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
                     onClick={() => setIsPresent(true)}
                     className={`${btnGrid} border ${
                       isPresent
-                        ? 'border-burgundy-500 bg-burgundy-600 text-beige-50'
+                        ? 'border-champagne-300 bg-champagne-300 text-primary-950'
                         : 'border-beige-500/25 bg-primary-900/50 text-beige-300 hover:bg-primary-800/60'
                     } `}
                   >
@@ -163,7 +191,7 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
                     onClick={() => setIsPresent(false)}
                     className={`${btnGrid} border ${
                       !isPresent
-                        ? 'border-burgundy-500 bg-burgundy-600 text-beige-50'
+                        ? 'border-champagne-300 bg-champagne-300 text-primary-950'
                         : 'border-beige-500/25 bg-primary-900/50 text-beige-300 hover:bg-primary-800/60'
                     } `}
                   >
@@ -229,9 +257,14 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
 
               <div className="pt-1 pb-4">
                 <button
+                  key={submitShakeKey}
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-burgundy-600 py-3.5 font-sans text-xs font-medium uppercase tracking-[0.15em] text-beige-50 transition hover:bg-burgundy-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={`flex w-full items-center justify-center gap-2 rounded-full bg-champagne-300 py-3.5 font-sans text-xs font-medium uppercase tracking-[0.15em] text-primary-950 transition hover:bg-champagne-200 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    submitShakeKey > 0
+                      ? 'motion-safe:animate-shake-submit motion-reduce:animate-none'
+                      : ''
+                  }`}
                 >
                   {loading ? 'Enviando…' : 'Enviar confirmação'}
                   {!loading ? <IoArrowForward className="h-4 w-4" aria-hidden /> : null}
@@ -262,5 +295,11 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
   );
 
   if (typeof document === 'undefined') return null;
-  return createPortal(panel, document.body);
+  return createPortal(
+    <>
+      {errorToast}
+      {panel}
+    </>,
+    document.body
+  );
 }
