@@ -11,6 +11,7 @@ import {
     IoSearch,
     IoImageOutline,
     IoClose,
+    IoRefreshOutline,
 } from 'react-icons/io5';
 import { useAdminGifts, useAdminRsvps } from './adminHooks';
 
@@ -25,7 +26,7 @@ function formatRsvpPhone(value) {
 const Dashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('rsvps'); // rsvps | gifts
-    const { rsvps } = useAdminRsvps();
+    const { rsvps, refresh: refreshRsvps } = useAdminRsvps();
     const { gifts, addGift, updateGift, deleteGift } = useAdminGifts();
 
     // Gift Form State
@@ -47,6 +48,7 @@ const Dashboard = () => {
     /** Convidados: mais recentes primeiro (igual ao fetch) ou mais antigos primeiro. */
     const [rsvpDateSort, setRsvpDateSort] = useState('newest');
     const [selectedRsvp, setSelectedRsvp] = useState(null);
+    const [rsvpRefreshing, setRsvpRefreshing] = useState(false);
     const [giftSort, setGiftSort] = useState('name-asc');
     const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
 
@@ -65,6 +67,15 @@ const Dashboard = () => {
     const confirmLogout = () => {
         localStorage.removeItem('adminAuth');
         navigate('/admin/login');
+    };
+
+    const handleRefreshRsvps = async () => {
+        setRsvpRefreshing(true);
+        try {
+            await refreshRsvps();
+        } finally {
+            setRsvpRefreshing(false);
+        }
     };
 
     // Stats
@@ -357,6 +368,23 @@ const Dashboard = () => {
                                         <option value="newest">Mais recentes primeiro</option>
                                         <option value="oldest">Mais antigos primeiro</option>
                                     </select>
+                                </div>
+                                <div className="flex w-full justify-end sm:ml-auto sm:w-auto">
+                                    <button
+                                        id="rsvp-refresh"
+                                        type="button"
+                                        onClick={handleRefreshRsvps}
+                                        disabled={rsvpRefreshing}
+                                        className="flex min-h-[44px] w-auto min-w-[140px] items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"
+                                        aria-label="Atualizar lista de convidados a partir do servidor"
+                                        aria-busy={rsvpRefreshing}
+                                    >
+                                        <IoRefreshOutline
+                                            className={`h-5 w-5 shrink-0 ${rsvpRefreshing ? 'animate-spin' : ''}`}
+                                            aria-hidden
+                                        />
+                                        {rsvpRefreshing ? 'Atualizando…' : 'Atualizar'}
+                                    </button>
                                 </div>
                             </div>
                             <div className="overflow-x-auto">
