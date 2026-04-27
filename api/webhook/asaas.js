@@ -21,6 +21,19 @@ function orderMatchOrFilter(payment) {
     return `asaas_payment_id.eq.${payId}`;
 }
 
+function parseJsonBody(reqBody) {
+    if (Buffer.isBuffer(reqBody)) {
+        return JSON.parse(reqBody.toString('utf8'));
+    }
+    if (typeof reqBody === 'string') {
+        return JSON.parse(reqBody);
+    }
+    if (typeof reqBody === 'object' && reqBody !== null) {
+        return reqBody;
+    }
+    throw new Error('Invalid body');
+}
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -38,14 +51,12 @@ export default async function handler(req, res) {
             }
         }
 
-        const payload =
-            typeof req.body === 'object' && req.body !== null
-                ? req.body
-                : JSON.parse(
-                      typeof req.body === 'string'
-                          ? req.body
-                          : JSON.stringify(req.body)
-                  );
+        let payload;
+        try {
+            payload = parseJsonBody(req.body);
+        } catch {
+            return res.status(400).json({ error: 'Invalid JSON body' });
+        }
 
         const event = payload.event;
         const payment = payload.payment;
@@ -60,7 +71,6 @@ export default async function handler(req, res) {
         }
 
         const orFilter = orderMatchOrFilter(payment);
-        console.log('Asaas webhook', event, paymentId, orFilter);
 
         if (PAID_EVENTS.has(event)) {
             const billingType = payment.billingType || 'ASAAS';

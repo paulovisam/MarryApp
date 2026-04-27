@@ -18,7 +18,7 @@ export default async function handler(req, res) {
             expectedSecret !== '' &&
             webhookSecret !== expectedSecret
         ) {
-            console.log('Invalid webhook secret', expectedSecret, webhookSecret);
+            console.warn('AbacatePay webhook: secret inválido');
             return res.status(401).json({ error: 'Invalid webhook secret' });
         }
 
@@ -45,7 +45,6 @@ export default async function handler(req, res) {
         }
 
         const billingId = data.billing.id;
-        console.log('AbacatePay webhook data', data);
         if (!billingId) {
             return res.status(400).json({ error: 'Missing billing id' });
         }

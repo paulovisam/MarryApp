@@ -4,8 +4,8 @@ import express from 'express';
 import cors from 'cors';
 import createPaymentHandler from './api/create-payment.js';
 import paymentConfigHandler from './api/payment-config.js';
-import webhookAbacatepayHandler from './api/webhook-abacatepay.js';
-import webhookAsaasHandler from './api/webhook-asaas.js';
+import webhookAbacatepayHandler from './api/webhook/abacatepay.js';
+import webhookAsaasHandler from './api/webhook/asaas.js';
 import webhookInfinitepayHandler from './api/webhook/infinitepay.js';
 
 const app = express();
