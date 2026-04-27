@@ -40,6 +40,8 @@ const Dashboard = () => {
         description: '',
     });
     const [searchTerm, setSearchTerm] = useState('');
+    /** Presentes: todos | com cotas disponíveis | esgotados (todas as cotas ganhas). */
+    const [giftAvailabilityFilter, setGiftAvailabilityFilter] = useState('all');
     const [rsvpSearch, setRsvpSearch] = useState('');
     const [rsvpStatusFilter, setRsvpStatusFilter] = useState('all');
     const [selectedRsvp, setSelectedRsvp] = useState(null);
@@ -66,7 +68,12 @@ const Dashboard = () => {
     // Stats
     const totalConfirmedGuests = rsvps.filter(r => r.is_present).reduce((acc, curr) => acc + curr.guests_count, 0);
     const totalMoney = gifts.reduce((acc, g) => acc + (g.purchased_quantity * g.price), 0);
-    const totalGiftsSold = gifts.reduce((acc, g) => acc + g.purchased_quantity, 0);
+    /** Quantidade de itens da lista com todas as cotas preenchidas (esgotados). */
+    const totalGiftsClosed = gifts.filter((g) => {
+        const total = Number(g.total_quantity) || 0;
+        const purchased = Number(g.purchased_quantity) || 0;
+        return total > 0 && purchased >= total;
+    }).length;
 
     const filteredRsvps = useMemo(() => {
         const q = rsvpSearch.trim().toLowerCase();
@@ -81,8 +88,22 @@ const Dashboard = () => {
 
     const filteredGifts = useMemo(() => {
         const term = searchTerm.toLowerCase();
-        const filtered = gifts.filter((gift) =>
-            gift.title.toLowerCase().includes(term)
+        const matchesAvailability = (gift) => {
+            const total = Number(gift.total_quantity) || 0;
+            const purchased = Number(gift.purchased_quantity) || 0;
+            if (giftAvailabilityFilter === 'all') return true;
+            if (giftAvailabilityFilter === 'open') {
+                return total > 0 && purchased < total;
+            }
+            if (giftAvailabilityFilter === 'won') {
+                return total > 0 && purchased >= total;
+            }
+            return true;
+        };
+        const filtered = gifts.filter(
+            (gift) =>
+                gift.title.toLowerCase().includes(term) &&
+                matchesAvailability(gift)
         );
         const sorted = [...filtered].sort((a, b) => {
             const titleA = a.title ?? '';
@@ -106,7 +127,7 @@ const Dashboard = () => {
             }
         });
         return sorted;
-    }, [gifts, searchTerm, giftSort]);
+    }, [gifts, searchTerm, giftSort, giftAvailabilityFilter]);
 
     // Handlers
     const openAddModal = () => {
@@ -261,7 +282,7 @@ const Dashboard = () => {
                             <div className="p-3 bg-green-100 text-green-600 rounded-lg"><IoGiftOutline size={24} /></div>
                             <div>
                                 <p className="text-sm text-slate-500">Presentes Ganhados</p>
-                                <p className="text-2xl font-bold dark:text-white">{totalGiftsSold}</p>
+                                <p className="text-2xl font-bold dark:text-white">{totalGiftsClosed}</p>
                             </div>
                         </div>
                     </div>
@@ -367,25 +388,44 @@ const Dashboard = () => {
 
                     {activeTab === 'gifts' && (
                         <div className="p-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                                <h3 className="text-xl font-bold font-sans dark:text-white">Gerenciar Presentes</h3>
-                                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:flex-wrap md:justify-end">
-                                    <div className="relative w-full sm:min-w-[200px] sm:flex-1 md:w-auto md:max-w-xs">
-                                        <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <div className="mb-6 space-y-4">
+                                <h3 className="text-xl font-bold font-sans dark:text-white">
+                                    Gerenciar Presentes
+                                </h3>
+                                <div
+                                    className="
+                                        grid grid-cols-1 gap-3
+                                        md:grid-cols-2 md:gap-4
+                                        xl:grid-cols-12 xl:items-end xl:gap-3
+                                    "
+                                >
+                                    <div className="relative min-w-0 md:col-span-2 xl:col-span-4">
+                                        <IoSearch
+                                            className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                                            aria-hidden
+                                        />
                                         <input
-                                            type="text"
-                                            placeholder="Buscar presente..."
-                                            className="pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg w-full dark:bg-slate-700 dark:text-white"
+                                            type="search"
+                                            placeholder="Buscar presente…"
+                                            className="min-h-[44px] w-full rounded-lg border border-slate-200 py-2.5 pl-10 pr-4 text-slate-900 dark:border-slate-700 dark:bg-slate-700 dark:text-white"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
+                                            autoComplete="off"
+                                            aria-label="Buscar presente por nome"
                                         />
                                     </div>
-                                    <label className="flex w-full flex-col gap-1 sm:w-auto">
-                                        <span className="sr-only">Ordenar por</span>
+                                    <div className="flex min-w-0 flex-col gap-1 md:min-w-0 xl:col-span-3">
+                                        <label
+                                            htmlFor="gift-sort-filter"
+                                            className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                                        >
+                                            Ordenar por
+                                        </label>
                                         <select
+                                            id="gift-sort-filter"
                                             value={giftSort}
                                             onChange={(e) => setGiftSort(e.target.value)}
-                                            className="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white sm:min-w-[220px]"
+                                            className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white"
                                             aria-label="Ordenar presentes por nome ou valor"
                                         >
                                             <option value="name-asc">Nome (A–Z)</option>
@@ -393,14 +433,45 @@ const Dashboard = () => {
                                             <option value="price-asc">Valor (menor primeiro)</option>
                                             <option value="price-desc">Valor (maior primeiro)</option>
                                         </select>
-                                    </label>
-                                    <button onClick={openAddModal} className="flex items-center justify-center gap-2 bg-burgundy-600 text-white px-4 py-2 rounded-lg hover:bg-burgundy-700 w-full sm:w-auto">
-                                        <IoAdd /> Adicionar Novo
-                                    </button>
+                                    </div>
+                                    <div className="flex min-w-0 flex-col gap-1 xl:col-span-3">
+                                        <label
+                                            htmlFor="gift-availability-filter"
+                                            className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                                        >
+                                            Disponibilidade
+                                        </label>
+                                        <select
+                                            id="gift-availability-filter"
+                                            value={giftAvailabilityFilter}
+                                            onChange={(e) => setGiftAvailabilityFilter(e.target.value)}
+                                            className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white"
+                                            aria-label="Filtrar presentes por abertos ou ganhos"
+                                        >
+                                            <option value="all">Todos</option>
+                                            <option value="open">Abertos (com cotas)</option>
+                                            <option value="won">Ganhados (esgotados)</option>
+                                        </select>
+                                    </div>
+                                    <div className="md:col-span-2 xl:col-span-2">
+                                        <button
+                                            type="button"
+                                            onClick={openAddModal}
+                                            className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-burgundy-600 px-4 py-2.5 text-white transition-colors hover:bg-burgundy-700"
+                                        >
+                                            <IoAdd className="shrink-0" aria-hidden />
+                                            Adicionar Novo
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {filteredGifts.length === 0 ? (
+                                    <div className="col-span-full rounded-xl border border-dashed border-slate-200 py-14 text-center text-slate-500 dark:border-slate-600 dark:text-slate-400">
+                                        Nenhum presente encontrado com os filtros atuais.
+                                    </div>
+                                ) : null}
                                 {filteredGifts.map((gift) => (
                                     <div
                                         key={gift.id}
