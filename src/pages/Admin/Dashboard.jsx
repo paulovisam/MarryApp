@@ -44,6 +44,8 @@ const Dashboard = () => {
     const [giftAvailabilityFilter, setGiftAvailabilityFilter] = useState('all');
     const [rsvpSearch, setRsvpSearch] = useState('');
     const [rsvpStatusFilter, setRsvpStatusFilter] = useState('all');
+    /** Convidados: mais recentes primeiro (igual ao fetch) ou mais antigos primeiro. */
+    const [rsvpDateSort, setRsvpDateSort] = useState('newest');
     const [selectedRsvp, setSelectedRsvp] = useState(null);
     const [giftSort, setGiftSort] = useState('name-asc');
     const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
@@ -77,14 +79,24 @@ const Dashboard = () => {
 
     const filteredRsvps = useMemo(() => {
         const q = rsvpSearch.trim().toLowerCase();
-        return rsvps.filter((r) => {
+        const filtered = rsvps.filter((r) => {
             const name = (r.name || '').toLowerCase();
             if (q && !name.includes(q)) return false;
             if (rsvpStatusFilter === 'present' && !r.is_present) return false;
             if (rsvpStatusFilter === 'absent' && r.is_present) return false;
             return true;
         });
-    }, [rsvps, rsvpSearch, rsvpStatusFilter]);
+        const createdTime = (r) => {
+            const t = r.created_at ? new Date(r.created_at).getTime() : 0;
+            return Number.isNaN(t) ? 0 : t;
+        };
+        return [...filtered].sort((a, b) => {
+            const ta = createdTime(a);
+            const tb = createdTime(b);
+            if (ta === tb) return 0;
+            return rsvpDateSort === 'oldest' ? ta - tb : tb - ta;
+        });
+    }, [rsvps, rsvpSearch, rsvpStatusFilter, rsvpDateSort]);
 
     const filteredGifts = useMemo(() => {
         const term = searchTerm.toLowerCase();
@@ -329,6 +341,21 @@ const Dashboard = () => {
                                         <option value="all">Todos</option>
                                         <option value="present">Confirmado</option>
                                         <option value="absent">Recusado</option>
+                                    </select>
+                                </div>
+                                <div className="w-full sm:w-auto sm:min-w-[220px]">
+                                    <label htmlFor="rsvp-date-sort" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                        Ordenar por data
+                                    </label>
+                                    <select
+                                        id="rsvp-date-sort"
+                                        className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white sm:min-w-[220px]"
+                                        value={rsvpDateSort}
+                                        onChange={(e) => setRsvpDateSort(e.target.value)}
+                                        aria-label="Ordenar convidados por data de registro"
+                                    >
+                                        <option value="newest">Mais recentes primeiro</option>
+                                        <option value="oldest">Mais antigos primeiro</option>
                                     </select>
                                 </div>
                             </div>
