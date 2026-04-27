@@ -183,7 +183,7 @@ export default function PreweddingGallery() {
                         />
                         <h2
                             id="prewedding-heading"
-                            className="font-serif text-3xl text-beige-200 md:text-4xl lg:text-5xl"
+                            className="font-serif text-3xl text-champagne-200 md:text-4xl lg:text-5xl"
                         >
                             Galeria de Fotos
                         </h2>

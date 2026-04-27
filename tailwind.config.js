@@ -73,6 +73,15 @@ export default {
           900: '#07131f',
           950: '#0b1c2d',
         },
+        /** Tons champagne (detalhes, hero e seções escuras) — alinhado a Details.jsx */
+        champagne: {
+          50: '#faf7f1',
+          100: '#E8D4B8',
+          200: '#D4B896',
+          300: '#C9A96E',
+          400: '#b89a6a',
+          500: '#b8a078',
+        },
       },
       fontFamily: {
         serif: ['Playfair Display', 'serif'],

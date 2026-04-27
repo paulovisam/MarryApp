@@ -26,7 +26,7 @@ const About = () => {
           {/* Section title */}
           <ScrollReveal className="text-center mb-16">
             <FaHeart className="text-burgundy-400 text-3xl mx-auto mb-6 opacity-70" />
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-beige-300 mb-4">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-champagne-100 mb-4">
               Sobre os Noivos
             </h2>
             {/* <div className="w-24 h-1 bg-gradient-to-r from-burgundy-500 to-royal-500 mx-auto"></div> */}
@@ -84,7 +84,7 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-32 md:gap-18">
             {/* Paulo Description */}
             <ScrollReveal className="text-center md:text-right" from="left" delay={0.05}>
-              <div className="space-y-4 text-beige-300 font-sans leading-relaxed">
+              <div className="space-y-4 text-champagne-200 font-sans leading-relaxed">
                 <p className="font-script text-3xl md:text-4xl text-primary-400 drop-shadow-lg whitespace-nowrap">Paulo</p>
                 <p className="text-lg">
                   Ele é sério quando precisa ser, calculador nas decisões e inteligente. Provedor, gentil e amoroso, demonstra seu carinho com atitudes firmes, responsabilidade (um pouco de Código e Excel) e muito cuidado com quem ama.
@@ -94,7 +94,7 @@ const About = () => {
 
             {/* Sara Description */}
             <ScrollReveal className="text-center md:text-left" from="right" delay={0.1}>
-              <div className="space-y-4 text-beige-300 font-sans leading-relaxed">
+              <div className="space-y-4 text-champagne-200 font-sans leading-relaxed">
                 <p className="font-script text-3xl md:text-4xl text-secondary-400 drop-shadow-lg whitespace-nowrap">Sara</p>
                 <p className="text-lg">
                   Ela é sensível, cuidadora e tem um coração que ama servir e acolher. Demonstra amor nos gestos simples, no cuidado constante e na forma leve de estar presente.
@@ -115,7 +115,7 @@ const About = () => {
                 
                 {/* Content */}
                 <div className="relative z-10">
-                  <p className="font-sans text-lg md:text-xl text-beige-200 leading-relaxed italic">
+                  <p className="font-sans text-lg md:text-xl text-champagne-100 leading-relaxed italic">
                     Nós acreditamos que o amor se constrói no dia a dia, nas conversas sinceras, no cuidado e na presença um do outro, com Deus no centro de tudo. Seguimos juntos, com parceria e equilíbrio, fazendo planos e escolhendo, todos os dias, caminhar lado a lado. Com fé, confiamos que é Deus quem sustenta nossa história e conduz cada passo do que estamos construindo juntos.
                   </p>
                 </div>

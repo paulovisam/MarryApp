@@ -20,7 +20,6 @@ import LazyImage from './LazyImage';
 import ScrollReveal from './ScrollReveal';
 
 const Story = () => {
-  const navigate = useNavigate();
 
   const [lightbox, setLightbox] = useState({
     isOpen: false,
@@ -156,11 +155,11 @@ const Story = () => {
         <div className="max-w-5xl mx-auto">
           {/* Section title */}
           <ScrollReveal className="text-center mb-20">
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-4">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-champagne-200 mb-4">
               Nossa História
             </h2>
             {/* <div className="w-24 h-1 bg-gradient-to-r from-secondary-700 to-primary-500 mx-auto mb-6"></div> */}
-            <p className="font-sans text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="font-sans text-lg md:text-xl text-champagne-400 max-w-2xl mx-auto">
             Uma história construída no cuidado, na fé e na escolha diária.
             </p>
           </ScrollReveal>
@@ -213,11 +212,11 @@ const Story = () => {
                           </span>
                         </div>
 
-                        <h3 className="font-serif text-2xl text-beige-300 mb-3">
+                        <h3 className="font-serif text-2xl text-champagne-100 mb-3">
                           {item.title}
                         </h3>
 
-                        <p className="font-sans text-beige-300 leading-relaxed">
+                        <p className="font-sans text-champagne-100 leading-relaxed">
                           {item.description}
                         </p>
                       </div>
@@ -263,11 +262,11 @@ const Story = () => {
                           </span>
                         </div>
 
-                        <h3 className="font-serif text-3xl text-beige-300 mb-3">
+                        <h3 className="font-serif text-3xl text-champagne-100 mb-3">
                           {item.title}
                         </h3>
 
-                        <p className="font-sans text-beige-300 leading-relaxed">
+                        <p className="font-sans text-champagne-100 leading-relaxed">
                           {item.description}
                         </p>
                       </div>

@@ -91,40 +91,40 @@ export default function ConfirmarPresencaCard({ timeLeft }) {
       <ConfirmarPresencaModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <ScrollReveal className="inline-block max-w-full">
         <div className="inline-block bg-gradient-to-r from-primary-800 to-primary-900 rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl border border-primary-500 border-opacity-30">
-          <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-beige-400 mb-10 leading-normal pb-2">
+          <p className="font-script text-4xl md:text-6xl bg-clip-text text-transparent bg-champagne-200 mb-10 leading-normal pb-2">
             15 de Agosto 2026
           </p>
 
           <div className="mb-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 max-w-lg mx-auto">
-              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-champagne-300 border-opacity-20">
+                <div className="font-script text-2xl md:text-3xl text-champagne-200 font-bold">
                   {timeLeft.months}
                 </div>
-                <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">Meses</div>
+                <div className="font-sans text-xs md:text-sm text-champagne-200 mt-1">Meses</div>
               </div>
-              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-champagne-300 border-opacity-20">
+                <div className="font-script text-2xl md:text-3xl text-champagne-200 font-bold">
                   {timeLeft.days}
                 </div>
-                <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">Dias</div>
+                <div className="font-sans text-xs md:text-sm text-champagne-200 mt-1">Dias</div>
               </div>
-              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-champagne-300 border-opacity-20">
+                <div className="font-script text-2xl md:text-3xl text-champagne-200 font-bold">
                   {timeLeft.hours}
                 </div>
-                <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">Horas</div>
+                <div className="font-sans text-xs md:text-sm text-champagne-200 mt-1">Horas</div>
               </div>
-              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-beige-500 border-opacity-20">
-                <div className="font-script text-2xl md:text-3xl text-beige-300 font-bold">
+              <div className="bg-slate-900 bg-opacity-50 rounded-lg p-3 md:p-4 border border-champagne-300 border-opacity-20">
+                <div className="font-script text-2xl md:text-3xl text-champagne-200 font-bold">
                   {timeLeft.minutes}
                 </div>
-                <div className="font-sans text-xs md:text-sm text-beige-300 mt-1">Min</div>
+                <div className="font-sans text-xs md:text-sm text-champagne-200 mt-1">Min</div>
               </div>
             </div>
           </div>
 
-          <p className="font-sans text-lg md:text-xl text-beige-300 leading-relaxed">
+          <p className="font-sans text-lg md:text-xl text-champagne-200 leading-relaxed">
             Estamos prontos para o próximo capítulo da nossa história, e queremos você ao nosso lado para
             celebrar esse momento tão especial!
           </p>

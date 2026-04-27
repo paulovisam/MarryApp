@@ -107,7 +107,7 @@ const Hero = () => {
               </div>
             </div>
             <a
-              href="#confirmar-presenca"
+              href="#details"
               onClick={() => playAmbient()}
               className="flex min-h-[48px] w-full max-w-sm items-center justify-center border border-white px-4 py-3.5 text-center font-serif text-[11px] tracking-[0.18em] text-white transition-all duration-300 active:bg-white/10 hover:bg-white hover:text-slate-900 sm:text-xs sm:tracking-widest"
             >
@@ -129,7 +129,7 @@ const Hero = () => {
               <div className="h-16 w-0.5 bg-gradient-to-b from-transparent to-primary-500 opacity-50" />
               <div className="py-8">
                 <a
-                  href="#confirmar-presenca"
+                  href="#details"
                   onClick={() => playAmbient()}
                   className="inline-block border border-white px-8 py-3 font-serif tracking-widest text-white transition-all duration-300 hover:bg-white hover:text-slate-900"
                 >
