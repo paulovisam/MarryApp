@@ -86,7 +86,7 @@ export default function ConfirmarPresencaCard({ timeLeft }) {
     <div
       id="confirmar-presenca"
       ref={confirmarPresencaRef}
-      className="my-20 scroll-my-20 text-center md:scroll-my-24"
+      className="py-20 scroll-py-20 text-center md:scroll-py-24"
     >
       <ConfirmarPresencaModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <ScrollReveal className="inline-block max-w-full">
@@ -132,7 +132,7 @@ export default function ConfirmarPresencaCard({ timeLeft }) {
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="mt-8 px-8 py-4 bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-full font-serif text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 animate-pulse-slow"
+            className="mt-8 px-8 py-4 bg-champagne-300 hover:bg-champagne-200 text-primary-950 rounded-full font-serif text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 animate-pulse-slow"
           >
             Confirmar Presença
           </button>

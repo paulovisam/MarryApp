@@ -58,7 +58,7 @@ export default function ConfirmarPresencaSection() {
 
   return (
     <section
-      className="bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 border-t border-white/5"
+      className="bg-[#060a12] border-white/5"
       aria-label="Confirmação de presença"
     >
       <div className="container mx-auto px-4">

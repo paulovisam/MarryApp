@@ -70,7 +70,7 @@ export default {
           600: '#0f3651',
           700: '#0b1c2d',
           800: '#091826',
-          900: '#07131f',
+          900: '#060a12',
           950: '#0b1c2d',
         },
         /** Tons champagne (detalhes, hero e seções escuras) — alinhado a Details.jsx */
