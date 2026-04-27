@@ -13,21 +13,16 @@ function mapCaptureMethod(m) {
 }
 
 export default async function handler(req, res) {
-    console.log('Webhook InfinitePay recebido');
-    console.log('Método:', req.method);
-    console.log('Headers:', req.headers);
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
         let payload = req.body;
-        console.log('Payload do webhook InfinitePay:', payload);
         if (typeof payload === 'string') {
             try {
                 payload = JSON.parse(payload);
             } catch {
-                console.log('Erro ao parsear o payload:', payload);
                 return res.status(400).json({ error: 'Invalid JSON body' });
             }
         }
@@ -37,10 +32,9 @@ export default async function handler(req, res) {
 
         const orderNsu = payload.order_nsu;
         if (orderNsu == null || String(orderNsu).trim() === '') {
-            console.log('Order NSU inválido:', orderNsu);
             return res.status(400).json({ error: 'Missing order_nsu' });
         }
-        
+
         const paymentMethod = mapCaptureMethod(payload.capture_method);
 
         const { data: updatedRows, error: orderError } = await supabase

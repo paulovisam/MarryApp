@@ -6,7 +6,7 @@ import createPaymentHandler from './api/create-payment.js';
 import paymentConfigHandler from './api/payment-config.js';
 import webhookAbacatepayHandler from './api/webhook-abacatepay.js';
 import webhookAsaasHandler from './api/webhook-asaas.js';
-import webhookInfinitepayHandler from './api/webhook-infinitepay.js';
+import webhookInfinitepayHandler from './api/webhook/infinitepay.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001; // Run API on 3001 to avoid conflict with Vite (3000)
