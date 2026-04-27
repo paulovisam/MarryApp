@@ -1,11 +1,16 @@
 
 import React, { useEffect, useState } from 'react';
-import { IoClose, IoLockClosed } from 'react-icons/io5';
+import { IoAdd, IoClose, IoLockClosed, IoRemove } from 'react-icons/io5';
 import { getPaymentProvider } from '../lib/payment-provider.js';
 
 const asaasMaxInstallments = (() => {
     const n = parseInt(import.meta.env.VITE_ASAAS_MAX_INSTALLMENT_COUNT || '12', 10);
     return Number.isFinite(n) && n > 0 ? n : 12;
+})();
+
+const maxQuotasPerOrderClient = (() => {
+    const n = parseInt(import.meta.env.VITE_MAX_GIFT_QUOTAS_PER_ORDER || '50', 10);
+    return Number.isFinite(n) && n > 0 ? Math.min(500, n) : 50;
 })();
 
 const CheckoutModal = ({ gift, onClose, onSuccess }) => {
@@ -31,6 +36,26 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
 
     const isAsaas = paymentProvider === 'asaas';
     const isInfinitepay = paymentProvider === 'infinitepay';
+
+    const unitPrice = Number(gift?.price) || 0;
+    const purchasedQty = Math.max(0, Number(gift?.purchased_quantity) || 0);
+    const totalQty = Math.max(0, Number(gift?.total_quantity) || 0);
+    const maxSelectable =
+        totalQty > 0
+            ? Math.max(1, totalQty - purchasedQty)
+            : maxQuotasPerOrderClient;
+
+    const [quotaQty, setQuotaQty] = useState(1);
+
+    useEffect(() => {
+        setQuotaQty(1);
+    }, [gift?.id]);
+
+    useEffect(() => {
+        setQuotaQty((q) =>
+            Math.min(Math.max(1, q), Math.max(1, maxSelectable))
+        );
+    }, [maxSelectable, gift?.id]);
 
     // Customer Info
     const [customer, setCustomer] = useState({
@@ -63,11 +88,14 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
         setError('');
 
         try {
+            const totalAmount =
+                Math.round(unitPrice * quotaQty * 100) / 100;
             const payload = {
                 giftId: gift.id,
                 giftTitle: gift.title,
                 giftDescription: gift.description,
-                amount: gift.price,
+                quantity: quotaQty,
+                amount: String(totalAmount),
                 customer: {
                     ...customer,
                     taxId: isAsaas
@@ -120,10 +148,92 @@ const CheckoutModal = ({ gift, onClose, onSuccess }) => {
                     {/* Summary */}
                     <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl mb-6 flex gap-4 items-center">
                         <img src={gift.image_url} alt="" className="w-16 h-16 object-cover rounded-lg bg-white" />
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <h4 className="font-sans font-semibold text-slate-900 dark:text-white">{gift.title}</h4>
-                            <p className="text-600 font-bold">R$ {gift.price}</p>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                                {unitPrice.toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL',
+                                })}{' '}
+                                por cota
+                            </p>
+                            <p className="mt-1 font-bold text-slate-900 dark:text-white">
+                                {(unitPrice * quotaQty).toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL',
+                                })}{' '}
+                                <span className="text-sm font-normal text-slate-500 dark:text-slate-400">
+                                    ({quotaQty} {quotaQty === 1 ? 'cota' : 'cotas'})
+                                </span>
+                            </p>
                         </div>
+                    </div>
+
+                    <div className="mb-6">
+                        <label
+                            htmlFor="quota-qty"
+                            className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                        >
+                            Quantidade de cotas
+                        </label>
+                        <div className="flex max-w-xs items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setQuotaQty((q) => Math.max(1, q - 1))
+                                }
+                                disabled={quotaQty <= 1 || loading}
+                                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                                aria-label="Menos uma cota"
+                            >
+                                <IoRemove className="h-5 w-5" aria-hidden />
+                            </button>
+                            <input
+                                id="quota-qty"
+                                type="number"
+                                inputMode="numeric"
+                                min={1}
+                                max={maxSelectable}
+                                value={quotaQty}
+                                onChange={(e) => {
+                                    const v = parseInt(e.target.value, 10);
+                                    if (Number.isNaN(v)) {
+                                        setQuotaQty(1);
+                                        return;
+                                    }
+                                    setQuotaQty(
+                                        Math.min(
+                                            Math.max(1, v),
+                                            maxSelectable
+                                        )
+                                    );
+                                }}
+                                className="h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white py-2 text-center text-base font-semibold tabular-nums text-slate-900 focus:border-burgundy-500 focus:outline-none focus:ring-2 focus:ring-burgundy-500/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                            />
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setQuotaQty((q) =>
+                                        Math.min(maxSelectable, q + 1)
+                                    )
+                                }
+                                disabled={quotaQty >= maxSelectable || loading}
+                                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                                aria-label="Mais uma cota"
+                            >
+                                <IoAdd className="h-5 w-5" aria-hidden />
+                            </button>
+                        </div>
+                        {totalQty > 0 ? (
+                            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                Disponíveis: {maxSelectable} de {totalQty}{' '}
+                                cotas.
+                            </p>
+                        ) : (
+                            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                Até {maxSelectable} cotas por pedido.
+                            </p>
+                        )}
                     </div>
 
                     {error && (

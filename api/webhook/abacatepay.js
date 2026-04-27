@@ -74,12 +74,16 @@ export default async function handler(req, res) {
                 .update(updatePayload)
                 .eq('asaas_payment_id', billingId)
                 .eq('status', 'PENDING')
-                .select('id, gift_id');
+                .select('id, gift_id, quota_quantity');
 
             if (orderError) {
                 console.error('Error updating order:', orderError);
             } else if (updatedRows?.length) {
                 const order = updatedRows[0];
+                const delta = Math.max(
+                    1,
+                    Math.floor(Number(order.quota_quantity)) || 1
+                );
                 const { data: gift } = await supabase
                     .from('gifts')
                     .select('purchased_quantity')
@@ -90,7 +94,7 @@ export default async function handler(req, res) {
                     await supabase
                         .from('gifts')
                         .update({
-                            purchased_quantity: gift.purchased_quantity + 1,
+                            purchased_quantity: gift.purchased_quantity + delta,
                         })
                         .eq('id', order.gift_id);
                 }

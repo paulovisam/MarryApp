@@ -13,7 +13,18 @@ const ABACATE_V1_BILLING_CREATE =
  * @param {import('http').IncomingMessage} req
  */
 export async function createAbacatePayment(body, req) {
-    const { giftId, giftTitle, giftDescription, customer, amount } = body;
+    const {
+        giftId,
+        giftTitle,
+        giftDescription,
+        customer,
+        amount,
+        quantity,
+        unitPrice,
+    } = body;
+    const qty = Math.max(1, Math.floor(Number(quantity)) || 1);
+    const unitCents = Math.round(parseFloat(unitPrice) * 100);
+    const pricePerUnitCents = Math.max(1, unitCents);
 
     if (!process.env.ABACATEPAY_API_KEY?.trim()) {
         throw new Error('ABACATEPAY_API_KEY não configurada no servidor.');
@@ -27,9 +38,6 @@ export async function createAbacatePayment(body, req) {
         req.headers.referer?.split('/').slice(0, 3).join('/') ||
         'http://localhost:3000';
 
-    const priceCents = Math.round(parseFloat(amount) * 100);
-    const price = Math.max(100, priceCents);
-
     const payload = {
         frequency: 'ONE_TIME',
         methods: ['PIX', 'CARD'],
@@ -40,8 +48,8 @@ export async function createAbacatePayment(body, req) {
                 description:
                     giftDescription ||
                     `Contribuição para: ${giftTitle || giftId}`,
-                quantity: 1,
-                price,
+                quantity: qty,
+                price: pricePerUnitCents,
             },
         ],
         returnUrl: `${origin}/presentes`,
@@ -52,7 +60,7 @@ export async function createAbacatePayment(body, req) {
             taxId: customer.taxId || '',
             cellphone: customer.phone || '',
         },
-        metadata: { giftId: String(giftId) },
+        metadata: { giftId: String(giftId), quotaQuantity: String(qty) },
     };
 
     const abacateRes = await fetch(ABACATE_V1_BILLING_CREATE, {
@@ -109,6 +117,7 @@ export async function createAbacatePayment(body, req) {
             customer_cpf: customer.taxId || '',
             customer_email: customer.email,
             amount: amount,
+            quota_quantity: qty,
             status: 'PENDING',
             asaas_payment_id: billing.id,
             payment_method: 'ABACATEPAY',

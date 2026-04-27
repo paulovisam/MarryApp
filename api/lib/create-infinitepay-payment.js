@@ -53,24 +53,32 @@ export async function createInfinitepayPayment(body, req) {
         );
     }
 
-    const { giftId, giftTitle, giftDescription, customer, amount } = body;
+    const {
+        giftId,
+        giftTitle,
+        giftDescription,
+        customer,
+        amount,
+        quantity,
+        unitPrice,
+    } = body;
+    const qty = Math.max(1, Math.floor(Number(quantity)) || 1);
+    const unitCents = Math.round(parseFloat(unitPrice) * 100);
+    const pricePerUnitCents = Math.max(1, unitCents);
 
     const origin =
         req.headers.origin ||
         req.headers.referer?.split('/').slice(0, 3).join('/') ||
         'http://localhost:3000';
 
-    const priceCents = Math.round(parseFloat(amount) * 100);
-    const price = Math.max(100, priceCents);
-
     const orderNsu = randomUUID();
 
     const payload = {
         handle,
-        items: [
+        itens: [
             {
-                quantity: 1,
-                price,
+                quantity: qty,
+                price: pricePerUnitCents,
                 description: String(
                     giftTitle || giftDescription || 'Presente de Casamento'
                 ).slice(0, 500),
@@ -143,6 +151,7 @@ export async function createInfinitepayPayment(body, req) {
             customer_cpf: String(customer.taxId || '').replace(/\D/g, ''),
             customer_email: customer.email,
             amount: amount,
+            quota_quantity: qty,
             status: 'PENDING',
             asaas_payment_id: orderNsu,
             payment_method: 'INFINITEPAY',

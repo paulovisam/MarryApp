@@ -93,7 +93,7 @@ const GiftDetailModal = ({ gift, onClose, onPresentear }) => {
                             ) : null}
                         </div>
 
-                        {!isSoldOut && totalQty > 0 && percent > 0 && (
+                        {!isSoldOut && (
                             <div>
                                 <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">
                                     Cotas presenteadas

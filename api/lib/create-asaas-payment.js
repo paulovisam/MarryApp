@@ -19,7 +19,15 @@ function getMaxInstallmentCount() {
  * @param {import('http').IncomingMessage} req
  */
 export async function createAsaasPayment(body, req) {
-    const { giftId, giftTitle, giftDescription, customer, amount } = body;
+    const {
+        giftId,
+        giftTitle,
+        giftDescription,
+        customer,
+        amount,
+        quantity,
+    } = body;
+    const qty = Math.max(1, Math.floor(Number(quantity)) || 1);
 
     if (!process.env.ASAAS_API_KEY?.trim()) {
         throw new Error('ASAAS_API_KEY não configurada no servidor.');
@@ -54,7 +62,7 @@ export async function createAsaasPayment(body, req) {
 
     const maxInstallmentCount = getMaxInstallmentCount();
     const linkPayload = {
-        name: `Presente: ${String(giftTitle || 'Casamento').slice(0, 80)}`,
+        name: `Presente: ${String(giftTitle || 'Casamento').slice(0, 80)}${qty > 1 ? ` (${qty} cotas)` : ''}`,
         description: String(
             giftDescription || `Contribuição — ${giftTitle || giftId}`
         ).slice(0, 500),
@@ -89,6 +97,7 @@ export async function createAsaasPayment(body, req) {
             customer_cpf: cpfCnpj,
             customer_email: customer.email,
             amount: amount,
+            quota_quantity: qty,
             status: 'PENDING',
             asaas_payment_id: linkId,
             payment_method: 'ASAAS',

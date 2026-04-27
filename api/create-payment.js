@@ -2,6 +2,7 @@ import { getPaymentProvider } from '../src/lib/payment-provider.js';
 import { createAbacatePayment } from './lib/create-abacate-payment.js';
 import { createAsaasPayment } from './lib/create-asaas-payment.js';
 import { createInfinitepayPayment } from './lib/create-infinitepay-payment.js';
+import { resolveGiftQuotaOrder } from './lib/resolve-gift-quota.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -28,26 +29,34 @@ export default async function handler(req, res) {
     if (!body || typeof body !== 'object') {
         return res.status(400).json({ error: 'JSON inválido ou corpo vazio.' });
     }
-    const { giftId, customer, amount } = body;
+    const { giftId, customer } = body;
     if (giftId == null || giftId === '') {
         return res.status(400).json({ error: 'Presente (giftId) é obrigatório.' });
     }
     if (!customer || typeof customer !== 'object') {
         return res.status(400).json({ error: 'Dados do cliente são obrigatórios.' });
     }
-    if (amount == null || amount === '' || Number.isNaN(parseFloat(amount))) {
-        return res.status(400).json({ error: 'Valor (amount) inválido.' });
-    }
 
     try {
+        const { quantity, unitPrice, amount } = await resolveGiftQuotaOrder(
+            giftId,
+            body.quantity
+        );
+        const payBody = {
+            ...body,
+            quantity,
+            unitPrice,
+            amount: String(amount),
+        };
+
         const provider = getPaymentProvider();
         let result;
         if (provider === 'asaas') {
-            result = await createAsaasPayment(body, req);
+            result = await createAsaasPayment(payBody, req);
         } else if (provider === 'infinitepay') {
-            result = await createInfinitepayPayment(body, req);
+            result = await createInfinitepayPayment(payBody, req);
         } else {
-            result = await createAbacatePayment(body, req);
+            result = await createAbacatePayment(payBody, req);
         }
 
         res.status(200).json({
@@ -60,7 +69,7 @@ export default async function handler(req, res) {
         const msg =
             (error && error.message) || 'Falha ao criar pagamento.';
         const userInput =
-            /obrigatório|mínimo|inválido|CPF|Celular|CNPJ|Resposta inválida ao criar/i.test(
+            /obrigatório|mínimo|inválido|CPF|Celular|CNPJ|cota|disponíveis|disponível|Resposta inválida ao criar/i.test(
                 msg
             );
         const config =
