@@ -117,7 +117,6 @@ export async function createAbacatePayment(body, req) {
             customer_cpf: customer.taxId || '',
             customer_email: customer.email,
             amount: amount,
-            quota_quantity: qty,
             status: 'PENDING',
             asaas_payment_id: billing.id,
             payment_method: 'ABACATEPAY',

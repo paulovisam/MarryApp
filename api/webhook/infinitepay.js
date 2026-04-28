@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { quotaDeltaFromAmountAndUnitPrice } from '../lib/order-quota-delta.js';
 
 const supabase = createClient(
     process.env.VITE_SUPABASE_URL,
@@ -45,23 +46,23 @@ export default async function handler(req, res) {
             })
             .eq('asaas_payment_id', String(orderNsu))
             .eq('status', 'PENDING')
-            .select('id, gift_id, quota_quantity');
+            .select('id, gift_id, amount');
 
         if (orderError) {
             console.error('InfinitePay webhook: order update', orderError);
         } else if (updatedRows?.length) {
             const order = updatedRows[0];
-            const delta = Math.max(
-                1,
-                Math.floor(Number(order.quota_quantity)) || 1
-            );
             const { data: gift } = await supabase
                 .from('gifts')
-                .select('purchased_quantity')
+                .select('purchased_quantity, price')
                 .eq('id', order.gift_id)
                 .single();
 
             if (gift) {
+                const delta = quotaDeltaFromAmountAndUnitPrice(
+                    order.amount,
+                    gift.price
+                );
                 await supabase
                     .from('gifts')
                     .update({

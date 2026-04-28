@@ -97,7 +97,6 @@ export async function createAsaasPayment(body, req) {
             customer_cpf: cpfCnpj,
             customer_email: customer.email,
             amount: amount,
-            quota_quantity: qty,
             status: 'PENDING',
             asaas_payment_id: linkId,
             payment_method: 'ASAAS',

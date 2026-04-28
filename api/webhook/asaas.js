@@ -1,9 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
+import { quotaDeltaFromAmountAndUnitPrice } from '../lib/order-quota-delta.js';
     process.env.VITE_SUPABASE_URL,
     process.env.VITE_SUPABASE_ANON_KEY
-);
+;
 
 const PAID_EVENTS = new Set(['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED']);
 const FAIL_EVENTS = new Set([
@@ -82,27 +81,28 @@ export default async function handler(req, res) {
                 })
                 .eq('status', 'PENDING')
                 .or(orFilter)
-                .select('id, gift_id, quota_quantity');
+                .select('id, gift_id, amount');
 
             if (orderError) {
                 console.error('Error updating order:', orderError);
             } else if (updatedRows?.length) {
                 const order = updatedRows[0];
-                const delta = Math.max(
-                    1,
-                    Math.floor(Number(order.quota_quantity)) || 1
-                );
                 const { data: gift } = await supabase
                     .from('gifts')
-                    .select('purchased_quantity')
+                    .select('purchased_quantity, price')
                     .eq('id', order.gift_id)
                     .single();
 
                 if (gift) {
+                    const delta = quotaDeltaFromAmountAndUnitPrice(
+                        order.amount,
+                        gift.price
+                    );
                     await supabase
                         .from('gifts')
                         .update({
-                            purchased_quantity: gift.purchased_quantity + delta,
+                            purchased_quantity:
+                                gift.purchased_quantity + delta,
                         })
                         .eq('id', order.gift_id);
                 }

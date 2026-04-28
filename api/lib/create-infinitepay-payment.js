@@ -75,7 +75,7 @@ export async function createInfinitepayPayment(body, req) {
 
     const payload = {
         handle,
-        itens: [
+        items: [
             {
                 quantity: qty,
                 price: pricePerUnitCents,
@@ -105,7 +105,6 @@ export async function createInfinitepayPayment(body, req) {
             payload.customer.phone_number = `+55${phoneDigits}`;
         }
     }
-    console.log('Link checkout para InfinitePay:', payload);
     const infRes = await fetch(CHECKOUT_LINKS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -151,7 +150,6 @@ export async function createInfinitepayPayment(body, req) {
             customer_cpf: String(customer.taxId || '').replace(/\D/g, ''),
             customer_email: customer.email,
             amount: amount,
-            quota_quantity: qty,
             status: 'PENDING',
             asaas_payment_id: orderNsu,
             payment_method: 'INFINITEPAY',
