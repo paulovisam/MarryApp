@@ -144,7 +144,7 @@ const CotasFloatingTip = () => {
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             onPointerDown={onPointerDown}
-            className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-[45] w-[min(calc(100vw-2rem),28rem)] max-h-[min(70vh,34rem)] -translate-x-1/2 overflow-y-auto rounded-2xl border border-burgundy-200/90 bg-white/95 p-4 text-left shadow-lg backdrop-blur-sm dark:border-burgundy-900/40 dark:bg-slate-900/95 sm:p-5 md:left-auto md:right-6 md:translate-x-0 motion-reduce:transition-none motion-safe:transition-opacity motion-safe:duration-300 motion-safe:ease-out ${
+            className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-[45] w-[min(calc(100vw-2rem),28rem)] max-h-[min(70vh,34rem)] -translate-x-1/2 origin-bottom select-none overflow-y-auto rounded-2xl border border-burgundy-200/90 bg-white/95 p-4 text-left shadow-lg backdrop-blur-sm dark:border-burgundy-900/40 dark:bg-slate-900/95 sm:p-5 md:left-auto md:right-6 md:origin-bottom-right md:translate-x-0 md:hover:z-[46] md:motion-safe:hover:scale-[1.015] md:motion-safe:hover:shadow-xl motion-safe:transition-[opacity,transform,box-shadow] motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none ${
                 exiting
                     ? 'pointer-events-none opacity-0'
                     : 'opacity-100'
@@ -191,11 +191,11 @@ const CotasFloatingTip = () => {
             <div className="space-y-2.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400 sm:space-y-3 sm:text-sm">
                 <p>
                     Pensando em todo mundo poder participar do nosso chá de casa
-                    nova, dividimos alguns presentes em{' '}
+                    nova, dividimos alguns presentes em cotas{' '}
                     <strong className="font-medium text-slate-800 dark:text-slate-200">
-                        cotas
+                        cada cota é um pedacinho do valor total.  
                     </strong>
-                    : cada cota é um pedacinho do valor total.
+                    
                 </p>
                 <p>
                     Você pode levar{' '}
