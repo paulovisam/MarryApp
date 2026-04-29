@@ -22,6 +22,13 @@ function isValidBrPhone(s) {
   return ddd >= 11 && ddd <= 99;
 }
 
+/** Mais do que uma pessoa no mesmo campo (ex.: "Fulano e Cicrano", "Fulano, Cicrano"). */
+function hasMultipleNamesInOneField(s) {
+  const t = String(s).trim();
+  if (/\s+e\s+/i.test(t)) return true;
+  return /,/.test(t);
+}
+
 /** Pelo menos duas partes (nome e sobrenome), separadas por espaço. */
 function isFullName(s) {
   const parts = s.trim().split(/\s+/).filter(Boolean);
@@ -92,6 +99,12 @@ export default function ConfirmarPresencaModal({ isOpen, onClose }) {
     const name = fullName.trim();
     if (!isFullName(name)) {
       shakeAndSetError('Preencha o nome completo.');
+      return;
+    }
+    if (hasMultipleNamesInOneField(name)) {
+      shakeAndSetError(
+        'Por favor, confirme um nome de cada vez.'
+      );
       return;
     }
     const phoneT = phone.trim();
