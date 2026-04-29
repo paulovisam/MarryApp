@@ -23,10 +23,32 @@ function formatRsvpPhone(value) {
     return String(value);
 }
 
+function rsvpEditDigitsOnly(s) {
+    return String(s ?? '').replace(/\D/g, '');
+}
+
+function rsvpEditIsFullName(s) {
+    const parts = String(s).trim().split(/\s+/).filter(Boolean);
+    return parts.length >= 2;
+}
+
+function rsvpEditHasMultipleNames(s) {
+    const t = String(s).trim();
+    return /\s+e\s+/i.test(t) || /,/.test(t);
+}
+
+function rsvpEditIsValidOptionalBrPhone(s) {
+    const d = rsvpEditDigitsOnly(s);
+    if (!d) return true;
+    if (d.length < 10 || d.length > 11) return false;
+    const ddd = parseInt(d.slice(0, 2), 10);
+    return ddd >= 11 && ddd <= 99;
+}
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('rsvps'); // rsvps | gifts
-    const { rsvps, refresh: refreshRsvps } = useAdminRsvps();
+    const { rsvps, refresh: refreshRsvps, updateRsvp } = useAdminRsvps();
     const { gifts, addGift, updateGift, deleteGift } = useAdminGifts();
 
     // Gift Form State
@@ -48,6 +70,9 @@ const Dashboard = () => {
     /** Convidados: mais recentes primeiro (igual ao fetch) ou mais antigos primeiro. */
     const [rsvpDateSort, setRsvpDateSort] = useState('newest');
     const [selectedRsvp, setSelectedRsvp] = useState(null);
+    const [rsvpEdit, setRsvpEdit] = useState(null);
+    const [rsvpEditSaving, setRsvpEditSaving] = useState(false);
+    const [rsvpEditError, setRsvpEditError] = useState('');
     const [rsvpRefreshing, setRsvpRefreshing] = useState(false);
     const [giftSort, setGiftSort] = useState('name-asc');
     const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
@@ -76,6 +101,58 @@ const Dashboard = () => {
         } finally {
             setRsvpRefreshing(false);
         }
+    };
+
+    const openRsvpEdit = (rsvp, opts = {}) => {
+        const { closeDetail } = opts;
+        if (closeDetail) setSelectedRsvp(null);
+        setRsvpEditError('');
+        setRsvpEdit({
+            id: rsvp.id,
+            name: rsvp.name ?? '',
+            phone: rsvp.phone != null ? String(rsvp.phone) : '',
+            guests_count: rsvp.guests_count != null ? String(rsvp.guests_count) : '',
+            is_present: !!rsvp.is_present,
+            message: rsvp.message ?? '',
+        });
+    };
+
+    const handleRsvpEditSubmit = async (e) => {
+        e.preventDefault();
+        if (!rsvpEdit) return;
+        const name = String(rsvpEdit.name).trim();
+        if (!rsvpEditIsFullName(name)) {
+            setRsvpEditError('Preencha o nome completo (nome e sobrenome).');
+            return;
+        }
+        if (rsvpEditHasMultipleNames(name)) {
+            setRsvpEditError('Use um único nome completo neste registro (sem vírgulas ou "e" entre nomes de pessoas).');
+            return;
+        }
+        const phoneT = String(rsvpEdit.phone).trim();
+        if (phoneT && !rsvpEditIsValidOptionalBrPhone(phoneT)) {
+            setRsvpEditError('Se informar telefone, use DDD + número (10 ou 11 dígitos).');
+            return;
+        }
+        const gcRaw = String(rsvpEdit.guests_count).trim();
+        const gc = gcRaw === '' ? 0 : Number.parseInt(gcRaw, 10);
+        if (!Number.isFinite(gc) || gc < 0) {
+            setRsvpEditError('Quantidade de pessoas deve ser um número inteiro ≥ 0.');
+            return;
+        }
+        const phoneDigits = rsvpEditDigitsOnly(phoneT);
+        const payload = {
+            name,
+            phone: phoneDigits || null,
+            guests_count: rsvpEdit.is_present ? gc : 0,
+            is_present: rsvpEdit.is_present,
+            message: String(rsvpEdit.message ?? '').trim(),
+        };
+        setRsvpEditSaving(true);
+        setRsvpEditError('');
+        const ok = await updateRsvp(rsvpEdit.id, payload);
+        setRsvpEditSaving(false);
+        if (ok) setRsvpEdit(null);
     };
 
     // Stats
@@ -203,19 +280,26 @@ const Dashboard = () => {
     };
 
     const handleDeleteGift = async (id) => {
-        if (confirm('Tem certeza que deseja excluir?')) {
-            await deleteGift(id);
+        if (
+            !confirm(
+                'Excluir este presente? Após aplicar a migração no Supabase (ON DELETE SET NULL), os pedidos existentes permanecem no histórico, mas deixam de apontar para este item (gift_id fica nulo). Esta ação não pode ser desfeita.'
+            )
+        ) {
+            return;
         }
+        await deleteGift(id);
     };
 
     useEffect(() => {
-        if (!selectedRsvp) return undefined;
+        if (!selectedRsvp && !rsvpEdit) return undefined;
         const onKey = (e) => {
-            if (e.key === 'Escape') setSelectedRsvp(null);
+            if (e.key !== 'Escape') return;
+            if (rsvpEdit) setRsvpEdit(null);
+            else setSelectedRsvp(null);
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [selectedRsvp]);
+    }, [selectedRsvp, rsvpEdit]);
 
     return (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-900 font-sans">
@@ -235,6 +319,7 @@ const Dashboard = () => {
                     <button
                         onClick={() => {
                             setSelectedRsvp(null);
+                            setRsvpEdit(null);
                             setActiveTab('gifts');
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'gifts' ? 'bg-burgundy-600' : 'hover:bg-slate-700'}`}
@@ -276,6 +361,7 @@ const Dashboard = () => {
                     <button
                         onClick={() => {
                             setSelectedRsvp(null);
+                            setRsvpEdit(null);
                             setActiveTab('gifts');
                         }}
                         className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'gifts'
@@ -396,12 +482,13 @@ const Dashboard = () => {
                                             <th className="p-4">Status</th>
                                             <th className="p-4">Mensagem</th>
                                             <th className="p-4">Data</th>
+                                            <th className="w-px whitespace-nowrap p-4 text-center">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                         {filteredRsvps.length === 0 ? (
                                             <tr>
-                                                <td colSpan={5} className="p-8 text-center text-slate-500 dark:text-slate-400">
+                                                <td colSpan={6} className="p-8 text-center text-slate-500 dark:text-slate-400">
                                                     Nenhum registro encontrado com os filtros atuais.
                                                 </td>
                                             </tr>
@@ -432,6 +519,20 @@ const Dashboard = () => {
                                                     </td>
                                                     <td className="p-4 text-sm text-slate-500 max-w-xs truncate" title={rsvp.message}>{rsvp.message || '—'}</td>
                                                     <td className="p-4 text-xs text-slate-500">{new Date(rsvp.created_at).toLocaleDateString('pt-BR')}</td>
+                                                    <td className="p-2 text-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                openRsvpEdit(rsvp);
+                                                            }}
+                                                            className="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                                                            aria-label={`Editar convidado ${rsvp.name || ''}`}
+                                                        >
+                                                            <IoCreate size={18} className="shrink-0" aria-hidden />
+                                                            <span className="hidden sm:inline">Editar</span>
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             ))
                                         )}
@@ -837,7 +938,14 @@ const Dashboard = () => {
                                 </dd>
                             </div>
                         </dl>
-                        <div className="mt-6 flex justify-end border-t border-slate-100 pt-4 dark:border-slate-700">
+                        <div className="mt-6 flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-700">
+                            <button
+                                type="button"
+                                onClick={() => openRsvpEdit(selectedRsvp, { closeDetail: true })}
+                                className="min-h-[44px] rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                            >
+                                Editar registro
+                            </button>
                             <button
                                 type="button"
                                 onClick={() => setSelectedRsvp(null)}
@@ -846,6 +954,148 @@ const Dashboard = () => {
                                 Fechar
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {rsvpEdit && (
+                <div
+                    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="rsvp-edit-title"
+                >
+                    <button
+                        type="button"
+                        className="absolute inset-0 cursor-default"
+                        aria-label="Fechar"
+                        disabled={rsvpEditSaving}
+                        onClick={() => !rsvpEditSaving && setRsvpEdit(null)}
+                    />
+                    <div className="relative z-10 w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+                        <div className="mb-4 flex items-start justify-between gap-4">
+                            <h3 id="rsvp-edit-title" className="font-sans text-xl font-bold dark:text-white">
+                                Editar convidado
+                            </h3>
+                            <button
+                                type="button"
+                                disabled={rsvpEditSaving}
+                                onClick={() => !rsvpEditSaving && setRsvpEdit(null)}
+                                className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:opacity-60 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                                aria-label="Fechar"
+                            >
+                                <IoClose size={22} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleRsvpEditSubmit} className="space-y-4">
+                            {rsvpEditError ? (
+                                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-800/40 dark:bg-red-950/40 dark:text-red-200" role="alert">
+                                    {rsvpEditError}
+                                </p>
+                            ) : null}
+                            <div>
+                                <label htmlFor="rsvp-edit-name" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    Nome completo
+                                </label>
+                                <input
+                                    id="rsvp-edit-name"
+                                    type="text"
+                                    value={rsvpEdit.name}
+                                    onChange={(e) => setRsvpEdit((s) => (s ? { ...s, name: e.target.value } : s))}
+                                    className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                    autoComplete="name"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="rsvp-edit-phone" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    Telefone (opcional)
+                                </label>
+                                <input
+                                    id="rsvp-edit-phone"
+                                    type="tel"
+                                    inputMode="tel"
+                                    value={rsvpEdit.phone}
+                                    onChange={(e) => setRsvpEdit((s) => (s ? { ...s, phone: e.target.value } : s))}
+                                    className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono tabular-nums text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                    autoComplete="tel"
+                                />
+                            </div>
+                            <div>
+                                <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    Presença
+                                </span>
+                                <div className="flex flex-wrap gap-3">
+                                    <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
+                                        <input
+                                            type="radio"
+                                            name="rsvp-edit-present"
+                                            checked={rsvpEdit.is_present}
+                                            onChange={() => setRsvpEdit((s) => (s ? { ...s, is_present: true } : s))}
+                                            className="h-4 w-4 accent-burgundy-600"
+                                        />
+                                        Confirmado
+                                    </label>
+                                    <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
+                                        <input
+                                            type="radio"
+                                            name="rsvp-edit-present"
+                                            checked={!rsvpEdit.is_present}
+                                            onChange={() => setRsvpEdit((s) => (s ? { ...s, is_present: false } : s))}
+                                            className="h-4 w-4 accent-burgundy-600"
+                                        />
+                                        Recusado
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="rsvp-edit-guests" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    Quantidade (pessoas)
+                                </label>
+                                <input
+                                    id="rsvp-edit-guests"
+                                    type="number"
+                                    min={0}
+                                    step={1}
+                                    value={rsvpEdit.guests_count}
+                                    onChange={(e) => setRsvpEdit((s) => (s ? { ...s, guests_count: e.target.value } : s))}
+                                    disabled={!rsvpEdit.is_present}
+                                    className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                />
+                                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                    Se o status for recusado, a quantidade é salva como 0.
+                                </p>
+                            </div>
+                            <div>
+                                <label htmlFor="rsvp-edit-message" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    Mensagem
+                                </label>
+                                <textarea
+                                    id="rsvp-edit-message"
+                                    rows={3}
+                                    value={rsvpEdit.message}
+                                    onChange={(e) => setRsvpEdit((s) => (s ? { ...s, message: e.target.value } : s))}
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                                />
+                            </div>
+                            <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-700">
+                                <button
+                                    type="button"
+                                    disabled={rsvpEditSaving}
+                                    onClick={() => !rsvpEditSaving && setRsvpEdit(null)}
+                                    className="min-h-[44px] rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={rsvpEditSaving}
+                                    className="min-h-[44px] rounded-lg bg-burgundy-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-burgundy-700 disabled:opacity-60"
+                                >
+                                    {rsvpEditSaving ? 'Salvando…' : 'Salvar'}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
