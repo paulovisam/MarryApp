@@ -30,13 +30,19 @@ export function useAdminGifts() {
     };
 
     const deleteGift = async (id) => {
+        // Com migração ON DELETE SET NULL (ver supabase/migrations), basta apagar o gift:
+        // o Postgres coloca orders.gift_id a NULL nos pedidos existentes.
         const { error } = await supabase.from('gifts').delete().eq('id', id);
         if (error) {
             console.error('Error deleting gift:', error);
-            alert('Erro ao excluir presente: ' + error.message);
-        } else {
-            fetchGifts();
+            const hint =
+                /foreign key|23503/i.test(String(error.message || error.code || ''))
+                    ? '\n\nSe o erro citar foreign key: no Supabase SQL Editor, rode o script em supabase/migrations que define gift_id como opcional e ON DELETE SET NULL em orders. As políticas RLS em orders podem também bloquear exclusões pelo cliente anon — nesse caso ajuste políticas ou use desassociação via SQL.'
+                    : '';
+            alert('Erro ao excluir presente: ' + error.message + hint);
+            return;
         }
+        fetchGifts();
     };
 
     useEffect(() => { fetchGifts(); }, []);
@@ -52,6 +58,17 @@ export function useAdminRsvps() {
         if (data) setRsvps(data);
     };
 
+    const updateRsvp = async (id, updates) => {
+        const { error } = await supabase.from('rsvps').update(updates).eq('id', id);
+        if (error) {
+            console.error('Error updating rsvp:', error);
+            alert('Erro ao atualizar convidado: ' + error.message);
+            return false;
+        }
+        fetchRsvps();
+        return true;
+    };
+
     useEffect(() => { fetchRsvps(); }, []);
-    return { rsvps, refresh: fetchRsvps };
+    return { rsvps, refresh: fetchRsvps, updateRsvp };
 }
