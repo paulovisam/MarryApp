@@ -12,6 +12,8 @@ import {
     IoImageOutline,
     IoClose,
     IoRefreshOutline,
+    IoChevronUp,
+    IoChevronDown,
 } from 'react-icons/io5';
 import { useAdminGifts, useAdminRsvps } from './adminHooks';
 
@@ -69,6 +71,10 @@ const Dashboard = () => {
     const [rsvpStatusFilter, setRsvpStatusFilter] = useState('all');
     /** Convidados: mais recentes primeiro (igual ao fetch) ou mais antigos primeiro. */
     const [rsvpDateSort, setRsvpDateSort] = useState('newest');
+    /** Ordem alfabética pelo cabeçalho Nome; quando falso, usa `rsvpDateSort`. */
+    const [rsvpNameSortActive, setRsvpNameSortActive] = useState(false);
+    /** false = A–Z, true = Z–A (só quando rsvpNameSortActive). */
+    const [rsvpNameSortDesc, setRsvpNameSortDesc] = useState(false);
     const [selectedRsvp, setSelectedRsvp] = useState(null);
     const [rsvpEdit, setRsvpEdit] = useState(null);
     const [rsvpEditSaving, setRsvpEditSaving] = useState(false);
@@ -179,12 +185,22 @@ const Dashboard = () => {
             return Number.isNaN(t) ? 0 : t;
         };
         return [...filtered].sort((a, b) => {
+            if (rsvpNameSortActive) {
+                const na = (a.name ?? '').trim();
+                const nb = (b.name ?? '').trim();
+                const c = na.localeCompare(nb, 'pt-BR', { sensitivity: 'base' });
+                if (c !== 0) return rsvpNameSortDesc ? -c : c;
+                const ta = createdTime(a);
+                const tb = createdTime(b);
+                if (ta === tb) return 0;
+                return rsvpDateSort === 'oldest' ? ta - tb : tb - ta;
+            }
             const ta = createdTime(a);
             const tb = createdTime(b);
             if (ta === tb) return 0;
             return rsvpDateSort === 'oldest' ? ta - tb : tb - ta;
         });
-    }, [rsvps, rsvpSearch, rsvpStatusFilter, rsvpDateSort]);
+    }, [rsvps, rsvpSearch, rsvpStatusFilter, rsvpDateSort, rsvpNameSortActive, rsvpNameSortDesc]);
 
     const filteredGifts = useMemo(() => {
         const term = searchTerm.toLowerCase();
@@ -448,7 +464,10 @@ const Dashboard = () => {
                                         id="rsvp-date-sort"
                                         className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-3 pr-8 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-700 dark:text-white sm:min-w-[220px]"
                                         value={rsvpDateSort}
-                                        onChange={(e) => setRsvpDateSort(e.target.value)}
+                                        onChange={(e) => {
+                                            setRsvpDateSort(e.target.value);
+                                            setRsvpNameSortActive(false);
+                                        }}
                                         aria-label="Ordenar convidados por data de registro"
                                     >
                                         <option value="newest">Mais recentes primeiro</option>
@@ -477,7 +496,45 @@ const Dashboard = () => {
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-xs">
                                         <tr>
-                                            <th className="p-4">Nome</th>
+                                            <th className="p-4">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (!rsvpNameSortActive) {
+                                                            setRsvpNameSortActive(true);
+                                                            setRsvpNameSortDesc(false);
+                                                        } else if (!rsvpNameSortDesc) {
+                                                            setRsvpNameSortDesc(true);
+                                                        } else {
+                                                            setRsvpNameSortActive(false);
+                                                        }
+                                                    }}
+                                                    className="-m-1 inline-flex min-h-[44px] w-full min-w-[7rem] items-center gap-1.5 rounded-md px-1 py-1 text-left font-semibold uppercase tracking-wide text-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-burgundy-500 dark:text-slate-400"
+                                                    aria-pressed={rsvpNameSortActive}
+                                                    aria-label={
+                                                        rsvpNameSortActive
+                                                            ? rsvpNameSortDesc
+                                                                ? 'Ordenar convidados: nome Z a A. Clicar volta à ordem por data.'
+                                                                : 'Ordenar convidados: nome A a Z. Próximo clique inverte para Z a A.'
+                                                            : 'Ordenar convidados por nome (A a Z). Clicar novamente inverte ou volta à ordem por data.'
+                                                    }
+                                                >
+                                                    <span>Nome</span>
+                                                    {rsvpNameSortActive ? (
+                                                        rsvpNameSortDesc ? (
+                                                            <IoChevronDown
+                                                                className="h-4 w-4 shrink-0 text-burgundy-600 dark:text-burgundy-400"
+                                                                aria-hidden
+                                                            />
+                                                        ) : (
+                                                            <IoChevronUp
+                                                                className="h-4 w-4 shrink-0 text-burgundy-600 dark:text-burgundy-400"
+                                                                aria-hidden
+                                                            />
+                                                        )
+                                                    ) : null}
+                                                </button>
+                                            </th>
                                             <th className="p-4">Telefone</th>
                                             <th className="p-4">Status</th>
                                             <th className="p-4">Mensagem</th>
