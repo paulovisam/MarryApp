@@ -11,8 +11,8 @@ export function isAmbientAudioBlocked(pathname) {
 }
 
 /**
- * Áudio em streaming progressivo: preload="none" evita download até o primeiro play
- * (melhor em redes lentas); o navegador continua recebendo o arquivo aos poucos durante a reprodução.
+ * `preload="metadata"`: primeiro play() falha menos em Chrome Android (ficheiro ainda vazio após primeiro gesto errado).
+ * O resto do ficheiro continua a carregar durante a reprodução.
  */
 export function AmbientAudioProvider({ children }) {
   const { pathname } = useLocation();
@@ -32,18 +32,14 @@ export function AmbientAudioProvider({ children }) {
   const tryStartAmbient = useCallback(() => {
     if (isAmbientAudioBlocked(pathnameRef.current)) return;
     const el = audioRef.current;
-    if (!el) return;
+    if (!el || !el.paused) return;
     el.volume = AMBIENT_MUSIC_VOLUME;
-    if (el.paused) {
-      el
-        .play()
-        .then(() => setIsAmbientActive(true))
-        .catch(() => {
-          // Política de autoplay: comum falhar até haver gesto do utilizador
-        });
-    } else {
-      setIsAmbientActive(true);
-    }
+    el
+      .play()
+      .then(() => setIsAmbientActive(true))
+      .catch(() => {
+        // Autoplay bloqueado ou áudio ainda sem buffer — novos gestos voltam a tentar
+      });
   }, []);
 
   const playAmbient = tryStartAmbient;
@@ -60,7 +56,10 @@ export function AmbientAudioProvider({ children }) {
 
   /**
    * 1) Tenta tocar ao entrar numa rota permitida (geralmente bloqueado sem gesto).
-   * 2) Primeiro gesto: listeners só quando a rota permite música.
+   * 2) Gesto do utilizador: listeners persistentes na rota.
+   *
+   * Em Android não usar `once: true`: o primeiro toque pode ser scroll/passive ou falhar até
+   * haver dados com preload mínimo; depois já não há listener e a música só arrancaria no Hero.
    */
   useEffect(() => {
     if (isAmbientAudioBlocked(pathname)) {
@@ -73,17 +72,19 @@ export function AmbientAudioProvider({ children }) {
       tryStartAmbient();
     };
 
-    const captureOnce = { capture: true, passive: true, once: true };
-    document.addEventListener('touchstart', onGesture, captureOnce);
-    document.addEventListener('touchend', onGesture, captureOnce);
-    document.addEventListener('pointerdown', onGesture, captureOnce);
-    window.addEventListener('keydown', onGesture, { once: true });
+    const capturePassive = { capture: true, passive: true };
+    document.addEventListener('touchstart', onGesture, capturePassive);
+    document.addEventListener('touchend', onGesture, capturePassive);
+    document.addEventListener('pointerdown', onGesture, capturePassive);
+    document.addEventListener('click', onGesture, capturePassive);
+    window.addEventListener('keydown', onGesture, { capture: true });
 
     return () => {
-      document.removeEventListener('touchstart', onGesture, { capture: true });
-      document.removeEventListener('touchend', onGesture, { capture: true });
-      document.removeEventListener('pointerdown', onGesture, { capture: true });
-      window.removeEventListener('keydown', onGesture);
+      document.removeEventListener('touchstart', onGesture, capturePassive);
+      document.removeEventListener('touchend', onGesture, capturePassive);
+      document.removeEventListener('pointerdown', onGesture, capturePassive);
+      document.removeEventListener('click', onGesture, capturePassive);
+      window.removeEventListener('keydown', onGesture, { capture: true });
     };
   }, [tryStartAmbient, pathname]);
 
@@ -102,7 +103,7 @@ export function AmbientAudioProvider({ children }) {
       <audio
         ref={audioRef}
         src={hallelujahMp3}
-        preload="none"
+        preload="metadata"
         loop
         playsInline
         className="sr-only"
