@@ -108,10 +108,6 @@ const Hero = () => {
             </div>
             <a
               href="#details"
-              onPointerDownCapture={(e) => {
-                if (e.button != null && e.button !== 0) return;
-                playAmbient();
-              }}
               onClick={() => playAmbient()}
               className="flex min-h-[48px] w-full max-w-sm items-center justify-center border border-white px-4 py-3.5 text-center font-serif text-[11px] tracking-[0.18em] text-white transition-all duration-300 active:bg-white/10 hover:bg-white hover:text-slate-900 sm:text-xs sm:tracking-widest"
             >
@@ -133,10 +129,6 @@ const Hero = () => {
               <div className="py-8">
                 <a
                   href="#details"
-                  onPointerDownCapture={(e) => {
-                    if (e.button != null && e.button !== 0) return;
-                    playAmbient();
-                  }}
                   onClick={() => playAmbient()}
                   className="inline-block border border-white px-8 py-3 font-serif tracking-widest text-white transition-all duration-300 hover:bg-white hover:text-slate-900"
                 >

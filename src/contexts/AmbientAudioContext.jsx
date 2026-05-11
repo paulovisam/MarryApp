@@ -56,10 +56,15 @@ export function AmbientAudioProvider({ children }) {
 
   /**
    * 1) Tenta tocar ao entrar numa rota permitida (geralmente bloqueado sem gesto).
-   * 2) Gesto do utilizador: listeners persistentes na rota.
+   * 2) Gesto do utilizador: listeners persistentes enquanto a rota permite música.
    *
-   * Em Android não usar `once: true`: o primeiro toque pode ser scroll/passive ou falhar até
-   * haver dados com preload mínimo; depois já não há listener e a música só arrancaria no Hero.
+   * Por que NÃO escutar `touchstart` / `pointerdown` para chamar play():
+   *   - Esses eventos disparam ANTES do gesto ser concluído e fazem `el.paused` virar `false`
+   *     imediatamente (mesmo que a promise venha a rejeitar com NotAllowedError).
+   *   - Quando o evento válido (`touchend` / `click`) chega milissegundos depois,
+   *     o guard `!el.paused` retorna early e o gesto de ativação válido é desperdiçado.
+   *   - No Android Chrome apenas `touchend` e `click` são ativações confiáveis para áudio.
+   *   - No iOS Safari `touchend` também é suficiente para iniciar a música ao rolar.
    */
   useEffect(() => {
     if (isAmbientAudioBlocked(pathname)) {
@@ -73,16 +78,12 @@ export function AmbientAudioProvider({ children }) {
     };
 
     const capturePassive = { capture: true, passive: true };
-    document.addEventListener('touchstart', onGesture, capturePassive);
     document.addEventListener('touchend', onGesture, capturePassive);
-    document.addEventListener('pointerdown', onGesture, capturePassive);
     document.addEventListener('click', onGesture, capturePassive);
     window.addEventListener('keydown', onGesture, { capture: true });
 
     return () => {
-      document.removeEventListener('touchstart', onGesture, capturePassive);
       document.removeEventListener('touchend', onGesture, capturePassive);
-      document.removeEventListener('pointerdown', onGesture, capturePassive);
       document.removeEventListener('click', onGesture, capturePassive);
       window.removeEventListener('keydown', onGesture, { capture: true });
     };
