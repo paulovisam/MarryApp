@@ -10,7 +10,7 @@ import {
     IoHeart,
     IoSearchOutline,
 } from 'react-icons/io5';
-import CotasFloatingTip from '../components/CotasFloatingTip';
+import CotasAccordion from '../components/CotasAccordion';
 import { Link, useSearchParams } from 'react-router-dom';
 
 /** Embaralha a ordem de exibição após cada carregamento (Fisher–Yates). */
@@ -105,6 +105,7 @@ const GiftListPage = () => {
                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                         Escolhemos alguns itens para nos ajudar a construir nosso novo lar.
                     </p>
+                    <CotasAccordion />
                 </div>
 
                 {!loading && gifts.length > 0 && (
@@ -209,7 +210,7 @@ const GiftListPage = () => {
                 />
             )}
 
-            <CotasFloatingTip />
+            {/* <CotasFloatingTip /> */} //Desativar dica flutuante
         </div>
     );
 };

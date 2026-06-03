@@ -191,9 +191,9 @@ const CotasFloatingTip = () => {
             <div className="space-y-2.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400 sm:space-y-3 sm:text-sm">
                 <p>
                     Pensando em todo mundo poder participar do nosso chá de casa
-                    nova, dividimos alguns presentes em cotas{' '}
+                    nova, dividimos alguns presentes em cotas cada{' '}
                     <strong className="font-medium text-slate-800 dark:text-slate-200">
-                        cada cota é um pedacinho do valor total.  
+                        cota é um pedacinho do valor total.  
                     </strong>
                     
                 </p>

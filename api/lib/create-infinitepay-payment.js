@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 const CHECKOUT_LINKS_URL =
-    'https://api.infinitepay.io/invoices/public/checkout/links';
+    'https://api.checkout.infinitepay.io/links';
 
 function normalizeHandle(raw) {
     let h = String(raw || '').trim();
